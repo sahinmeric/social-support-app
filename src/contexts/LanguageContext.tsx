@@ -6,10 +6,11 @@ import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,
 } from "../constants";
+import { loadLanguageResources } from "../i18n/config";
 
 interface LanguageContextValue {
   language: string;
-  setLanguage: (lang: string) => void;
+  setLanguage: (lang: string) => Promise<void>;
   direction: "ltr" | "rtl";
 }
 
@@ -32,11 +33,22 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
     language === SUPPORTED_LANGUAGES.ARABIC ? "rtl" : "ltr"
   );
 
-  const setLanguage = (lang: string) => {
-    setLanguageState(lang);
-    localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
-    i18n.changeLanguage(lang);
-    setDirection(lang === SUPPORTED_LANGUAGES.ARABIC ? "rtl" : "ltr");
+  const setLanguage = async (lang: string) => {
+    try {
+      // Check if language resources are already loaded
+      if (!i18n.hasResourceBundle(lang, "translation")) {
+        // Load language resources dynamically
+        const resources = await loadLanguageResources(lang);
+        i18n.addResourceBundle(lang, "translation", resources);
+      }
+
+      setLanguageState(lang);
+      localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
+      await i18n.changeLanguage(lang);
+      setDirection(lang === SUPPORTED_LANGUAGES.ARABIC ? "rtl" : "ltr");
+    } catch (error) {
+      console.error(`Failed to switch to language ${lang}:`, error);
+    }
   };
 
   useEffect(() => {
