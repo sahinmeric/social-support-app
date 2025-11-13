@@ -86,7 +86,7 @@
   - Implement responsive layout
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [-] 10. Create OpenAI service for AI assistance
+- [x] 10. Create OpenAI service for AI assistance
 
   - Implement OpenAIService class
   - Add generateSuggestion method with API call to OpenAI
@@ -96,7 +96,7 @@
   - Add retry logic
   - _Requirements: 4.2, 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 11. Build AI assistance UI components
+- [-] 11. Build AI assistance UI components
 
   - Create HelpMeWriteButton component
   - Implement loading and disabled states
