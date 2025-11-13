@@ -95,6 +95,13 @@
     "validationError": "Please review and correct the highlighted fields.",
     "submitting": "Submitting your application..."
   },
+  "success": {
+    "message": "Thank you for submitting your application. We have received your information and will review it shortly. You will be contacted regarding the status of your application.",
+    "applicationId": "Application ID",
+    "submittedAt": "Submitted at",
+    "submitAnother": "Submit Another Application",
+    "goHome": "Go to Home Page"
+  },
   "language": {
     "english": "English",
     "arabic": "Arabic"

@@ -164,7 +164,7 @@
   - Test with keyboard-only navigation
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [-] 17. Create README and documentation
+- [x] 17. Create README and documentation
 
   - Write comprehensive README.md with project overview
   - Document how to run the project (npm install, npm run dev)

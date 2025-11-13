@@ -17,6 +17,7 @@ import Step1PersonalInfo from "./steps/Step1PersonalInfo";
 import Step2FamilyFinancial from "./steps/Step2FamilyFinancial";
 import Step3SituationDescriptions from "./steps/Step3SituationDescriptions";
 import LanguageSelector from "./common/LanguageSelector";
+import SuccessPage from "./SuccessPage";
 
 const FormWizard: React.FC = () => {
   const { t } = useTranslation();
@@ -26,6 +27,10 @@ const FormWizard: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [submissionData, setSubmissionData] = useState<{
+    applicationId?: string;
+    timestamp?: string;
+  }>({});
 
   /**
    * Handle navigation to next step
@@ -72,7 +77,13 @@ const FormWizard: React.FC = () => {
         // Clear localStorage on successful submission
         StorageService.clearFormData();
 
-        // Show success message
+        // Store submission data
+        setSubmissionData({
+          applicationId: response.applicationId,
+          timestamp: response.timestamp,
+        });
+
+        // Show success page
         setShowSuccess(true);
 
         // Log for demonstration
@@ -80,9 +91,6 @@ const FormWizard: React.FC = () => {
           applicationId: response.applicationId,
           timestamp: response.timestamp,
         });
-
-        // In a real app, you might redirect to a success page:
-        // navigate('/success', { state: { applicationId: response.applicationId } });
       } else {
         throw new Error(response.message || "Submission failed");
       }
@@ -98,10 +106,25 @@ const FormWizard: React.FC = () => {
   };
 
   /**
-   * Close success snackbar
+   * Handle submit another application
    */
-  const handleCloseSuccess = () => {
+  const handleSubmitAnother = () => {
+    // Reset form state
     setShowSuccess(false);
+    setSubmissionData({});
+    setCurrentStep(1);
+    // Note: FormContext will initialize with empty data from localStorage
+    // which was cleared after successful submission
+    window.location.reload(); // Reload to reset all state
+  };
+
+  /**
+   * Handle go to home page
+   */
+  const handleGoHome = () => {
+    // In a real app, this would navigate to the home page
+    // For now, just reload the page
+    window.location.href = "/";
   };
 
   /**
@@ -143,6 +166,18 @@ const FormWizard: React.FC = () => {
     }
   };
 
+  // Show success page after successful submission
+  if (showSuccess) {
+    return (
+      <SuccessPage
+        applicationId={submissionData.applicationId}
+        timestamp={submissionData.timestamp}
+        onSubmitAnother={handleSubmitAnother}
+        onGoHome={handleGoHome}
+      />
+    );
+  }
+
   return (
     <Container maxWidth="md">
       {/* Language Selector */}
@@ -173,23 +208,6 @@ const FormWizard: React.FC = () => {
         isSubmitting={isSubmitting}
         isValid={true}
       />
-
-      {/* Success Snackbar */}
-      <Snackbar
-        open={showSuccess}
-        autoHideDuration={6000}
-        onClose={handleCloseSuccess}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSuccess}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {t("submission.success")}
-        </Alert>
-      </Snackbar>
 
       {/* Error Snackbar */}
       <Snackbar
