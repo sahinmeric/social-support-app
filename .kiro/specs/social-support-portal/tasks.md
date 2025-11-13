@@ -18,7 +18,7 @@
   - Build LanguageSelector component
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 3. Create type definitions and validation schemas
+- [x] 3. Create type definitions and validation schemas
 
   - Define ApplicationFormData interface with all form fields
   - Create Yup validation schemas for each step (step1Schema, step2Schema, step3Schema)
