@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import {
   Box,
   Container,
@@ -13,12 +13,17 @@ import { APIService } from "../services/APIService";
 import { StorageService } from "../services/StorageService";
 import ProgressBar from "./common/ProgressBar";
 import NavigationButtons from "./common/NavigationButtons";
-import Step1PersonalInfo from "./steps/Step1PersonalInfo";
-import Step2FamilyFinancial from "./steps/Step2FamilyFinancial";
-import Step3SituationDescriptions from "./steps/Step3SituationDescriptions";
 import LanguageSelector from "./common/LanguageSelector";
-import SuccessPage from "./SuccessPage";
+import { FormSkeleton } from "./common/SkeletonLoader";
 import { APP_CONFIG, FORM_STEPS, SCROLL_CONFIG } from "../constants";
+
+// Lazy load step components for code splitting
+const Step1PersonalInfo = lazy(() => import("./steps/Step1PersonalInfo"));
+const Step2FamilyFinancial = lazy(() => import("./steps/Step2FamilyFinancial"));
+const Step3SituationDescriptions = lazy(
+  () => import("./steps/Step3SituationDescriptions")
+);
+const SuccessPage = lazy(() => import("./SuccessPage"));
 
 const FormWizard: React.FC = () => {
   const { t } = useTranslation();
@@ -177,12 +182,14 @@ const FormWizard: React.FC = () => {
   // Show success page after successful submission
   if (showSuccess) {
     return (
-      <SuccessPage
-        applicationId={submissionData.applicationId}
-        timestamp={submissionData.timestamp}
-        onSubmitAnother={handleSubmitAnother}
-        onGoHome={handleGoHome}
-      />
+      <Suspense fallback={<FormSkeleton />}>
+        <SuccessPage
+          applicationId={submissionData.applicationId}
+          timestamp={submissionData.timestamp}
+          onSubmitAnother={handleSubmitAnother}
+          onGoHome={handleGoHome}
+        />
+      </Suspense>
     );
   }
 
@@ -206,7 +213,7 @@ const FormWizard: React.FC = () => {
 
       {/* Step Content */}
       <Paper elevation={2} sx={{ p: 4, mb: 4 }}>
-        {renderStep()}
+        <Suspense fallback={<FormSkeleton />}>{renderStep()}</Suspense>
       </Paper>
 
       {/* Navigation Buttons */}
