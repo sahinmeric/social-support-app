@@ -290,3 +290,298 @@ For questions or issues, please contact the development team.
 ---
 
 **Built with ❤️ using React, TypeScript, and Material-UI**
+
+---
+
+## 🔄 Complete Application Workflow
+
+This section explains the end-to-end workflow of how the application works, from user interaction to data persistence.
+
+### 1. Application Startup 🚀
+
+```
+User opens browser → http://localhost:5173
+│
+├─ main.tsx renders App
+│  └─ Wraps with LanguageProvider
+│     └─ Wraps with FormProvider
+│
+├─ LanguageProvider initializes:
+│  ├─ Checks localStorage for saved language (default: 'en')
+│  ├─ Sets document direction (LTR/RTL)
+│  └─ Loads i18n translations
+│
+└─ FormProvider initializes:
+   ├─ Checks localStorage for saved form data
+   ├─ Checks localStorage for saved step (default: 1)
+   ├─ Initializes React Hook Form with:
+   │  ├─ defaultValues: saved data or empty initialFormData
+   │  ├─ resolver: Yup schema for current step
+   │  └─ mode: 'onChange' (validates as user types)
+   └─ Renders FormWizard component
+```
+
+### 2. User Types in an Input Field ⌨️
+
+**Example: User types "John" in the Name field**
+
+```
+User types "J" in Name field
+│
+├─ Step1PersonalInfo.tsx
+│  └─ handleChange('name') is called
+│     └─ updateFormData('name', 'J')
+│
+├─ FormContext.tsx
+│  └─ form.setValue('name', 'J', { shouldValidate: false })
+│     ├─ React Hook Form updates internal state
+│     ├─ Does NOT trigger validation (shouldValidate: false)
+│     └─ Triggers re-render ONLY for Name field (optimized!)
+│
+├─ useFormPersistence hook detects change
+│  ├─ Clears previous timeout (if exists)
+│  ├─ Sets NEW timeout for 2 seconds
+│  └─ Waits... (user keeps typing)
+│
+└─ User types "o" → "h" → "n"
+   └─ Same process repeats
+      └─ Timeout keeps resetting (debouncing)
+```
+
+**After 2 seconds of no typing:**
+
+```
+Timeout fires!
+│
+└─ useFormPersistence.ts
+   ├─ StorageService.saveFormData(formData)
+   │  └─ localStorage.setItem('socialSupportForm', JSON.stringify(formData))
+   │
+   └─ StorageService.saveCurrentStep(currentStep)
+      └─ localStorage.setItem('socialSupportFormStep', '1')
+```
+
+### 3. User Clicks "Next" Button ➡️
+
+```
+User clicks "Next"
+│
+├─ NavigationButtons.tsx
+│  └─ onNext() is called
+│
+├─ FormWizard.tsx - handleNext()
+│  ├─ Calls validateCurrentStep()
+│  │  │
+│  │  └─ FormContext.tsx
+│  │     ├─ trigger() - React Hook Form validation
+│  │     ├─ Runs Yup schema for Step 1
+│  │     ├─ Checks all fields: name, nationalId, dateOfBirth, etc.
+│  │     └─ Returns true/false
+│  │
+│  ├─ If validation FAILS:
+│  │  ├─ Errors are set in formState.errors
+│  │  ├─ Red error messages appear under fields
+│  │  ├─ User stays on Step 1
+│  │  └─ Process stops here ❌
+│  │
+│  └─ If validation SUCCEEDS:
+│     ├─ setCurrentStep(2)
+│     ├─ FormContext updates currentStep state
+│     ├─ FormWizard re-renders
+│     ├─ ProgressBar updates (Step 2 active)
+│     ├─ Step2FamilyFinancial component renders
+│     ├─ window.scrollTo({ top: 0 }) - smooth scroll
+│     └─ User sees Step 2 ✅
+```
+
+### 4. User Switches Language 🌐
+
+```
+User clicks Language Selector → Selects Arabic
+│
+├─ LanguageSelector.tsx
+│  └─ handleChange() calls setLanguage('ar')
+│
+├─ LanguageContext.tsx
+│  ├─ Updates language state to 'ar'
+│  ├─ localStorage.setItem('language', 'ar')
+│  ├─ i18n.changeLanguage('ar')
+│  ├─ Sets direction to 'rtl'
+│  ├─ document.documentElement.dir = 'rtl'
+│  └─ document.documentElement.lang = 'ar'
+│
+├─ App.tsx detects direction change
+│  └─ createAppTheme('rtl')
+│     ├─ Sets theme direction
+│     ├─ Changes font to Cairo
+│     └─ ThemeProvider re-renders
+│
+└─ All components re-render with:
+   ├─ Arabic translations (from ar.json)
+   ├─ RTL layout (right-to-left)
+   └─ Form data preserved! ✅
+```
+
+### 5. User Clicks "Help Me Write" (AI Assistance) 🤖
+
+```
+User clicks "Help Me Write" on Financial Situation field
+│
+├─ Step3SituationDescriptions.tsx
+│  └─ handleHelpMeWrite('financialSituation')
+│     ├─ Sets modalOpen = true
+│     ├─ Sets isLoading = true
+│     └─ Calls openAIService.generateSuggestion()
+│
+├─ OpenAIService.ts
+│  ├─ Checks if VITE_USE_MOCK_AI = true
+│  │  └─ YES → generateMockSuggestion()
+│  │     ├─ Waits 1.5 seconds (simulated delay)
+│  │     └─ Returns contextual mock text based on formData
+│  │
+│  └─ If VITE_USE_MOCK_AI = false:
+│     ├─ Builds contextual prompt with form data
+│     ├─ Calls OpenAI API (would fail due to CORS)
+│     └─ Returns AI-generated suggestion
+│
+├─ Step3 receives suggestion
+│  ├─ setSuggestion(result.text)
+│  ├─ setIsLoading(false)
+│  └─ SuggestionModal shows suggestion
+│
+└─ User sees modal with:
+   ├─ Editable textarea with suggestion
+   ├─ Accept button
+   ├─ Edit button
+   └─ Discard button
+```
+
+**If user clicks "Accept":**
+
+```
+User clicks Accept
+│
+├─ SuggestionModal.tsx → onAccept()
+│
+├─ Step3SituationDescriptions.tsx
+│  └─ handleAccept()
+│     ├─ updateFormData('financialSituation', suggestion)
+│     ├─ TextField updates with AI text
+│     ├─ Modal closes
+│     └─ useFormPersistence will save in 2 seconds
+```
+
+### 6. User Submits Form 📤
+
+```
+User completes all 3 steps → Clicks "Submit"
+│
+├─ NavigationButtons.tsx
+│  └─ onSubmit() is called
+│
+├─ FormWizard.tsx - handleSubmit()
+│  ├─ Validates Step 3 (current step)
+│  │  └─ If fails: shows errors, stops ❌
+│  │
+│  ├─ If valid: continues...
+│  ├─ setIsSubmitting(true)
+│  └─ Calls APIService.submitApplication(formData)
+│
+├─ APIService.ts
+│  ├─ Validates all fields across all steps
+│  ├─ Simulates network delay (1-2 seconds)
+│  ├─ Generates unique applicationId
+│  ├─ Returns success response with:
+│  │  ├─ applicationId: "APP-1234567890-abc123"
+│  │  ├─ timestamp: "2025-01-13T10:30:00.000Z"
+│  │  └─ success: true
+│  │
+│  └─ (In production: would POST to backend API)
+│
+├─ FormWizard receives response
+│  ├─ StorageService.clearFormData()
+│  │  ├─ localStorage.removeItem('socialSupportForm')
+│  │  └─ localStorage.removeItem('socialSupportFormStep')
+│  │
+│  ├─ setSubmissionData({ applicationId, timestamp })
+│  ├─ setShowSuccess(true)
+│  └─ setIsSubmitting(false)
+│
+└─ FormWizard renders SuccessPage
+   └─ Shows:
+      ├─ ✅ Success icon
+      ├─ Success message
+      ├─ Application ID
+      ├─ Timestamp
+      ├─ "Submit Another Application" button
+      └─ "Go to Home Page" button
+```
+
+### 7. User Refreshes Browser 🔄
+
+```
+User refreshes page (F5) or closes and reopens
+│
+├─ Application restarts (Step 1 again)
+│
+├─ FormProvider initializes
+│  ├─ StorageService.loadFormData()
+│  │  └─ Reads from localStorage
+│  │     └─ Returns saved form data ✅
+│  │
+│  └─ StorageService.loadCurrentStep()
+│     └─ Reads from localStorage
+│        └─ Returns saved step (e.g., 2) ✅
+│
+├─ React Hook Form initializes with saved data
+│
+└─ FormWizard renders
+   ├─ Shows Step 2 (where user left off)
+   ├─ All fields pre-filled with saved data
+   └─ User can continue from where they left! 🎉
+```
+
+### 🔑 Key Performance Optimizations
+
+#### React Hook Form Benefits:
+
+1. **Uncontrolled inputs** - No re-render on every keystroke
+2. **Isolated re-renders** - Only the changed field re-renders
+3. **Optimized validation** - Only validates when needed
+4. **No unnecessary state updates** - Direct DOM manipulation
+
+#### Debouncing (useFormPersistence):
+
+- Saves to localStorage only after 2 seconds of inactivity
+- Prevents excessive writes on every keystroke
+- Clears and resets timeout on each change
+
+#### React.memo:
+
+- Step components wrapped with React.memo
+- Prevents re-render if props haven't changed
+
+#### useCallback & useMemo:
+
+- Functions memoized to prevent recreation
+- Context value memoized to prevent provider re-renders
+
+### 📊 Data Flow Summary
+
+```
+User Input → React Hook Form → FormContext → useFormPersistence
+                                    ↓              ↓
+                              Components    localStorage
+                                    ↓              ↓
+                              Validation    (2s debounce)
+                                    ↓
+                              Navigation
+                                    ↓
+                              Submission
+                                    ↓
+                              APIService
+                                    ↓
+                              SuccessPage
+```
+
+---
