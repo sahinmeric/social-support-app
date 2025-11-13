@@ -1,106 +1,109 @@
 import * as yup from "yup";
-
-// Helper function to check if date is in the past
-const isPastDate = (date: Date | undefined): boolean => {
-  if (!date) return false;
-  return date < new Date();
-};
+import {
+  MIN_TEXT_LENGTH,
+  MAX_TEXT_LENGTH,
+  VALIDATION_PATTERNS,
+  VALIDATION_MESSAGES,
+} from "../constants/validation";
 
 // Step 1: Personal Information validation schema
 export const step1Schema = yup.object().shape({
   name: yup
     .string()
-    .required("validation.required")
-    .min(2, "validation.minLength")
-    .matches(/^[a-zA-Z\s\u0600-\u06FF]+$/, "validation.invalidName"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.NAME, VALIDATION_MESSAGES.MIN_LENGTH)
+    .matches(VALIDATION_PATTERNS.NAME, VALIDATION_MESSAGES.INVALID_NAME),
 
   nationalId: yup
     .string()
-    .required("validation.required")
-    .matches(/^[0-9]+$/, "validation.invalidNationalId")
-    .min(10, "validation.minLength")
-    .max(20, "validation.maxLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .matches(
+      VALIDATION_PATTERNS.NATIONAL_ID,
+      VALIDATION_MESSAGES.INVALID_NATIONAL_ID
+    )
+    .min(MIN_TEXT_LENGTH.NATIONAL_ID, VALIDATION_MESSAGES.MIN_LENGTH)
+    .max(MAX_TEXT_LENGTH.NATIONAL_ID, VALIDATION_MESSAGES.MAX_LENGTH),
 
   dateOfBirth: yup
-    .date()
-    .required("validation.required")
-    .test("is-past", "validation.dateInPast", isPastDate)
-    .max(new Date(), "validation.dateInPast"),
+    .string()
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .test("is-valid-date", VALIDATION_MESSAGES.DATE_IN_PAST, (value) => {
+      if (!value) return false;
+      const date = new Date(value);
+      return !isNaN(date.getTime()) && date < new Date();
+    }),
 
   gender: yup
     .string()
-    .required("validation.required")
-    .oneOf(["male", "female", "other"], "validation.invalidGender"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .oneOf(["male", "female", "other"], VALIDATION_MESSAGES.INVALID_GENDER),
 
   address: yup
     .string()
-    .required("validation.required")
-    .min(5, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.ADDRESS, VALIDATION_MESSAGES.MIN_LENGTH),
 
   city: yup
     .string()
-    .required("validation.required")
-    .min(2, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.CITY, VALIDATION_MESSAGES.MIN_LENGTH),
 
   state: yup
     .string()
-    .required("validation.required")
-    .min(2, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.STATE, VALIDATION_MESSAGES.MIN_LENGTH),
 
   country: yup
     .string()
-    .required("validation.required")
-    .min(2, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.COUNTRY, VALIDATION_MESSAGES.MIN_LENGTH),
 
   phone: yup
     .string()
-    .required("validation.required")
-    .matches(
-      /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
-      "validation.invalidPhone"
-    ),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .matches(VALIDATION_PATTERNS.PHONE, VALIDATION_MESSAGES.INVALID_PHONE),
 
   email: yup
     .string()
-    .required("validation.required")
-    .email("validation.invalidEmail"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .email(VALIDATION_MESSAGES.INVALID_EMAIL),
 });
 
 // Step 2: Family & Financial Information validation schema
 export const step2Schema = yup.object().shape({
   maritalStatus: yup
     .string()
-    .required("validation.required")
+    .required(VALIDATION_MESSAGES.REQUIRED)
     .oneOf(
       ["single", "married", "divorced", "widowed"],
-      "validation.invalidMaritalStatus"
+      VALIDATION_MESSAGES.INVALID_MARITAL_STATUS
     ),
 
   dependents: yup
     .number()
-    .required("validation.required")
-    .min(0, "validation.nonNegative")
-    .integer("validation.mustBeInteger"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(0, VALIDATION_MESSAGES.NON_NEGATIVE)
+    .integer(VALIDATION_MESSAGES.MUST_BE_INTEGER),
 
   employmentStatus: yup
     .string()
-    .required("validation.required")
+    .required(VALIDATION_MESSAGES.REQUIRED)
     .oneOf(
       ["employed", "unemployed", "selfEmployed", "retired"],
-      "validation.invalidEmploymentStatus"
+      VALIDATION_MESSAGES.INVALID_EMPLOYMENT_STATUS
     ),
 
   monthlyIncome: yup
     .number()
-    .required("validation.required")
-    .min(0, "validation.nonNegative"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(0, VALIDATION_MESSAGES.NON_NEGATIVE),
 
   housingStatus: yup
     .string()
-    .required("validation.required")
+    .required(VALIDATION_MESSAGES.REQUIRED)
     .oneOf(
       ["owned", "rented", "homeless", "other"],
-      "validation.invalidHousingStatus"
+      VALIDATION_MESSAGES.INVALID_HOUSING_STATUS
     ),
 });
 
@@ -108,18 +111,18 @@ export const step2Schema = yup.object().shape({
 export const step3Schema = yup.object().shape({
   financialSituation: yup
     .string()
-    .required("validation.required")
-    .min(50, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.DESCRIPTION, VALIDATION_MESSAGES.MIN_LENGTH),
 
   employmentCircumstances: yup
     .string()
-    .required("validation.required")
-    .min(50, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.DESCRIPTION, VALIDATION_MESSAGES.MIN_LENGTH),
 
   reasonForApplying: yup
     .string()
-    .required("validation.required")
-    .min(50, "validation.minLength"),
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .min(MIN_TEXT_LENGTH.DESCRIPTION, VALIDATION_MESSAGES.MIN_LENGTH),
 });
 
 // Complete form validation schema (all steps combined)

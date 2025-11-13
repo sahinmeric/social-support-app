@@ -107,8 +107,10 @@ const Step3SituationDescriptions: React.FC = () => {
             error={!!errors.financialSituation}
             helperText={
               errors.financialSituation
-                ? t(errors.financialSituation)
-                : t("validation.minLength", { min: 50 })
+                ? t(errors.financialSituation, { min: 50 })
+                : `${t("validation.minLength", { min: 50 })} (${
+                    formData.financialSituation.length
+                  }/50)`
             }
             multiline
             rows={4}
@@ -151,8 +153,10 @@ const Step3SituationDescriptions: React.FC = () => {
             error={!!errors.employmentCircumstances}
             helperText={
               errors.employmentCircumstances
-                ? t(errors.employmentCircumstances)
-                : t("validation.minLength", { min: 50 })
+                ? t(errors.employmentCircumstances, { min: 50 })
+                : `${t("validation.minLength", { min: 50 })} (${
+                    formData.employmentCircumstances.length
+                  }/50)`
             }
             multiline
             rows={4}
@@ -195,8 +199,10 @@ const Step3SituationDescriptions: React.FC = () => {
             error={!!errors.reasonForApplying}
             helperText={
               errors.reasonForApplying
-                ? t(errors.reasonForApplying)
-                : t("validation.minLength", { min: 50 })
+                ? t(errors.reasonForApplying, { min: 50 })
+                : `${t("validation.minLength", { min: 50 })} (${
+                    formData.reasonForApplying.length
+                  }/50)`
             }
             multiline
             rows={4}
