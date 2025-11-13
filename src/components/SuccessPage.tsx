@@ -1,12 +1,10 @@
 import React from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Paper,
-  Stack,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HomeIcon from "@mui/icons-material/Home";
 import AddIcon from "@mui/icons-material/Add";

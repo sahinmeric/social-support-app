@@ -1,14 +1,12 @@
 import React, { useCallback } from "react";
-import {
-  Box,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormHelperText,
-  Stack,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import Stack from "@mui/material/Stack";
 import type { SelectChangeEvent } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";

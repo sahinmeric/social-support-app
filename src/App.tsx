@@ -1,4 +1,6 @@
-import { Box, ThemeProvider, CssBaseline } from "@mui/material";
+import Box from "@mui/material/Box";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import { useLanguage } from "./contexts/LanguageContext";
 import { createAppTheme } from "./theme/theme";
 import { FormProvider } from "./contexts/FormContext";

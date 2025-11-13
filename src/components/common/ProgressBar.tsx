@@ -1,12 +1,10 @@
 import React from "react";
-import {
-  Box,
-  Stepper,
-  Step,
-  StepLabel,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import type { ProgressBarProps } from "../../types/component.types";
 

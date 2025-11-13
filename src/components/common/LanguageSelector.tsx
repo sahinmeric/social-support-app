@@ -1,5 +1,8 @@
 import React from "react";
-import { Select, MenuItem, FormControl, Box } from "@mui/material";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Box from "@mui/material/Box";
 import type { SelectChangeEvent } from "@mui/material";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useTranslation } from "react-i18next";

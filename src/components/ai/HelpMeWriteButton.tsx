@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, CircularProgress } from "@mui/material";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useTranslation } from "react-i18next";
 import type { HelpMeWriteButtonProps } from "../../types/component.types";

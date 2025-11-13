@@ -1,12 +1,10 @@
 import React, { useState, lazy, Suspense } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Alert,
-  Snackbar,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../hooks/useFormContext";
 import { APIService } from "../services/APIService";

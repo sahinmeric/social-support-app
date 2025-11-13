@@ -1,5 +1,8 @@
 import React, { useState, useCallback } from "react";
-import { Box, TextField, Stack, Button } from "@mui/material";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";
