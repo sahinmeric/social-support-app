@@ -54,17 +54,20 @@ export const sanitizeInput = (
 export const sanitizeFormData = (
   data: Partial<ApplicationFormData>
 ): Partial<ApplicationFormData> => {
-  const sanitized: Partial<ApplicationFormData> = {};
+  const sanitized: Record<string, unknown> = {};
 
-  for (const [key, value] of Object.entries(data)) {
-    if (typeof value === "string") {
-      // Sanitize string fields
-      sanitized[key as keyof ApplicationFormData] = sanitizeInput(value) as any;
-    } else {
-      // Keep non-string fields as-is (numbers, dates, etc.)
-      sanitized[key as keyof ApplicationFormData] = value as any;
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      const value = data[key as keyof ApplicationFormData];
+      if (typeof value === "string") {
+        // Sanitize string fields
+        sanitized[key] = sanitizeInput(value);
+      } else {
+        // Keep non-string fields as-is (numbers, dates, etc.)
+        sanitized[key] = value;
+      }
     }
   }
 
-  return sanitized;
+  return sanitized as Partial<ApplicationFormData>;
 };

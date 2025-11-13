@@ -81,8 +81,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                     color: isActive
                       ? "primary.main"
                       : isCompleted
-                      ? "text.primary"
-                      : "text.secondary",
+                        ? "text.primary"
+                        : "text.secondary",
                   }}
                 >
                   {label}

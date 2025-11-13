@@ -52,6 +52,7 @@ export class APIService {
         },
       };
 
+      // eslint-disable-next-line no-console
       console.log("Application submitted:", {
         data: sanitizedData,
         response: mockResponse,

@@ -94,6 +94,7 @@ const FormWizard: React.FC = () => {
         setShowSuccess(true);
 
         // Log for demonstration
+        // eslint-disable-next-line no-console
         console.log("Application submitted successfully:", {
           applicationId: response.data.applicationId,
           timestamp: response.data.timestamp,
