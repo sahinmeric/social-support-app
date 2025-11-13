@@ -131,7 +131,7 @@
   - Add form submission handler
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 9.4, 9.5, 10.2_
 
-- [ ] 14. Implement API service and form submission
+- [-] 14. Implement API service and form submission
 
   - Create APIService class with submitApplication method
   - Implement mock API call with 1-2 second delay

@@ -1,7 +1,16 @@
 import React, { useState } from "react";
-import { Box, Container, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  Alert,
+  Snackbar,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../hooks/useFormContext";
+import { APIService } from "../services/APIService";
+import { StorageService } from "../services/StorageService";
 import ProgressBar from "./common/ProgressBar";
 import NavigationButtons from "./common/NavigationButtons";
 import Step1PersonalInfo from "./steps/Step1PersonalInfo";
@@ -14,6 +23,9 @@ const FormWizard: React.FC = () => {
   const { currentStep, setCurrentStep, validateCurrentStep, formData } =
     useFormContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   /**
    * Handle navigation to next step
@@ -44,32 +56,59 @@ const FormWizard: React.FC = () => {
   const handleSubmit = async () => {
     const isValid = await validateCurrentStep();
     if (!isValid) {
+      setErrorMessage(t("submission.validationError"));
+      setShowError(true);
       return;
     }
 
     setIsSubmitting(true);
+    setShowError(false);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Submit application via API service
+      const response = await APIService.submitApplication(formData);
 
-      // Log form data for demonstration
-      console.log("Form submitted:", formData);
+      if (response.success) {
+        // Clear localStorage on successful submission
+        StorageService.clearFormData();
 
-      // Show success message
-      alert(t("submission.success"));
+        // Show success message
+        setShowSuccess(true);
 
-      // In a real app, you would:
-      // 1. Call APIService.submitApplication(formData)
-      // 2. Handle success/error responses
-      // 3. Clear localStorage on success
-      // 4. Redirect to success page
+        // Log for demonstration
+        console.log("Application submitted successfully:", {
+          applicationId: response.applicationId,
+          timestamp: response.timestamp,
+        });
+
+        // In a real app, you might redirect to a success page:
+        // navigate('/success', { state: { applicationId: response.applicationId } });
+      } else {
+        throw new Error(response.message || "Submission failed");
+      }
     } catch (error) {
       console.error("Submission error:", error);
-      alert(t("submission.error"));
+      setErrorMessage(
+        error instanceof Error ? error.message : t("submission.error")
+      );
+      setShowError(true);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  /**
+   * Close success snackbar
+   */
+  const handleCloseSuccess = () => {
+    setShowSuccess(false);
+  };
+
+  /**
+   * Close error snackbar
+   */
+  const handleCloseError = () => {
+    setShowError(false);
   };
 
   /**
@@ -134,6 +173,40 @@ const FormWizard: React.FC = () => {
         isSubmitting={isSubmitting}
         isValid={true}
       />
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={showSuccess}
+        autoHideDuration={6000}
+        onClose={handleCloseSuccess}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSuccess}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {t("submission.success")}
+        </Alert>
+      </Snackbar>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={showError}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage || t("submission.error")}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
