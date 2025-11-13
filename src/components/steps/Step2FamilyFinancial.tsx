@@ -34,6 +34,16 @@ const Step2FamilyFinancial: React.FC = () => {
       updateFormData(field, event.target.value);
     };
 
+  // Helper to parse error message and extract parameters
+  const getErrorMessage = (error: string | undefined): string => {
+    if (!error) return "";
+    if (error.includes("|")) {
+      const [key, value] = error.split("|");
+      return t(key, { min: parseInt(value), max: parseInt(value) });
+    }
+    return t(error);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Stack spacing={3}>
@@ -97,7 +107,7 @@ const Step2FamilyFinancial: React.FC = () => {
             value={formData.dependents}
             onChange={handleChange("dependents")}
             error={!!errors.dependents}
-            helperText={errors.dependents ? t(errors.dependents) : ""}
+            helperText={getErrorMessage(errors.dependents)}
             slotProps={{
               htmlInput: {
                 min: 0,
@@ -172,7 +182,7 @@ const Step2FamilyFinancial: React.FC = () => {
             value={formData.monthlyIncome}
             onChange={handleChange("monthlyIncome")}
             error={!!errors.monthlyIncome}
-            helperText={errors.monthlyIncome ? t(errors.monthlyIncome) : ""}
+            helperText={getErrorMessage(errors.monthlyIncome)}
             slotProps={{
               htmlInput: {
                 min: 0,

@@ -28,6 +28,17 @@ const Step1PersonalInfo: React.FC = () => {
       updateFormData(field, event.target.value);
     };
 
+  // Helper to parse error message and extract parameters
+  const getErrorMessage = (error: string | undefined): string => {
+    if (!error) return "";
+    // Check if error contains parameter (format: "key|value")
+    if (error.includes("|")) {
+      const [key, value] = error.split("|");
+      return t(key, { min: parseInt(value), max: parseInt(value) });
+    }
+    return t(error);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Stack spacing={3}>
@@ -48,7 +59,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.name}
             onChange={handleChange("name")}
             error={!!errors.name}
-            helperText={errors.name ? t(errors.name) : ""}
+            helperText={getErrorMessage(errors.name)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.name"),
@@ -68,7 +79,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.nationalId}
             onChange={handleChange("nationalId")}
             error={!!errors.nationalId}
-            helperText={errors.nationalId ? t(errors.nationalId) : ""}
+            helperText={getErrorMessage(errors.nationalId)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.nationalId"),
@@ -100,7 +111,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.dateOfBirth}
             onChange={handleChange("dateOfBirth")}
             error={!!errors.dateOfBirth}
-            helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : ""}
+            helperText={getErrorMessage(errors.dateOfBirth)}
             slotProps={{
               inputLabel: {
                 shrink: true,
@@ -158,7 +169,7 @@ const Step1PersonalInfo: React.FC = () => {
           value={formData.address}
           onChange={handleChange("address")}
           error={!!errors.address}
-          helperText={errors.address ? t(errors.address) : ""}
+          helperText={getErrorMessage(errors.address)}
           multiline
           rows={2}
           slotProps={{
@@ -188,7 +199,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.city}
             onChange={handleChange("city")}
             error={!!errors.city}
-            helperText={errors.city ? t(errors.city) : ""}
+            helperText={getErrorMessage(errors.city)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.city"),
@@ -208,7 +219,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.state}
             onChange={handleChange("state")}
             error={!!errors.state}
-            helperText={errors.state ? t(errors.state) : ""}
+            helperText={getErrorMessage(errors.state)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.state"),
@@ -237,7 +248,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.country}
             onChange={handleChange("country")}
             error={!!errors.country}
-            helperText={errors.country ? t(errors.country) : ""}
+            helperText={getErrorMessage(errors.country)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.country"),
@@ -260,7 +271,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.phone}
             onChange={handleChange("phone")}
             error={!!errors.phone}
-            helperText={errors.phone ? t(errors.phone) : ""}
+            helperText={getErrorMessage(errors.phone)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.phone"),
@@ -283,7 +294,7 @@ const Step1PersonalInfo: React.FC = () => {
           value={formData.email}
           onChange={handleChange("email")}
           error={!!errors.email}
-          helperText={errors.email ? t(errors.email) : ""}
+          helperText={getErrorMessage(errors.email)}
           slotProps={{
             htmlInput: {
               "aria-label": t("fields.email"),

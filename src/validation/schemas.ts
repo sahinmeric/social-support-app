@@ -11,7 +11,10 @@ export const step1Schema = yup.object().shape({
   name: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.NAME, VALIDATION_MESSAGES.MIN_LENGTH)
+    .min(
+      MIN_TEXT_LENGTH.NAME,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.NAME}`
+    )
     .matches(VALIDATION_PATTERNS.NAME, VALIDATION_MESSAGES.INVALID_NAME),
 
   nationalId: yup
@@ -21,8 +24,14 @@ export const step1Schema = yup.object().shape({
       VALIDATION_PATTERNS.NATIONAL_ID,
       VALIDATION_MESSAGES.INVALID_NATIONAL_ID
     )
-    .min(MIN_TEXT_LENGTH.NATIONAL_ID, VALIDATION_MESSAGES.MIN_LENGTH)
-    .max(MAX_TEXT_LENGTH.NATIONAL_ID, VALIDATION_MESSAGES.MAX_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.NATIONAL_ID,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.NATIONAL_ID}`
+    )
+    .max(
+      MAX_TEXT_LENGTH.NATIONAL_ID,
+      `${VALIDATION_MESSAGES.MAX_LENGTH}|${MAX_TEXT_LENGTH.NATIONAL_ID}`
+    ),
 
   dateOfBirth: yup
     .string()
@@ -41,22 +50,34 @@ export const step1Schema = yup.object().shape({
   address: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.ADDRESS, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.ADDRESS,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.ADDRESS}`
+    ),
 
   city: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.CITY, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.CITY,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.CITY}`
+    ),
 
   state: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.STATE, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.STATE,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.STATE}`
+    ),
 
   country: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.COUNTRY, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.COUNTRY,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.COUNTRY}`
+    ),
 
   phone: yup
     .string()
@@ -112,17 +133,26 @@ export const step3Schema = yup.object().shape({
   financialSituation: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.DESCRIPTION, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.DESCRIPTION,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.DESCRIPTION}`
+    ),
 
   employmentCircumstances: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.DESCRIPTION, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.DESCRIPTION,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.DESCRIPTION}`
+    ),
 
   reasonForApplying: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)
-    .min(MIN_TEXT_LENGTH.DESCRIPTION, VALIDATION_MESSAGES.MIN_LENGTH),
+    .min(
+      MIN_TEXT_LENGTH.DESCRIPTION,
+      `${VALIDATION_MESSAGES.MIN_LENGTH}|${MIN_TEXT_LENGTH.DESCRIPTION}`
+    ),
 });
 
 // Complete form validation schema (all steps combined)
