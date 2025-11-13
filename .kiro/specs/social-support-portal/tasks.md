@@ -46,7 +46,7 @@
   - Create FormProvider component
   - _Requirements: 1.1, 1.3, 9.1_
 
-- [-] 6. Build ProgressBar component
+- [x] 6. Build ProgressBar component
 
   - Create ProgressBar component with step indicators
   - Implement responsive design (horizontal on desktop, compact on mobile)
@@ -55,7 +55,7 @@
   - Add ARIA progressbar role with proper attributes
   - _Requirements: 1.4_
 
-- [ ] 7. Create NavigationButtons component
+- [x] 7. Create NavigationButtons component
 
   - Build NavigationButtons with Previous, Next, and Submit buttons
   - Implement conditional rendering based on current step
