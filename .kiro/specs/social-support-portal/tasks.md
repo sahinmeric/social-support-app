@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. Set up project structure and core configuration
+- [-] 1. Set up project structure and core configuration
 
   - Initialize React + TypeScript + Vite project
   - Install dependencies (MUI, React Hook Form, Yup, react-i18next, Axios, React Router)
