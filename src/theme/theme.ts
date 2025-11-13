@@ -67,22 +67,6 @@ export const createAppTheme = (direction: "ltr" | "rtl"): Theme => {
               "&.Mui-focused fieldset": {
                 borderWidth: 2,
               },
-              "&.Mui-focused": {
-                outline: "2px solid",
-                outlineColor: "primary.main",
-                outlineOffset: 2,
-              },
-            },
-          },
-        },
-      },
-      MuiSelect: {
-        styleOverrides: {
-          root: {
-            "&.Mui-focused": {
-              outline: "2px solid",
-              outlineColor: "primary.main",
-              outlineOffset: 2,
             },
           },
         },
