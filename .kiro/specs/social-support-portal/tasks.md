@@ -64,7 +64,7 @@
   - Add keyboard navigation support (Enter to proceed)
   - _Requirements: 1.2, 1.5, 10.1_
 
-- [ ] 8. Implement Step 1: Personal Information
+- [-] 8. Implement Step 1: Personal Information
 
   - Create Step1PersonalInfo component
   - Add form fields: name, nationalId, dateOfBirth, gender, address, city, state, country, phone, email
