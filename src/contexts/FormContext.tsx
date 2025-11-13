@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { useState } from "react";
 import type { ReactNode } from "react";
 import type {
   ApplicationFormData,
@@ -10,22 +10,8 @@ import { getSchemaForStep } from "../validation/schemas";
 import { StorageService } from "../services/StorageService";
 import { useFormPersistence } from "../hooks/useFormPersistence";
 import { ValidationError } from "yup";
-
-interface FormContextValue {
-  formData: ApplicationFormData;
-  currentStep: FormStep;
-  errors: FormErrors;
-  updateFormData: (
-    field: keyof ApplicationFormData,
-    value: string | number
-  ) => void;
-  setCurrentStep: (step: FormStep) => void;
-  validateCurrentStep: () => Promise<boolean>;
-  clearErrors: () => void;
-  setErrors: (errors: FormErrors) => void;
-}
-
-const FormContext = createContext<FormContextValue | undefined>(undefined);
+import { FormContext } from "./FormContext.context";
+import type { FormContextValue } from "./FormContext.types";
 
 interface FormProviderProps {
   children: ReactNode;
@@ -122,15 +108,4 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
-};
-
-/**
- * Hook to access form context
- */
-export const useFormContext = (): FormContextValue => {
-  const context = useContext(FormContext);
-  if (!context) {
-    throw new Error("useFormContext must be used within a FormProvider");
-  }
-  return context;
 };
