@@ -252,4 +252,4 @@ const Step2FamilyFinancial: React.FC = () => {
   );
 };
 
-export default Step2FamilyFinancial;
+export default React.memo(Step2FamilyFinancial);

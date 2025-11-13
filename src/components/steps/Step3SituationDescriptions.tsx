@@ -249,4 +249,4 @@ const Step3SituationDescriptions: React.FC = () => {
   );
 };
 
-export default Step3SituationDescriptions;
+export default React.memo(Step3SituationDescriptions);

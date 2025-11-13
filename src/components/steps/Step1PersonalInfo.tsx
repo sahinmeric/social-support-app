@@ -316,4 +316,4 @@ const Step1PersonalInfo: React.FC = () => {
   );
 };
 
-export default Step1PersonalInfo;
+export default React.memo(Step1PersonalInfo);
