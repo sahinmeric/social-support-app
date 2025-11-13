@@ -13,6 +13,7 @@ import ProgressBar from "./components/common/ProgressBar";
 import NavigationButtons from "./components/common/NavigationButtons";
 import Step1PersonalInfo from "./components/steps/Step1PersonalInfo";
 import Step2FamilyFinancial from "./components/steps/Step2FamilyFinancial";
+import Step3SituationDescriptions from "./components/steps/Step3SituationDescriptions";
 import { FormProvider } from "./contexts/FormContext";
 import { useFormContext } from "./hooks/useFormContext";
 import { useTranslation } from "react-i18next";
@@ -59,7 +60,7 @@ function FormContent() {
       <Paper elevation={2} sx={{ p: 4, mb: 4 }}>
         {currentStep === 1 && <Step1PersonalInfo />}
         {currentStep === 2 && <Step2FamilyFinancial />}
-        {currentStep === 3 && <Typography>Step 3 - Coming soon...</Typography>}
+        {currentStep === 3 && <Step3SituationDescriptions />}
       </Paper>
 
       <NavigationButtons
