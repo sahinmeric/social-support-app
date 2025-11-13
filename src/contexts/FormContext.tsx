@@ -45,7 +45,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
    */
   const updateFormData = useCallback(
     (field: keyof ApplicationFormData, value: string | number): void => {
-      // @ts-ignore - React Hook Form's setValue has complex generic types
       form.setValue(field, value, { shouldValidate: false });
     },
     [form]
