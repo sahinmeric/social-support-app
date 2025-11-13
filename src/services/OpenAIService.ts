@@ -14,6 +14,7 @@ import {
   HTTP_STATUS,
   ERROR_CODES,
 } from "../constants";
+import { sanitizeInput } from "../utils/sanitize";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_AI === "true";
 
@@ -50,9 +51,12 @@ export class OpenAIService {
       } dependents. This support would help me maintain housing stability, ensure food security, and cover essential expenses while I work towards improving my circumstances. I am committed to using this assistance responsibly and working towards financial independence.`,
     };
 
+    const suggestion =
+      mockSuggestions[fieldName] || "Sample suggestion text for " + fieldName;
+
+    // Sanitize AI-generated content before returning
     return {
-      text:
-        mockSuggestions[fieldName] || "Sample suggestion text for " + fieldName,
+      text: sanitizeInput(suggestion),
       fieldName: fieldName as string,
     };
   }
@@ -166,8 +170,9 @@ Generate a compelling reason for why they are applying for social support, focus
         );
       }
 
+      // Sanitize AI-generated content before returning
       return {
-        text: suggestion,
+        text: sanitizeInput(suggestion),
         fieldName: fieldName as string,
       };
     } catch (error) {

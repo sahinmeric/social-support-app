@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Box, TextField, Stack, Button } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { openAIService } from "../../services/OpenAIService";
 import type { ApplicationFormData } from "../../types/form.types";
 import type { AIError } from "../../types/openai.types";
 import { MIN_TEXT_LENGTH } from "../../constants";
+import { sanitizeInput } from "../../utils/sanitize";
 
 const Step3SituationDescriptions: React.FC = () => {
   const { t } = useTranslation();
@@ -27,6 +28,20 @@ const Step3SituationDescriptions: React.FC = () => {
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       updateFormData(field, event.target.value);
     };
+
+  const handleBlur = useCallback(
+    (field: keyof typeof formData) =>
+      (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        if (typeof value === "string") {
+          const sanitized = sanitizeInput(value);
+          if (sanitized !== value) {
+            updateFormData(field, sanitized);
+          }
+        }
+      },
+    [updateFormData]
+  );
 
   const handleHelpMeWrite = async (field: keyof ApplicationFormData) => {
     setCurrentField(field);
@@ -105,6 +120,7 @@ const Step3SituationDescriptions: React.FC = () => {
             label={t("fields.financialSituation")}
             value={formData.financialSituation}
             onChange={handleChange("financialSituation")}
+            onBlur={handleBlur("financialSituation")}
             error={!!errors.financialSituation}
             helperText={
               errors.financialSituation
@@ -155,6 +171,7 @@ const Step3SituationDescriptions: React.FC = () => {
             label={t("fields.employmentCircumstances")}
             value={formData.employmentCircumstances}
             onChange={handleChange("employmentCircumstances")}
+            onBlur={handleBlur("employmentCircumstances")}
             error={!!errors.employmentCircumstances}
             helperText={
               errors.employmentCircumstances
@@ -205,6 +222,7 @@ const Step3SituationDescriptions: React.FC = () => {
             label={t("fields.reasonForApplying")}
             value={formData.reasonForApplying}
             onChange={handleChange("reasonForApplying")}
+            onBlur={handleBlur("reasonForApplying")}
             error={!!errors.reasonForApplying}
             helperText={
               errors.reasonForApplying

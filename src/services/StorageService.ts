@@ -1,5 +1,6 @@
 import type { ApplicationFormData, FormStep } from "../types/form.types";
 import { STORAGE_KEYS, FORM_STEPS } from "../constants";
+import { sanitizeFormData } from "../utils/sanitize";
 
 /**
  * Service for persisting form data to localStorage
@@ -7,10 +8,13 @@ import { STORAGE_KEYS, FORM_STEPS } from "../constants";
 export class StorageService {
   /**
    * Save form data to localStorage
+   * Sanitizes data before saving to prevent injection attacks
    */
   static saveFormData(data: ApplicationFormData): void {
     try {
-      const serialized = JSON.stringify(data);
+      // Sanitize form data before saving
+      const sanitizedData = sanitizeFormData(data) as ApplicationFormData;
+      const serialized = JSON.stringify(sanitizedData);
       localStorage.setItem(STORAGE_KEYS.FORM_DATA, serialized);
     } catch (error) {
       console.error("Failed to save form data:", error);

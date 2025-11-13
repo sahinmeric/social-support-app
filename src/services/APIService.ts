@@ -1,6 +1,7 @@
 import type { ApplicationFormData } from "../types/form.types";
 import type { SubmissionResponse } from "../types/api.types";
 import { APP_CONFIG, MIN_TEXT_LENGTH } from "../constants";
+import { sanitizeFormData } from "../utils/sanitize";
 
 /**
  * Service for submitting application data to the backend
@@ -19,8 +20,11 @@ export class APIService {
     data: ApplicationFormData
   ): Promise<SubmissionResponse> {
     try {
+      // Sanitize form data before submission
+      const sanitizedData = sanitizeFormData(data) as ApplicationFormData;
+
       // Validate all required fields are present
-      const validationErrors = this.validateSubmission(data);
+      const validationErrors = this.validateSubmission(sanitizedData);
       if (validationErrors.length > 0) {
         throw new Error(`Validation failed: ${validationErrors.join(", ")}`);
       }
@@ -49,7 +53,7 @@ export class APIService {
       };
 
       console.log("Application submitted:", {
-        data,
+        data: sanitizedData,
         response: mockResponse,
       });
 

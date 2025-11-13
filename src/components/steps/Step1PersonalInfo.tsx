@@ -12,6 +12,7 @@ import {
 import type { SelectChangeEvent } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";
+import { sanitizeInput } from "../../utils/sanitize";
 
 const Step1PersonalInfo: React.FC = () => {
   const { t } = useTranslation();
@@ -29,6 +30,20 @@ const Step1PersonalInfo: React.FC = () => {
     (field: keyof typeof formData) => (event: SelectChangeEvent) => {
       updateFormData(field, event.target.value);
     },
+    [updateFormData]
+  );
+
+  const handleBlur = useCallback(
+    (field: keyof typeof formData) =>
+      (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        if (typeof value === "string") {
+          const sanitized = sanitizeInput(value);
+          if (sanitized !== value) {
+            updateFormData(field, sanitized);
+          }
+        }
+      },
     [updateFormData]
   );
 
@@ -65,6 +80,7 @@ const Step1PersonalInfo: React.FC = () => {
             label={t("fields.name")}
             value={formData.name}
             onChange={handleChange("name")}
+            onBlur={handleBlur("name")}
             error={!!errors.name}
             helperText={getErrorMessage(errors.name)}
             slotProps={{
@@ -85,6 +101,7 @@ const Step1PersonalInfo: React.FC = () => {
             label={t("fields.nationalId")}
             value={formData.nationalId}
             onChange={handleChange("nationalId")}
+            onBlur={handleBlur("nationalId")}
             error={!!errors.nationalId}
             helperText={getErrorMessage(errors.nationalId)}
             slotProps={{
@@ -175,6 +192,7 @@ const Step1PersonalInfo: React.FC = () => {
           label={t("fields.address")}
           value={formData.address}
           onChange={handleChange("address")}
+          onBlur={handleBlur("address")}
           error={!!errors.address}
           helperText={getErrorMessage(errors.address)}
           multiline
@@ -205,6 +223,7 @@ const Step1PersonalInfo: React.FC = () => {
             label={t("fields.city")}
             value={formData.city}
             onChange={handleChange("city")}
+            onBlur={handleBlur("city")}
             error={!!errors.city}
             helperText={getErrorMessage(errors.city)}
             slotProps={{
@@ -225,6 +244,7 @@ const Step1PersonalInfo: React.FC = () => {
             label={t("fields.state")}
             value={formData.state}
             onChange={handleChange("state")}
+            onBlur={handleBlur("state")}
             error={!!errors.state}
             helperText={getErrorMessage(errors.state)}
             slotProps={{
@@ -254,6 +274,7 @@ const Step1PersonalInfo: React.FC = () => {
             label={t("fields.country")}
             value={formData.country}
             onChange={handleChange("country")}
+            onBlur={handleBlur("country")}
             error={!!errors.country}
             helperText={getErrorMessage(errors.country)}
             slotProps={{
@@ -277,6 +298,7 @@ const Step1PersonalInfo: React.FC = () => {
             type="tel"
             value={formData.phone}
             onChange={handleChange("phone")}
+            onBlur={handleBlur("phone")}
             error={!!errors.phone}
             helperText={getErrorMessage(errors.phone)}
             slotProps={{
@@ -300,6 +322,7 @@ const Step1PersonalInfo: React.FC = () => {
           type="email"
           value={formData.email}
           onChange={handleChange("email")}
+          onBlur={handleBlur("email")}
           error={!!errors.email}
           helperText={getErrorMessage(errors.email)}
           slotProps={{
