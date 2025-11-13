@@ -1,0 +1,93 @@
+{
+  "common": {
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح"
+  },
+  "steps": {
+    "personalInfo": "المعلومات الشخصية",
+    "familyFinancial": "معلومات العائلة والمالية",
+    "situationDescriptions": "وصف الحالة"
+  },
+  "fields": {
+    "name": "الاسم الكامل",
+    "nationalId": "رقم الهوية الوطنية",
+    "dateOfBirth": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "الولاية",
+    "country": "الدولة",
+    "phone": "رقم الهاتف",
+    "email": "البريد الإلكتروني",
+    "maritalStatus": "الحالة الاجتماعية",
+    "dependents": "عدد المعالين",
+    "employmentStatus": "حالة التوظيف",
+    "monthlyIncome": "الدخل الشهري",
+    "housingStatus": "حالة السكن",
+    "financialSituation": "الوضع المالي الحالي",
+    "employmentCircumstances": "ظروف العمل",
+    "reasonForApplying": "سبب التقديم"
+  },
+  "options": {
+    "gender": {
+      "male": "ذكر",
+      "female": "أنثى",
+      "other": "آخر"
+    },
+    "maritalStatus": {
+      "single": "أعزب",
+      "married": "متزوج",
+      "divorced": "مطلق",
+      "widowed": "أرمل"
+    },
+    "employmentStatus": {
+      "employed": "موظف",
+      "unemployed": "عاطل عن العمل",
+      "selfEmployed": "عمل حر",
+      "retired": "متقاعد"
+    },
+    "housingStatus": {
+      "owned": "مملوك",
+      "rented": "مستأجر",
+      "homeless": "بلا مأوى",
+      "other": "آخر"
+    }
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "invalidPhone": "يرجى إدخال رقم هاتف صحيح",
+    "dateInPast": "يجب أن يكون التاريخ في الماضي",
+    "nonNegative": "يجب أن تكون القيمة صفر أو أكبر",
+    "minLength": "الحد الأدنى للطول هو {{min}} حرفًا"
+  },
+  "ai": {
+    "helpMeWrite": "ساعدني في الكتابة",
+    "generating": "جاري إنشاء الاقتراح...",
+    "accept": "قبول",
+    "edit": "تعديل",
+    "discard": "تجاهل",
+    "retry": "إعادة المحاولة",
+    "errors": {
+      "network": "غير قادر على الاتصال. يرجى التحقق من اتصال الإنترنت.",
+      "timeout": "استغرق الطلب وقتًا طويلاً. يرجى المحاولة مرة أخرى.",
+      "rateLimit": "طلبات كثيرة جدًا. يرجى الانتظار لحظة والمحاولة مرة أخرى.",
+      "generic": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "submission": {
+    "success": "تم إرسال طلبك بنجاح!",
+    "error": "غير قادر على الإرسال. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+    "validationError": "يرجى مراجعة وتصحيح الحقول المميزة.",
+    "submitting": "جاري إرسال طلبك..."
+  },
+  "language": {
+    "english": "الإنجليزية",
+    "arabic": "العربية"
+  }
+}

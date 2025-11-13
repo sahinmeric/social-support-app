@@ -1,0 +1,93 @@
+{
+  "common": {
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "steps": {
+    "personalInfo": "Personal Information",
+    "familyFinancial": "Family & Financial Info",
+    "situationDescriptions": "Situation Descriptions"
+  },
+  "fields": {
+    "name": "Full Name",
+    "nationalId": "National ID",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "country": "Country",
+    "phone": "Phone Number",
+    "email": "Email Address",
+    "maritalStatus": "Marital Status",
+    "dependents": "Number of Dependents",
+    "employmentStatus": "Employment Status",
+    "monthlyIncome": "Monthly Income",
+    "housingStatus": "Housing Status",
+    "financialSituation": "Current Financial Situation",
+    "employmentCircumstances": "Employment Circumstances",
+    "reasonForApplying": "Reason for Applying"
+  },
+  "options": {
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "maritalStatus": {
+      "single": "Single",
+      "married": "Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed"
+    },
+    "employmentStatus": {
+      "employed": "Employed",
+      "unemployed": "Unemployed",
+      "selfEmployed": "Self-Employed",
+      "retired": "Retired"
+    },
+    "housingStatus": {
+      "owned": "Owned",
+      "rented": "Rented",
+      "homeless": "Homeless",
+      "other": "Other"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPhone": "Please enter a valid phone number",
+    "dateInPast": "Date must be in the past",
+    "nonNegative": "Value must be zero or greater",
+    "minLength": "Minimum length is {{min}} characters"
+  },
+  "ai": {
+    "helpMeWrite": "Help Me Write",
+    "generating": "Generating suggestion...",
+    "accept": "Accept",
+    "edit": "Edit",
+    "discard": "Discard",
+    "retry": "Retry",
+    "errors": {
+      "network": "Unable to connect. Please check your internet connection.",
+      "timeout": "Request took too long. Please try again.",
+      "rateLimit": "Too many requests. Please wait a moment and try again.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "submission": {
+    "success": "Your application has been submitted successfully!",
+    "error": "Unable to submit. Please check your connection and try again.",
+    "validationError": "Please review and correct the highlighted fields.",
+    "submitting": "Submitting your application..."
+  },
+  "language": {
+    "english": "English",
+    "arabic": "Arabic"
+  }
+}
