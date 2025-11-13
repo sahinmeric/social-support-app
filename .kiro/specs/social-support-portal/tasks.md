@@ -26,7 +26,7 @@
   - Create OpenAI API request/response types
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1_
 
-- [ ] 4. Build storage service for form persistence
+- [-] 4. Build storage service for form persistence
 
   - Implement StorageService class with save/load methods
   - Add saveFormData method with serialization
