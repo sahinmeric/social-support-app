@@ -8,8 +8,9 @@ import type {
 import { AIErrorType } from "../types/openai.types";
 import type { ApplicationFormData } from "../types/form.types";
 
-const OPENAI_API_URL = "https://api.openai.com/v4/chat/completions";
+const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const TIMEOUT_MS = 30000; // 30 seconds
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_AI === "true";
 
 /**
  * Service for interacting with OpenAI API to generate suggestions
@@ -19,6 +20,36 @@ export class OpenAIService {
 
   constructor(apiKey?: string) {
     this.apiKey = apiKey || import.meta.env.VITE_OPENAI_API_KEY || "";
+  }
+
+  /**
+   * Generate mock suggestion for testing without API calls
+   */
+  private generateMockSuggestion(
+    fieldName: keyof ApplicationFormData,
+    formData: ApplicationFormData
+  ): AISuggestion {
+    const mockSuggestions: Record<string, string> = {
+      financialSituation: `I am currently facing significant financial challenges. With a monthly income of ${
+        formData.monthlyIncome || "limited funds"
+      } and ${
+        formData.dependents || 0
+      } dependents to support, I am struggling to meet basic needs. My housing situation is ${
+        formData.housingStatus || "unstable"
+      }, which adds to the financial burden. I am seeking assistance to help stabilize my situation and provide for my family's essential needs.`,
+      employmentCircumstances: `My current employment status is ${
+        formData.employmentStatus || "uncertain"
+      }. This has significantly impacted my ability to maintain stable income and support myself and my family. I am actively seeking opportunities to improve my employment situation, but in the meantime, I need support to bridge this difficult period and ensure basic necessities are met.`,
+      reasonForApplying: `I am applying for social support because I am in urgent need of assistance to meet basic living expenses. With my current financial and employment situation, I am unable to adequately provide for ${
+        formData.dependents || "my"
+      } dependents. This support would help me maintain housing stability, ensure food security, and cover essential expenses while I work towards improving my circumstances. I am committed to using this assistance responsibly and working towards financial independence.`,
+    };
+
+    return {
+      text:
+        mockSuggestions[fieldName] || "Sample suggestion text for " + fieldName,
+      fieldName: fieldName as string,
+    };
   }
 
   /**
@@ -74,6 +105,13 @@ Generate a compelling reason for why they are applying for social support, focus
     fieldName: keyof ApplicationFormData,
     formData: ApplicationFormData
   ): Promise<AISuggestion> {
+    // Use mock mode for testing without API calls (avoids CORS issues)
+    if (USE_MOCK) {
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      return this.generateMockSuggestion(fieldName, formData);
+    }
+
     if (!this.apiKey) {
       throw this.createError(
         AIErrorType.GENERIC,
