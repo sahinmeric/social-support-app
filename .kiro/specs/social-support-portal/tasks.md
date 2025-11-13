@@ -119,7 +119,7 @@
   - Add ARIA labels and error announcements
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 13. Build FormWizard container component
+- [x] 13. Build FormWizard container component
 
   - Create FormWizard component as main container
   - Implement step navigation logic (next, previous)
