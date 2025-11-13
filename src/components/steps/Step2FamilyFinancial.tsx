@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Box,
   TextField,
@@ -17,32 +17,39 @@ const Step2FamilyFinancial: React.FC = () => {
   const { t } = useTranslation();
   const { formData, errors, updateFormData } = useFormContext();
 
-  const handleChange =
+  const handleChange = useCallback(
     (field: keyof typeof formData) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value = event.target.value;
-      // Convert to number for numeric fields
-      if (field === "dependents" || field === "monthlyIncome") {
-        updateFormData(field, value === "" ? 0 : Number(value));
-      } else {
-        updateFormData(field, value);
-      }
-    };
+      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        // Convert to number for numeric fields
+        if (field === "dependents" || field === "monthlyIncome") {
+          updateFormData(field, value === "" ? 0 : Number(value));
+        } else {
+          updateFormData(field, value);
+        }
+      },
+    [updateFormData]
+  );
 
-  const handleSelectChange =
+  const handleSelectChange = useCallback(
     (field: keyof typeof formData) => (event: SelectChangeEvent) => {
       updateFormData(field, event.target.value);
-    };
+    },
+    [updateFormData]
+  );
 
   // Helper to parse error message and extract parameters
-  const getErrorMessage = (error: string | undefined): string => {
-    if (!error) return "";
-    if (error.includes("|")) {
-      const [key, value] = error.split("|");
-      return t(key, { min: parseInt(value), max: parseInt(value) });
-    }
-    return t(error);
-  };
+  const getErrorMessage = useCallback(
+    (error: string | undefined): string => {
+      if (!error) return "";
+      if (error.includes("|")) {
+        const [key, value] = error.split("|");
+        return t(key, { min: parseInt(value), max: parseInt(value) });
+      }
+      return t(error);
+    },
+    [t]
+  );
 
   return (
     <Box sx={{ width: "100%" }}>

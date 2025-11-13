@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import type { ReactNode } from "react";
 import type {
   ApplicationFormData,
@@ -37,38 +37,39 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   /**
    * Update a single form field
    */
-  const updateFormData = (
-    field: keyof ApplicationFormData,
-    value: string | number
-  ): void => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const updateFormData = useCallback(
+    (field: keyof ApplicationFormData, value: string | number): void => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
 
-    // Clear error for this field when user starts typing
-    if (errors[field]) {
+      // Clear error for this field when user starts typing
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
+        if (prev[field]) {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        }
+        return prev;
       });
-    }
-  };
+    },
+    []
+  );
 
   /**
    * Set the current step
    */
-  const setCurrentStep = (step: FormStep): void => {
+  const setCurrentStep = useCallback((step: FormStep): void => {
     setCurrentStepState(step);
     // Clear errors when changing steps
     setErrors({});
-  };
+  }, []);
 
   /**
    * Validate the current step using Yup schema
    */
-  const validateCurrentStep = async (): Promise<boolean> => {
+  const validateCurrentStep = useCallback(async (): Promise<boolean> => {
     try {
       const schema = getSchemaForStep(currentStep);
       await schema.validate(formData, { abortEarly: false });
@@ -87,25 +88,36 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
       }
       return false;
     }
-  };
+  }, [currentStep, formData]);
 
   /**
    * Clear all validation errors
    */
-  const clearErrors = (): void => {
+  const clearErrors = useCallback((): void => {
     setErrors({});
-  };
+  }, []);
 
-  const value: FormContextValue = {
-    formData,
-    currentStep,
-    errors,
-    updateFormData,
-    setCurrentStep,
-    validateCurrentStep,
-    clearErrors,
-    setErrors,
-  };
+  const value: FormContextValue = useMemo(
+    () => ({
+      formData,
+      currentStep,
+      errors,
+      updateFormData,
+      setCurrentStep,
+      validateCurrentStep,
+      clearErrors,
+      setErrors,
+    }),
+    [
+      formData,
+      currentStep,
+      errors,
+      updateFormData,
+      setCurrentStep,
+      validateCurrentStep,
+      clearErrors,
+    ]
+  );
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 };

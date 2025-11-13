@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Box,
   TextField,
@@ -17,27 +17,34 @@ const Step1PersonalInfo: React.FC = () => {
   const { t } = useTranslation();
   const { formData, errors, updateFormData } = useFormContext();
 
-  const handleChange =
+  const handleChange = useCallback(
     (field: keyof typeof formData) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      updateFormData(field, event.target.value);
-    };
+      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        updateFormData(field, event.target.value);
+      },
+    [updateFormData]
+  );
 
-  const handleSelectChange =
+  const handleSelectChange = useCallback(
     (field: keyof typeof formData) => (event: SelectChangeEvent) => {
       updateFormData(field, event.target.value);
-    };
+    },
+    [updateFormData]
+  );
 
   // Helper to parse error message and extract parameters
-  const getErrorMessage = (error: string | undefined): string => {
-    if (!error) return "";
-    // Check if error contains parameter (format: "key|value")
-    if (error.includes("|")) {
-      const [key, value] = error.split("|");
-      return t(key, { min: parseInt(value), max: parseInt(value) });
-    }
-    return t(error);
-  };
+  const getErrorMessage = useCallback(
+    (error: string | undefined): string => {
+      if (!error) return "";
+      // Check if error contains parameter (format: "key|value")
+      if (error.includes("|")) {
+        const [key, value] = error.split("|");
+        return t(key, { min: parseInt(value), max: parseInt(value) });
+      }
+      return t(error);
+    },
+    [t]
+  );
 
   return (
     <Box sx={{ width: "100%" }}>
