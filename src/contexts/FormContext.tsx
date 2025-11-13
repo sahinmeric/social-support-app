@@ -43,16 +43,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
         ...prev,
         [field]: value,
       }));
-
-      // Clear error for this field when user starts typing
-      setErrors((prev) => {
-        if (prev[field]) {
-          const newErrors = { ...prev };
-          delete newErrors[field];
-          return newErrors;
-        }
-        return prev;
-      });
     },
     []
   );
