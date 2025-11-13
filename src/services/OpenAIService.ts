@@ -7,9 +7,14 @@ import type {
 } from "../types/openai.types";
 import { AIErrorType } from "../types/openai.types";
 import type { ApplicationFormData } from "../types/form.types";
+import {
+  API_CONFIG,
+  OPENAI_CONFIG,
+  APP_CONFIG,
+  HTTP_STATUS,
+  ERROR_CODES,
+} from "../constants";
 
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const TIMEOUT_MS = 30000; // 30 seconds
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_AI === "true";
 
 /**
@@ -108,7 +113,9 @@ Generate a compelling reason for why they are applying for social support, focus
     // Use mock mode for testing without API calls (avoids CORS issues)
     if (USE_MOCK) {
       // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) =>
+        setTimeout(resolve, APP_CONFIG.AI_MOCK_DELAY)
+      );
       return this.generateMockSuggestion(fieldName, formData);
     }
 
@@ -122,32 +129,31 @@ Generate a compelling reason for why they are applying for social support, focus
     const prompt = this.buildPrompt(fieldName, formData);
 
     const request: OpenAIRequest = {
-      model: "gpt-3.5-turbo",
+      model: OPENAI_CONFIG.MODEL,
       messages: [
         {
           role: "system",
-          content:
-            "You are a helpful assistant that helps people write clear and empathetic descriptions for social support applications.",
+          content: OPENAI_CONFIG.SYSTEM_MESSAGE,
         },
         {
           role: "user",
           content: prompt,
         },
       ],
-      max_tokens: 300,
-      temperature: 0.7,
+      max_tokens: OPENAI_CONFIG.MAX_TOKENS,
+      temperature: OPENAI_CONFIG.TEMPERATURE,
     };
 
     try {
       const response = await axios.post<OpenAIResponse>(
-        OPENAI_API_URL,
+        API_CONFIG.OPENAI_URL,
         request,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.apiKey}`,
           },
-          timeout: TIMEOUT_MS,
+          timeout: API_CONFIG.REQUEST_TIMEOUT,
         }
       );
 
@@ -174,14 +180,17 @@ Generate a compelling reason for why they are applying for social support, focus
    */
   private handleError(error: unknown): AIError {
     if (axios.isAxiosError(error)) {
-      if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+      if (
+        error.code === ERROR_CODES.TIMEOUT ||
+        error.code === ERROR_CODES.NETWORK_ERROR
+      ) {
         return this.createError(
           AIErrorType.TIMEOUT,
           "Request took too long. Please try again."
         );
       }
 
-      if (error.response?.status === 429) {
+      if (error.response?.status === HTTP_STATUS.RATE_LIMIT) {
         return this.createError(
           AIErrorType.RATE_LIMIT,
           "Too many requests. Please wait a moment and try again."

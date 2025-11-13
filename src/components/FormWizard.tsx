@@ -18,6 +18,7 @@ import Step2FamilyFinancial from "./steps/Step2FamilyFinancial";
 import Step3SituationDescriptions from "./steps/Step3SituationDescriptions";
 import LanguageSelector from "./common/LanguageSelector";
 import SuccessPage from "./SuccessPage";
+import { APP_CONFIG, FORM_STEPS, SCROLL_CONFIG } from "../constants";
 
 const FormWizard: React.FC = () => {
   const { t } = useTranslation();
@@ -37,10 +38,13 @@ const FormWizard: React.FC = () => {
    */
   const handleNext = async () => {
     const isValid = await validateCurrentStep();
-    if (isValid && currentStep < 3) {
+    if (isValid && currentStep < FORM_STEPS.MAX_STEP) {
       setCurrentStep((currentStep + 1) as 1 | 2 | 3);
       // Scroll to top when changing steps
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({
+        top: SCROLL_CONFIG.TOP_POSITION,
+        behavior: SCROLL_CONFIG.BEHAVIOR,
+      });
     }
   };
 
@@ -48,10 +52,13 @@ const FormWizard: React.FC = () => {
    * Handle navigation to previous step
    */
   const handlePrevious = () => {
-    if (currentStep > 1) {
+    if (currentStep > FORM_STEPS.MIN_STEP) {
       setCurrentStep((currentStep - 1) as 1 | 2 | 3);
       // Scroll to top when changing steps
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({
+        top: SCROLL_CONFIG.TOP_POSITION,
+        behavior: SCROLL_CONFIG.BEHAVIOR,
+      });
     }
   };
 
@@ -112,7 +119,7 @@ const FormWizard: React.FC = () => {
     // Reset form state
     setShowSuccess(false);
     setSubmissionData({});
-    setCurrentStep(1);
+    setCurrentStep(FORM_STEPS.PERSONAL_INFO);
     // Note: FormContext will initialize with empty data from localStorage
     // which was cleared after successful submission
     window.location.reload(); // Reload to reset all state
@@ -139,11 +146,11 @@ const FormWizard: React.FC = () => {
    */
   const getStepTitle = (): string => {
     switch (currentStep) {
-      case 1:
+      case FORM_STEPS.PERSONAL_INFO:
         return t("steps.personalInfo");
-      case 2:
+      case FORM_STEPS.FAMILY_FINANCIAL:
         return t("steps.familyFinancial");
-      case 3:
+      case FORM_STEPS.SITUATION_DESCRIPTIONS:
         return t("steps.situationDescriptions");
       default:
         return "";
@@ -155,11 +162,11 @@ const FormWizard: React.FC = () => {
    */
   const renderStep = () => {
     switch (currentStep) {
-      case 1:
+      case FORM_STEPS.PERSONAL_INFO:
         return <Step1PersonalInfo />;
-      case 2:
+      case FORM_STEPS.FAMILY_FINANCIAL:
         return <Step2FamilyFinancial />;
-      case 3:
+      case FORM_STEPS.SITUATION_DESCRIPTIONS:
         return <Step3SituationDescriptions />;
       default:
         return null;
@@ -191,7 +198,10 @@ const FormWizard: React.FC = () => {
       </Typography>
 
       {/* Progress Bar */}
-      <ProgressBar currentStep={currentStep} totalSteps={3} />
+      <ProgressBar
+        currentStep={currentStep}
+        totalSteps={APP_CONFIG.FORM_STEPS}
+      />
 
       {/* Step Content */}
       <Paper elevation={2} sx={{ p: 4, mb: 4 }}>
@@ -201,7 +211,7 @@ const FormWizard: React.FC = () => {
       {/* Navigation Buttons */}
       <NavigationButtons
         currentStep={currentStep}
-        totalSteps={3}
+        totalSteps={APP_CONFIG.FORM_STEPS}
         onNext={handleNext}
         onPrevious={handlePrevious}
         onSubmit={handleSubmit}
@@ -212,7 +222,7 @@ const FormWizard: React.FC = () => {
       {/* Error Snackbar */}
       <Snackbar
         open={showError}
-        autoHideDuration={6000}
+        autoHideDuration={APP_CONFIG.ERROR_SNACKBAR_DURATION}
         onClose={handleCloseError}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >

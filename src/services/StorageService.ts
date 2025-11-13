@@ -1,7 +1,5 @@
 import type { ApplicationFormData, FormStep } from "../types/form.types";
-
-const FORM_DATA_KEY = "socialSupportForm";
-const CURRENT_STEP_KEY = "socialSupportFormStep";
+import { STORAGE_KEYS, FORM_STEPS } from "../constants";
 
 /**
  * Service for persisting form data to localStorage
@@ -13,7 +11,7 @@ export class StorageService {
   static saveFormData(data: ApplicationFormData): void {
     try {
       const serialized = JSON.stringify(data);
-      localStorage.setItem(FORM_DATA_KEY, serialized);
+      localStorage.setItem(STORAGE_KEYS.FORM_DATA, serialized);
     } catch (error) {
       console.error("Failed to save form data:", error);
     }
@@ -24,7 +22,7 @@ export class StorageService {
    */
   static loadFormData(): ApplicationFormData | null {
     try {
-      const serialized = localStorage.getItem(FORM_DATA_KEY);
+      const serialized = localStorage.getItem(STORAGE_KEYS.FORM_DATA);
       if (!serialized) {
         return null;
       }
@@ -40,7 +38,7 @@ export class StorageService {
    */
   static saveCurrentStep(step: FormStep): void {
     try {
-      localStorage.setItem(CURRENT_STEP_KEY, step.toString());
+      localStorage.setItem(STORAGE_KEYS.CURRENT_STEP, step.toString());
     } catch (error) {
       console.error("Failed to save current step:", error);
     }
@@ -51,12 +49,12 @@ export class StorageService {
    */
   static loadCurrentStep(): FormStep | null {
     try {
-      const step = localStorage.getItem(CURRENT_STEP_KEY);
+      const step = localStorage.getItem(STORAGE_KEYS.CURRENT_STEP);
       if (!step) {
         return null;
       }
       const parsed = parseInt(step, 10);
-      if (parsed >= 1 && parsed <= 3) {
+      if (parsed >= FORM_STEPS.MIN_STEP && parsed <= FORM_STEPS.MAX_STEP) {
         return parsed as FormStep;
       }
       return null;
@@ -71,8 +69,8 @@ export class StorageService {
    */
   static clearFormData(): void {
     try {
-      localStorage.removeItem(FORM_DATA_KEY);
-      localStorage.removeItem(CURRENT_STEP_KEY);
+      localStorage.removeItem(STORAGE_KEYS.FORM_DATA);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_STEP);
     } catch (error) {
       console.error("Failed to clear form data:", error);
     }
@@ -82,6 +80,6 @@ export class StorageService {
    * Check if form data exists in localStorage
    */
   static hasFormData(): boolean {
-    return localStorage.getItem(FORM_DATA_KEY) !== null;
+    return localStorage.getItem(STORAGE_KEYS.FORM_DATA) !== null;
   }
 }

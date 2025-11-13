@@ -1,4 +1,5 @@
 import type { ApplicationFormData } from "../types/form.types";
+import { APP_CONFIG, MIN_TEXT_LENGTH } from "../constants";
 
 /**
  * Response from the API after submitting an application
@@ -15,9 +16,9 @@ export interface SubmissionResponse {
  */
 export class APIService {
   // API endpoint for production use (currently using mock implementation)
-  // @ts-ignore - Reserved for future use
-  private static readonly API_URL =
-    import.meta.env.VITE_API_URL || "/api/applications";
+  // Reserved for future use when implementing real API calls
+  // private static readonly API_URL =
+  //   import.meta.env.VITE_API_URL || API_ENDPOINTS.SUBMIT_APPLICATION;
 
   /**
    * Submit application to the backend
@@ -34,7 +35,10 @@ export class APIService {
       }
 
       // Simulate network delay (1-2 seconds)
-      const delay = 1000 + Math.random() * 1000;
+      const delay =
+        APP_CONFIG.MOCK_API_DELAY_MIN +
+        Math.random() *
+          (APP_CONFIG.MOCK_API_DELAY_MAX - APP_CONFIG.MOCK_API_DELAY_MIN);
       await new Promise((resolve) => setTimeout(resolve, delay));
 
       // Mock API response
@@ -91,15 +95,27 @@ export class APIService {
     if (!data.housingStatus) errors.push("Housing Status is required");
 
     // Step 3 validations
-    if (!data.financialSituation?.trim() || data.financialSituation.length < 50)
-      errors.push("Financial Situation must be at least 50 characters");
+    if (
+      !data.financialSituation?.trim() ||
+      data.financialSituation.length < MIN_TEXT_LENGTH.DESCRIPTION
+    )
+      errors.push(
+        `Financial Situation must be at least ${MIN_TEXT_LENGTH.DESCRIPTION} characters`
+      );
     if (
       !data.employmentCircumstances?.trim() ||
-      data.employmentCircumstances.length < 50
+      data.employmentCircumstances.length < MIN_TEXT_LENGTH.DESCRIPTION
     )
-      errors.push("Employment Circumstances must be at least 50 characters");
-    if (!data.reasonForApplying?.trim() || data.reasonForApplying.length < 50)
-      errors.push("Reason for Applying must be at least 50 characters");
+      errors.push(
+        `Employment Circumstances must be at least ${MIN_TEXT_LENGTH.DESCRIPTION} characters`
+      );
+    if (
+      !data.reasonForApplying?.trim() ||
+      data.reasonForApplying.length < MIN_TEXT_LENGTH.DESCRIPTION
+    )
+      errors.push(
+        `Reason for Applying must be at least ${MIN_TEXT_LENGTH.DESCRIPTION} characters`
+      );
 
     return errors;
   }

@@ -9,6 +9,7 @@ import { StorageService } from "../services/StorageService";
 import { useFormPersistence } from "../hooks/useFormPersistence";
 import { FormContext } from "./FormContext.context";
 import type { FormContextValue } from "./FormContext.types";
+import { FORM_STEPS } from "../constants";
 
 interface FormProviderProps {
   children: ReactNode;
@@ -18,7 +19,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   // Initialize state from localStorage or use defaults
   const [currentStep, setCurrentStepState] = useState<FormStep>(() => {
     const savedStep = StorageService.loadCurrentStep();
-    return savedStep || 1;
+    return savedStep || FORM_STEPS.PERSONAL_INFO;
   });
 
   // Initialize React Hook Form

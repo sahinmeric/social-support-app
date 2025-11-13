@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  STORAGE_KEYS,
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+} from "../constants";
 
 interface LanguageContextValue {
   language: string;
@@ -21,17 +26,17 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
 }) => {
   const { i18n } = useTranslation();
   const [language, setLanguageState] = useState<string>(
-    localStorage.getItem("language") || "en"
+    localStorage.getItem(STORAGE_KEYS.LANGUAGE) || DEFAULT_LANGUAGE
   );
   const [direction, setDirection] = useState<"ltr" | "rtl">(
-    language === "ar" ? "rtl" : "ltr"
+    language === SUPPORTED_LANGUAGES.ARABIC ? "rtl" : "ltr"
   );
 
   const setLanguage = (lang: string) => {
     setLanguageState(lang);
-    localStorage.setItem("language", lang);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
     i18n.changeLanguage(lang);
-    setDirection(lang === "ar" ? "rtl" : "ltr");
+    setDirection(lang === SUPPORTED_LANGUAGES.ARABIC ? "rtl" : "ltr");
   };
 
   useEffect(() => {

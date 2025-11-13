@@ -2,7 +2,9 @@
  * Validation constants used across the application
  */
 
-// Minimum character lengths for text fields
+/**
+ * Minimum character lengths for text fields
+ */
 export const MIN_TEXT_LENGTH = {
   NAME: 2,
   NATIONAL_ID: 10,
@@ -13,26 +15,66 @@ export const MIN_TEXT_LENGTH = {
   DESCRIPTION: 50, // For Step 3 text areas
 } as const;
 
-// Maximum character lengths
+/**
+ * Maximum character lengths for text fields
+ */
 export const MAX_TEXT_LENGTH = {
+  NAME: 100,
   NATIONAL_ID: 20,
+  ADDRESS: 200,
+  DESCRIPTION: 1000,
 } as const;
 
-// Numeric validation
+/**
+ * Numeric validation limits
+ */
 export const NUMERIC_LIMITS = {
   MIN_VALUE: 0,
   MIN_DEPENDENTS: 0,
+  MAX_DEPENDENTS: 20,
   MIN_INCOME: 0,
+  MAX_INCOME: 1000000,
+  MIN_AGE: 18,
+  MAX_AGE: 120,
 } as const;
 
-// Regex patterns
+/**
+ * Regex patterns for field validation
+ */
 export const VALIDATION_PATTERNS = {
   NAME: /^[a-zA-Z\s\u0600-\u06FF]+$/,
   NATIONAL_ID: /^[0-9]+$/,
   PHONE: /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 } as const;
 
-// Validation messages keys (for i18n)
+/**
+ * Field constraints for validation
+ */
+export const FIELD_CONSTRAINTS = {
+  name: { min: MIN_TEXT_LENGTH.NAME, max: MAX_TEXT_LENGTH.NAME },
+  nationalId: {
+    min: MIN_TEXT_LENGTH.NATIONAL_ID,
+    max: MAX_TEXT_LENGTH.NATIONAL_ID,
+  },
+  address: { min: MIN_TEXT_LENGTH.ADDRESS, max: MAX_TEXT_LENGTH.ADDRESS },
+  dependents: {
+    min: NUMERIC_LIMITS.MIN_DEPENDENTS,
+    max: NUMERIC_LIMITS.MAX_DEPENDENTS,
+  },
+  monthlyIncome: {
+    min: NUMERIC_LIMITS.MIN_INCOME,
+    max: NUMERIC_LIMITS.MAX_INCOME,
+  },
+  description: {
+    min: MIN_TEXT_LENGTH.DESCRIPTION,
+    max: MAX_TEXT_LENGTH.DESCRIPTION,
+  },
+} as const;
+
+/**
+ * Validation messages keys (for i18n)
+ */
 export const VALIDATION_MESSAGES = {
   REQUIRED: "validation.required",
   INVALID_EMAIL: "validation.invalidEmail",

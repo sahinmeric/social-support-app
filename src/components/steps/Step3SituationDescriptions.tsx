@@ -7,6 +7,7 @@ import SuggestionModal from "../ai/SuggestionModal";
 import { openAIService } from "../../services/OpenAIService";
 import type { ApplicationFormData } from "../../types/form.types";
 import type { AIError } from "../../types/openai.types";
+import { MIN_TEXT_LENGTH } from "../../constants";
 
 const Step3SituationDescriptions: React.FC = () => {
   const { t } = useTranslation();
@@ -107,10 +108,14 @@ const Step3SituationDescriptions: React.FC = () => {
             error={!!errors.financialSituation}
             helperText={
               errors.financialSituation
-                ? t(errors.financialSituation, { min: 50 })
-                : `${t("validation.minLength", { min: 50 })} (${
-                    formData.financialSituation.length
-                  }/50)`
+                ? t(errors.financialSituation, {
+                    min: MIN_TEXT_LENGTH.DESCRIPTION,
+                  })
+                : `${t("validation.minLength", {
+                    min: MIN_TEXT_LENGTH.DESCRIPTION,
+                  })} (${formData.financialSituation.length}/${
+                    MIN_TEXT_LENGTH.DESCRIPTION
+                  })`
             }
             multiline
             rows={4}
@@ -153,10 +158,14 @@ const Step3SituationDescriptions: React.FC = () => {
             error={!!errors.employmentCircumstances}
             helperText={
               errors.employmentCircumstances
-                ? t(errors.employmentCircumstances, { min: 50 })
-                : `${t("validation.minLength", { min: 50 })} (${
-                    formData.employmentCircumstances.length
-                  }/50)`
+                ? t(errors.employmentCircumstances, {
+                    min: MIN_TEXT_LENGTH.DESCRIPTION,
+                  })
+                : `${t("validation.minLength", {
+                    min: MIN_TEXT_LENGTH.DESCRIPTION,
+                  })} (${formData.employmentCircumstances.length}/${
+                    MIN_TEXT_LENGTH.DESCRIPTION
+                  })`
             }
             multiline
             rows={4}
@@ -199,10 +208,14 @@ const Step3SituationDescriptions: React.FC = () => {
             error={!!errors.reasonForApplying}
             helperText={
               errors.reasonForApplying
-                ? t(errors.reasonForApplying, { min: 50 })
-                : `${t("validation.minLength", { min: 50 })} (${
-                    formData.reasonForApplying.length
-                  }/50)`
+                ? t(errors.reasonForApplying, {
+                    min: MIN_TEXT_LENGTH.DESCRIPTION,
+                  })
+                : `${t("validation.minLength", {
+                    min: MIN_TEXT_LENGTH.DESCRIPTION,
+                  })} (${formData.reasonForApplying.length}/${
+                    MIN_TEXT_LENGTH.DESCRIPTION
+                  })`
             }
             multiline
             rows={4}
