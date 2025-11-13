@@ -1,4 +1,4 @@
-import type { ApplicationFormData, FormStep } from "./form.types";
+import type { ApplicationFormData, FormStep, FormErrors } from "./form.types";
 
 // ProgressBar component props
 export interface ProgressBarProps {
@@ -20,8 +20,11 @@ export interface NavigationButtonsProps {
 // Step component props
 export interface StepProps {
   formData: ApplicationFormData;
-  errors: Record<string, string>;
-  onChange: (field: keyof ApplicationFormData, value: string | number) => void;
+  errors: FormErrors;
+  onChange: <K extends keyof ApplicationFormData>(
+    field: K,
+    value: ApplicationFormData[K]
+  ) => void;
   onBlur: (field: keyof ApplicationFormData) => void;
 }
 

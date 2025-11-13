@@ -80,14 +80,14 @@ const FormWizard: React.FC = () => {
       // Submit application via API service
       const response = await APIService.submitApplication(formData);
 
-      if (response.success) {
+      if (response.success && response.data) {
         // Clear localStorage on successful submission
         StorageService.clearFormData();
 
         // Store submission data
         setSubmissionData({
-          applicationId: response.applicationId,
-          timestamp: response.timestamp,
+          applicationId: response.data.applicationId,
+          timestamp: response.data.timestamp,
         });
 
         // Show success page
@@ -95,8 +95,8 @@ const FormWizard: React.FC = () => {
 
         // Log for demonstration
         console.log("Application submitted successfully:", {
-          applicationId: response.applicationId,
-          timestamp: response.timestamp,
+          applicationId: response.data.applicationId,
+          timestamp: response.data.timestamp,
         });
       } else {
         throw new Error(response.message || "Submission failed");

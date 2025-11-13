@@ -2,7 +2,11 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import type { ApplicationFormData, FormStep } from "../types/form.types";
+import type {
+  ApplicationFormData,
+  FormStep,
+  FormErrors,
+} from "../types/form.types";
 import { initialFormData } from "../types/form.types";
 import { getSchemaForStep } from "../validation/schemas";
 import { StorageService } from "../services/StorageService";
@@ -42,11 +46,15 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   }, [currentStep, form]);
 
   /**
-   * Update a single form field
+   * Update a single form field with type safety
    */
   const updateFormData = useCallback(
-    (field: keyof ApplicationFormData, value: string | number): void => {
-      form.setValue(field, value, { shouldValidate: false });
+    <K extends keyof ApplicationFormData>(
+      field: K,
+      value: ApplicationFormData[K]
+    ): void => {
+      // Type assertion needed due to react-hook-form's complex path types
+      form.setValue(field, value as never, { shouldValidate: false });
     },
     [form]
   );
@@ -77,7 +85,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
    * Set errors manually
    */
   const setErrors = useCallback(
-    (errors: Record<string, string | undefined>): void => {
+    (errors: FormErrors): void => {
       Object.entries(errors).forEach(([field, message]) => {
         if (message) {
           form.setError(field as keyof ApplicationFormData, {
@@ -94,10 +102,10 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     () => ({
       formData,
       currentStep,
-      errors: Object.keys(errors).reduce((acc, key) => {
+      errors: Object.keys(errors).reduce<FormErrors>((acc, key) => {
         acc[key] = errors[key as keyof ApplicationFormData]?.message || "";
         return acc;
-      }, {} as Record<string, string>),
+      }, {}),
       updateFormData,
       setCurrentStep,
       validateCurrentStep,

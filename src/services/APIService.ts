@@ -1,15 +1,6 @@
 import type { ApplicationFormData } from "../types/form.types";
+import type { SubmissionResponse } from "../types/api.types";
 import { APP_CONFIG, MIN_TEXT_LENGTH } from "../constants";
-
-/**
- * Response from the API after submitting an application
- */
-export interface SubmissionResponse {
-  success: boolean;
-  message: string;
-  applicationId?: string;
-  timestamp?: string;
-}
 
 /**
  * Service for submitting application data to the backend
@@ -49,10 +40,12 @@ export class APIService {
       const mockResponse: SubmissionResponse = {
         success: true,
         message: "Application submitted successfully",
-        applicationId: `APP-${Date.now()}-${Math.random()
-          .toString(36)
-          .substr(2, 9)}`,
-        timestamp: new Date().toISOString(),
+        data: {
+          applicationId: `APP-${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`,
+          timestamp: new Date().toISOString(),
+        },
       };
 
       console.log("Application submitted:", {
