@@ -48,6 +48,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({
             textAlign: "center",
             width: "100%",
           }}
+          data-testid="success-page"
         >
           <Box
             sx={{
@@ -96,6 +97,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({
               <Typography
                 variant="h6"
                 sx={{ fontFamily: "monospace", fontWeight: 600 }}
+                data-testid="application-id"
               >
                 {applicationId}
               </Typography>
@@ -123,6 +125,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({
               startIcon={<AddIcon />}
               onClick={onSubmitAnother}
               sx={{ minWidth: { xs: "100%", sm: 200 } }}
+              data-testid="btn-submit-another"
             >
               {t("success.submitAnother")}
             </Button>
@@ -133,6 +136,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({
               startIcon={<HomeIcon />}
               onClick={onGoHome}
               sx={{ minWidth: { xs: "100%", sm: 200 } }}
+              data-testid="btn-go-home"
             >
               {t("success.goHome")}
             </Button>

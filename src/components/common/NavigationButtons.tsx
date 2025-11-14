@@ -66,6 +66,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
           order: { xs: 2, sm: 1 },
         }}
         aria-label={t("common.previous")}
+        data-testid="btn-previous"
       >
         {t("common.previous")}
       </Button>
@@ -89,6 +90,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
           }}
           aria-label={t("common.submit")}
           aria-busy={isSubmitting}
+          data-testid="btn-submit"
         >
           {isSubmitting ? t("submission.submitting") : t("common.submit")}
         </Button>
@@ -105,6 +107,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
             order: { xs: 1, sm: 2 },
           }}
           aria-label={t("common.next")}
+          data-testid="btn-next"
         >
           {t("common.next")}
         </Button>

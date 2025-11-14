@@ -75,6 +75,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
       fullWidth
       aria-labelledby="suggestion-dialog-title"
       aria-describedby="suggestion-dialog-description"
+      data-testid="ai-modal"
     >
       <DialogTitle id="suggestion-dialog-title">
         <Box
@@ -96,7 +97,11 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
       </DialogTitle>
 
       <DialogContent dividers>
-        {isLoading && <ModalSkeleton />}
+        {isLoading && (
+          <Box data-testid="ai-loading">
+            <ModalSkeleton />
+          </Box>
+        )}
 
         {error && (
           <Alert
@@ -107,6 +112,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
                 {t("ai.retry")}
               </Button>
             }
+            data-testid="ai-error"
           >
             {error}
           </Alert>
@@ -123,6 +129,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
             placeholder={t("ai.helpMeWrite")}
             aria-label="AI suggestion text"
             aria-describedby="suggestion-dialog-description"
+            data-testid="ai-suggestion-text"
             sx={{
               "& .MuiOutlinedInput-root": {
                 fontFamily: "inherit",
@@ -138,6 +145,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
           startIcon={<DeleteIcon />}
           color="error"
           disabled={isLoading}
+          data-testid="btn-discard-suggestion"
         >
           {t("ai.discard")}
         </Button>
@@ -149,6 +157,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
             onClick={onRetry}
             startIcon={<RefreshIcon />}
             variant="outlined"
+            data-testid="btn-retry-suggestion"
           >
             {t("ai.retry")}
           </Button>
@@ -168,6 +177,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
               onClick={handleAccept}
               startIcon={<CheckCircleIcon />}
               variant="contained"
+              data-testid="btn-accept-suggestion"
             >
               {t("ai.accept")}
             </Button>

@@ -36,6 +36,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       aria-valuemin={1}
       aria-valuemax={totalSteps}
       aria-label={`Step ${currentStep} of ${totalSteps}`}
+      data-testid="progress-bar"
     >
       {/* Overall completion percentage */}
       {completionPercentage !== undefined && (
@@ -68,6 +69,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         <Stepper
           activeStep={currentStep - 1}
           orientation={isMobile ? "vertical" : "horizontal"}
+          data-testid="step-indicator"
           sx={{
             "& .MuiStepLabel-root": {
               cursor: "default",

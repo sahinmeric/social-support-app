@@ -141,7 +141,7 @@ const FormWizard: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" data-testid="form-wizard">
       {/* Language Selector */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
         <LanguageSelector />

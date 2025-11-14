@@ -34,6 +34,7 @@ const LanguageSelector: React.FC = () => {
           },
         }}
         aria-label="Select language"
+        data-testid="language-selector"
       >
         <MenuItem value="en">
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

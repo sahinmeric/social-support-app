@@ -107,6 +107,7 @@ const Step3SituationDescriptions: React.FC = () => {
               textTransform: "none",
               borderRadius: 2,
             }}
+            data-testid="ai-help-financialSituation"
           >
             {t("ai.helpMeWrite")}
           </Button>
@@ -156,6 +157,7 @@ const Step3SituationDescriptions: React.FC = () => {
               textTransform: "none",
               borderRadius: 2,
             }}
+            data-testid="ai-help-employmentCircumstances"
           >
             {t("ai.helpMeWrite")}
           </Button>
@@ -205,6 +207,7 @@ const Step3SituationDescriptions: React.FC = () => {
               textTransform: "none",
               borderRadius: 2,
             }}
+            data-testid="ai-help-reasonForApplying"
           >
             {t("ai.helpMeWrite")}
           </Button>
