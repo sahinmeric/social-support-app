@@ -7,13 +7,14 @@ import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../hooks/useFormContext";
+import { useStepNavigation } from "../hooks/useStepNavigation";
 import { APIService } from "../services/APIService";
 import { StorageService } from "../services/StorageService";
 import ProgressBar from "./common/ProgressBar";
 import NavigationButtons from "./common/NavigationButtons";
 import LanguageSelector from "./common/LanguageSelector";
 import { FormSkeleton } from "./common/SkeletonLoader";
-import { APP_CONFIG, FORM_STEPS, SCROLL_CONFIG } from "../constants";
+import { APP_CONFIG, FORM_STEPS } from "../constants";
 
 // Lazy load step components for code splitting
 const Step1PersonalInfo = lazy(() => import("./steps/Step1PersonalInfo"));
@@ -25,8 +26,8 @@ const SuccessPage = lazy(() => import("./SuccessPage"));
 
 const FormWizard: React.FC = () => {
   const { t } = useTranslation();
-  const { currentStep, setCurrentStep, validateCurrentStep, formData } =
-    useFormContext();
+  const { formData, validateCurrentStep } = useFormContext();
+  const { currentStep, handleNext, handlePrevious } = useStepNavigation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -35,37 +36,6 @@ const FormWizard: React.FC = () => {
     applicationId?: string;
     timestamp?: string;
   }>({});
-
-  /**
-   * Handle navigation to next step
-   * Memoized to prevent unnecessary re-renders of child components
-   */
-  const handleNext = useCallback(async () => {
-    const isValid = await validateCurrentStep();
-    if (isValid && currentStep < FORM_STEPS.MAX_STEP) {
-      setCurrentStep((currentStep + 1) as 1 | 2 | 3);
-      // Scroll to top when changing steps
-      window.scrollTo({
-        top: SCROLL_CONFIG.TOP_POSITION,
-        behavior: SCROLL_CONFIG.BEHAVIOR,
-      });
-    }
-  }, [currentStep, validateCurrentStep, setCurrentStep]);
-
-  /**
-   * Handle navigation to previous step
-   * Memoized to prevent unnecessary re-renders of child components
-   */
-  const handlePrevious = useCallback(() => {
-    if (currentStep > FORM_STEPS.MIN_STEP) {
-      setCurrentStep((currentStep - 1) as 1 | 2 | 3);
-      // Scroll to top when changing steps
-      window.scrollTo({
-        top: SCROLL_CONFIG.TOP_POSITION,
-        behavior: SCROLL_CONFIG.BEHAVIOR,
-      });
-    }
-  }, [currentStep, setCurrentStep]);
 
   /**
    * Handle form submission
@@ -126,7 +96,6 @@ const FormWizard: React.FC = () => {
     // Reset form state
     setShowSuccess(false);
     setSubmissionData({});
-    setCurrentStep(FORM_STEPS.PERSONAL_INFO);
     // Note: FormContext will initialize with empty data from localStorage
     // which was cleared after successful submission
     window.location.reload(); // Reload to reset all state

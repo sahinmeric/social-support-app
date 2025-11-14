@@ -97,7 +97,7 @@
 
 ## Phase 3: Architecture Improvements (Higher Risk)
 
-- [ ] 11. Extract useStepNavigation custom hook
+- [x] 11. Extract useStepNavigation custom hook
   - Create src/hooks/useStepNavigation.ts
   - Define UseStepNavigationReturn interface
   - Extract step navigation logic from FormWizard component
