@@ -1,0 +1,281 @@
+{
+  "validUser": {
+    "step1": {
+      "name": "Ahmed Hassan",
+      "nationalId": "1234567890",
+      "dateOfBirth": "1990-01-15",
+      "gender": "male",
+      "address": "123 Main Street, Apt 4B",
+      "city": "Riyadh",
+      "state": "Riyadh Province",
+      "country": "Saudi Arabia",
+      "phone": "+966501234567",
+      "email": "ahmed.hassan@example.com"
+    },
+    "step2": {
+      "maritalStatus": "married",
+      "dependents": "2",
+      "employmentStatus": "employed",
+      "monthlyIncome": "5000",
+      "currency": "USD",
+      "housingStatus": "rented"
+    },
+    "step3": {
+      "financialSituation": "I am currently facing financial difficulties due to unexpected medical expenses for my family. The costs have been overwhelming and I need assistance to cover basic necessities.",
+      "employmentCircumstances": "I am employed full-time as a warehouse worker but my salary is not sufficient to cover all expenses including medical bills and basic living costs for my family.",
+      "reasonForApplying": "I am requesting financial assistance to help cover medical bills and ensure my family has access to basic necessities during this difficult time. This support would help us get back on our feet."
+    }
+  },
+  "arabicUser": {
+    "step1": {
+      "name": "أحمد حسن محمد",
+      "nationalId": "9876543210",
+      "dateOfBirth": "1985-05-20",
+      "gender": "male",
+      "address": "شارع الملك فهد، حي النخيل، الرياض",
+      "city": "الرياض",
+      "state": "منطقة الرياض",
+      "country": "المملكة العربية السعودية",
+      "phone": "+966509876543",
+      "email": "ahmed.arabic@example.com"
+    },
+    "step2": {
+      "maritalStatus": "single",
+      "dependents": "0",
+      "employmentStatus": "unemployed",
+      "monthlyIncome": "0",
+      "currency": "AED",
+      "housingStatus": "homeless"
+    },
+    "step3": {
+      "financialSituation": "أواجه صعوبات مالية كبيرة وأحتاج إلى مساعدة عاجلة لتغطية النفقات الأساسية. الوضع المالي صعب جداً وليس لدي دخل ثابت حالياً.",
+      "employmentCircumstances": "أبحث عن عمل منذ عدة أشهر ولكن لم أتمكن من إيجاد فرصة مناسبة. أحتاج إلى دعم مالي حتى أتمكن من الحصول على وظيفة.",
+      "reasonForApplying": "أتقدم بطلب المساعدة المالية للحصول على دعم شهري يساعدني في تغطية احتياجاتي الأساسية من مأكل ومسكن حتى أجد عملاً مناسباً."
+    }
+  },
+  "femaleUser": {
+    "step1": {
+      "name": "Sarah Johnson",
+      "nationalId": "5555555555",
+      "dateOfBirth": "1992-08-10",
+      "gender": "female",
+      "address": "456 Oak Avenue, Unit 12",
+      "city": "Dubai",
+      "state": "Dubai",
+      "country": "United Arab Emirates",
+      "phone": "+971501234567",
+      "email": "sarah.johnson@example.com"
+    },
+    "step2": {
+      "maritalStatus": "divorced",
+      "dependents": "3",
+      "employmentStatus": "selfEmployed",
+      "monthlyIncome": "3500",
+      "currency": "AED",
+      "housingStatus": "rented"
+    },
+    "step3": {
+      "financialSituation": "As a single mother of three children, I am struggling to make ends meet. My self-employment income is irregular and often insufficient to cover rent, food, and children's education expenses.",
+      "employmentCircumstances": "I work as a freelance graphic designer from home to be available for my children. However, client work is inconsistent and I need financial support during slow periods.",
+      "reasonForApplying": "I am seeking assistance to ensure my children have stable housing, nutritious meals, and can continue their education without interruption while I build a more stable income stream."
+    }
+  },
+  "retiredUser": {
+    "step1": {
+      "name": "Mohammed Al-Rashid",
+      "nationalId": "1111111111",
+      "dateOfBirth": "1955-03-25",
+      "gender": "male",
+      "address": "789 Palm Street",
+      "city": "Abu Dhabi",
+      "state": "Abu Dhabi",
+      "country": "United Arab Emirates",
+      "phone": "+971509998877",
+      "email": "mohammed.rashid@example.com"
+    },
+    "step2": {
+      "maritalStatus": "widowed",
+      "dependents": "1",
+      "employmentStatus": "retired",
+      "monthlyIncome": "2000",
+      "currency": "AED",
+      "housingStatus": "owned"
+    },
+    "step3": {
+      "financialSituation": "My retirement pension is minimal and barely covers basic living expenses. Recent health issues have created additional financial burden with medical costs and medications.",
+      "employmentCircumstances": "I am retired and living on a fixed pension. I am unable to work due to age and health conditions. My only income is my small monthly pension.",
+      "reasonForApplying": "I need financial assistance to cover medical expenses and ensure I can afford necessary medications and healthcare while maintaining basic living standards."
+    }
+  },
+  "edgeCases": {
+    "minimumValues": {
+      "step1": {
+        "name": "Jo Li",
+        "nationalId": "1000000000",
+        "dateOfBirth": "2005-01-01",
+        "gender": "other",
+        "address": "1 A St",
+        "city": "A",
+        "state": "B",
+        "country": "C",
+        "phone": "+1234567890",
+        "email": "a@b.co"
+      },
+      "step2": {
+        "maritalStatus": "single",
+        "dependents": "0",
+        "employmentStatus": "unemployed",
+        "monthlyIncome": "0",
+        "currency": "USD",
+        "housingStatus": "homeless"
+      },
+      "step3": {
+        "financialSituation": "I need help with basic living expenses and housing.",
+        "employmentCircumstances": "Currently unemployed and seeking work opportunities.",
+        "reasonForApplying": "Requesting assistance for basic needs and shelter."
+      }
+    },
+    "maximumValues": {
+      "step1": {
+        "name": "Christopher Alexander Montgomery-Wellington III",
+        "nationalId": "9999999999",
+        "dateOfBirth": "1950-12-31",
+        "gender": "male",
+        "address": "12345 Very Long Street Name Avenue, Building Complex Tower A, Floor 25, Apartment 2501, Near Central Business District",
+        "city": "Constantinople",
+        "state": "Massachusetts",
+        "country": "United States of America",
+        "phone": "+12025551234567",
+        "email": "christopher.alexander.montgomery.wellington.the.third@very-long-domain-name-example.com"
+      },
+      "step2": {
+        "maritalStatus": "married",
+        "dependents": "10",
+        "employmentStatus": "employed",
+        "monthlyIncome": "999999",
+        "currency": "USD",
+        "housingStatus": "owned"
+      },
+      "step3": {
+        "financialSituation": "Despite having a large family and significant monthly income, unexpected circumstances including multiple family medical emergencies, natural disaster damage to property, loss of secondary income sources, and accumulation of debt from previous financial hardships have created an overwhelming financial burden that exceeds our current capacity to manage effectively without external assistance and support.",
+        "employmentCircumstances": "I am currently employed in a full-time position with a stable company, however the income generated is insufficient to cover the extensive medical expenses, property repairs, educational costs for multiple dependents, and other essential living expenses that have accumulated over the past several months due to unforeseen circumstances and emergencies.",
+        "reasonForApplying": "I am applying for financial assistance to help bridge the gap between my current income and the overwhelming expenses my family faces, including medical bills, property repairs, educational costs, and basic necessities for a large household, until we can recover from these temporary setbacks and return to financial stability."
+      }
+    },
+    "specialCharacters": {
+      "step1": {
+        "name": "O'Brien-Smith, José María Ñoño",
+        "nationalId": "1234567890",
+        "dateOfBirth": "1988-06-15",
+        "gender": "male",
+        "address": "123 St. Mary's Rd., Apt #5-B (Rear)",
+        "city": "São Paulo",
+        "state": "São Paulo",
+        "country": "Brasil",
+        "phone": "+55-11-98765-4321",
+        "email": "jose.maria@test-domain.co.uk"
+      },
+      "step2": {
+        "maritalStatus": "married",
+        "dependents": "2",
+        "employmentStatus": "employed",
+        "monthlyIncome": "4500",
+        "currency": "USD",
+        "housingStatus": "rented"
+      },
+      "step3": {
+        "financialSituation": "I'm facing difficulties due to unexpected expenses & medical bills (>$10,000). The situation is challenging - we need help!",
+        "employmentCircumstances": "I work at \"Tech Solutions Inc.\" earning ~$4,500/month, but it's not enough for our family's needs (rent + bills + food).",
+        "reasonForApplying": "We're requesting assistance to cover medical expenses & basic needs. This support would help us maintain stability during this difficult period."
+      }
+    },
+    "unicodeCharacters": {
+      "step1": {
+        "name": "李明 (Li Ming) 🌟",
+        "nationalId": "8888888888",
+        "dateOfBirth": "1990-09-09",
+        "gender": "male",
+        "address": "北京市朝阳区 Building 8, Unit 3, Room 301",
+        "city": "北京 (Beijing)",
+        "state": "北京市",
+        "country": "中国 (China)",
+        "phone": "+86-138-0000-0000",
+        "email": "li.ming@example.cn"
+      },
+      "step2": {
+        "maritalStatus": "married",
+        "dependents": "1",
+        "employmentStatus": "employed",
+        "monthlyIncome": "6000",
+        "currency": "USD",
+        "housingStatus": "rented"
+      },
+      "step3": {
+        "financialSituation": "我目前面临经济困难，需要帮助支付医疗费用和基本生活开支。家庭收入不足以覆盖所有必要的支出。",
+        "employmentCircumstances": "我在一家公司全职工作，但工资不足以支付所有家庭开支，包括医疗费用和子女教育费用。",
+        "reasonForApplying": "我申请经济援助以帮助支付医疗账单和确保家庭基本生活需求，直到我们能够恢复财务稳定。"
+      }
+    }
+  },
+  "invalidData": {
+    "invalidEmail": {
+      "step1": {
+        "name": "Test User",
+        "nationalId": "1234567890",
+        "dateOfBirth": "1990-01-01",
+        "gender": "male",
+        "address": "123 Test St",
+        "city": "Test City",
+        "state": "Test State",
+        "country": "Test Country",
+        "phone": "+1234567890",
+        "email": "invalid-email"
+      }
+    },
+    "invalidPhone": {
+      "step1": {
+        "name": "Test User",
+        "nationalId": "1234567890",
+        "dateOfBirth": "1990-01-01",
+        "gender": "male",
+        "address": "123 Test St",
+        "city": "Test City",
+        "state": "Test State",
+        "country": "Test Country",
+        "phone": "123",
+        "email": "test@example.com"
+      }
+    },
+    "futureDateOfBirth": {
+      "step1": {
+        "name": "Test User",
+        "nationalId": "1234567890",
+        "dateOfBirth": "2030-01-01",
+        "gender": "male",
+        "address": "123 Test St",
+        "city": "Test City",
+        "state": "Test State",
+        "country": "Test Country",
+        "phone": "+1234567890",
+        "email": "test@example.com"
+      }
+    },
+    "negativeIncome": {
+      "step2": {
+        "maritalStatus": "single",
+        "dependents": "0",
+        "employmentStatus": "employed",
+        "monthlyIncome": "-1000",
+        "currency": "USD",
+        "housingStatus": "rented"
+      }
+    },
+    "tooShortText": {
+      "step3": {
+        "financialSituation": "Help",
+        "employmentCircumstances": "Work",
+        "reasonForApplying": "Need"
+      }
+    }
+  }
+}
