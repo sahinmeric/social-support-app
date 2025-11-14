@@ -107,7 +107,7 @@
   - Test navigation functionality remains unchanged
   - _Requirements: 2.1, 2.4, 2.5_
 
-- [ ] 12. Extract useAISuggestion custom hook
+- [x] 12. Extract useAISuggestion custom hook
   - Create src/hooks/useAISuggestion.ts
   - Define UseAISuggestionReturn interface
   - Extract AI suggestion logic from Step3SituationDescriptions

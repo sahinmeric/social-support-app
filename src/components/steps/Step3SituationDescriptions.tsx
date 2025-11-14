@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
@@ -6,25 +6,26 @@ import Button from "@mui/material/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";
+import { useAISuggestion } from "../../hooks/useAISuggestion";
 import SuggestionModal from "../ai/SuggestionModal";
-import { openAIService } from "../../services/OpenAIService";
-import type { ApplicationFormData } from "../../types/form.types";
-import type { AIError } from "../../types/openai.types";
 import { MIN_TEXT_LENGTH } from "../../constants";
 import { sanitizeInput } from "../../utils/sanitize";
 
 const Step3SituationDescriptions: React.FC = () => {
   const { t } = useTranslation();
   const { formData, errors, updateFormData } = useFormContext();
-
-  // Modal state
-  const [modalOpen, setModalOpen] = useState(false);
-  const [currentField, setCurrentField] = useState<
-    keyof ApplicationFormData | null
-  >(null);
-  const [suggestion, setSuggestion] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    isModalOpen,
+    suggestion,
+    isLoading,
+    error,
+    generateSuggestion,
+    acceptSuggestion,
+    editSuggestion,
+    discardSuggestion,
+    retrySuggestion,
+    closeModal,
+  } = useAISuggestion();
 
   const handleChange =
     (field: keyof typeof formData) =>
@@ -45,70 +46,6 @@ const Step3SituationDescriptions: React.FC = () => {
       },
     [updateFormData]
   );
-
-  const handleHelpMeWrite = async (field: keyof ApplicationFormData) => {
-    setCurrentField(field);
-    setModalOpen(true);
-    setIsLoading(true);
-    setError(null);
-    setSuggestion("");
-
-    try {
-      const result = await openAIService.generateSuggestion(field, formData);
-      setSuggestion(result.text);
-    } catch (err) {
-      const aiError = err as AIError;
-      setError(t(`ai.errors.${aiError.type}`) || aiError.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAccept = () => {
-    if (currentField && suggestion) {
-      updateFormData(currentField, suggestion);
-    }
-    handleCloseModal();
-  };
-
-  const handleEdit = (editedText: string) => {
-    if (currentField) {
-      updateFormData(currentField, editedText);
-    }
-    handleCloseModal();
-  };
-
-  const handleDiscard = () => {
-    handleCloseModal();
-  };
-
-  const handleRetry = async () => {
-    if (currentField) {
-      setIsLoading(true);
-      setError(null);
-      setSuggestion("");
-
-      try {
-        const result = await openAIService.generateSuggestion(
-          currentField,
-          formData
-        );
-        setSuggestion(result.text);
-      } catch (err) {
-        const aiError = err as AIError;
-        setError(t(`ai.errors.${aiError.type}`) || aiError.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setCurrentField(null);
-    setSuggestion("");
-    setError(null);
-  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -153,7 +90,7 @@ const Step3SituationDescriptions: React.FC = () => {
             variant="outlined"
             size="small"
             startIcon={<AutoAwesomeIcon />}
-            onClick={() => handleHelpMeWrite("financialSituation")}
+            onClick={() => generateSuggestion("financialSituation")}
             sx={{
               mt: 1,
               textTransform: "none",
@@ -204,7 +141,7 @@ const Step3SituationDescriptions: React.FC = () => {
             variant="outlined"
             size="small"
             startIcon={<AutoAwesomeIcon />}
-            onClick={() => handleHelpMeWrite("employmentCircumstances")}
+            onClick={() => generateSuggestion("employmentCircumstances")}
             sx={{
               mt: 1,
               textTransform: "none",
@@ -255,7 +192,7 @@ const Step3SituationDescriptions: React.FC = () => {
             variant="outlined"
             size="small"
             startIcon={<AutoAwesomeIcon />}
-            onClick={() => handleHelpMeWrite("reasonForApplying")}
+            onClick={() => generateSuggestion("reasonForApplying")}
             sx={{
               mt: 1,
               textTransform: "none",
@@ -269,15 +206,15 @@ const Step3SituationDescriptions: React.FC = () => {
 
       {/* AI Suggestion Modal */}
       <SuggestionModal
-        open={modalOpen}
+        open={isModalOpen}
         suggestion={suggestion}
         isLoading={isLoading}
         error={error}
-        onAccept={handleAccept}
-        onEdit={handleEdit}
-        onDiscard={handleDiscard}
-        onRetry={handleRetry}
-        onClose={handleCloseModal}
+        onAccept={acceptSuggestion}
+        onEdit={editSuggestion}
+        onDiscard={discardSuggestion}
+        onRetry={retrySuggestion}
+        onClose={closeModal}
       />
     </Box>
   );
