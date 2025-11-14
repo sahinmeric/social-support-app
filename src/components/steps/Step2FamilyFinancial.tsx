@@ -19,9 +19,9 @@ const Step2FamilyFinancial: React.FC = () => {
     (field: keyof typeof formData) =>
       (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const value = event.target.value;
-        // Convert to number for numeric fields
+        // Convert to number for numeric fields, keep empty string if empty
         if (field === "dependents" || field === "monthlyIncome") {
-          updateFormData(field, value === "" ? 0 : Number(value));
+          updateFormData(field, value === "" ? "" : Number(value));
         } else {
           updateFormData(field, value);
         }

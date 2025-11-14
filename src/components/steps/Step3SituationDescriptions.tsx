@@ -27,6 +27,19 @@ const Step3SituationDescriptions: React.FC = () => {
     closeModal,
   } = useAISuggestion();
 
+  const translateError = useCallback(
+    (error: string | undefined): string | undefined => {
+      if (!error) return undefined;
+      // Check if error contains parameter (format: "key|value")
+      if (error.includes("|")) {
+        const [key, value] = error.split("|");
+        return t(key, { min: parseInt(value), max: parseInt(value) });
+      }
+      return t(error);
+    },
+    [t]
+  );
+
   const handleChange =
     (field: keyof typeof formData) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -61,13 +74,7 @@ const Step3SituationDescriptions: React.FC = () => {
             value={formData.financialSituation}
             onChange={handleChange("financialSituation")}
             onBlur={handleBlur("financialSituation")}
-            error={
-              errors.financialSituation
-                ? t(errors.financialSituation, {
-                    min: MIN_TEXT_LENGTH.DESCRIPTION,
-                  })
-                : undefined
-            }
+            error={translateError(errors.financialSituation)}
             helperText={
               !errors.financialSituation
                 ? `${t("validation.minLength", {
@@ -116,13 +123,7 @@ const Step3SituationDescriptions: React.FC = () => {
             value={formData.employmentCircumstances}
             onChange={handleChange("employmentCircumstances")}
             onBlur={handleBlur("employmentCircumstances")}
-            error={
-              errors.employmentCircumstances
-                ? t(errors.employmentCircumstances, {
-                    min: MIN_TEXT_LENGTH.DESCRIPTION,
-                  })
-                : undefined
-            }
+            error={translateError(errors.employmentCircumstances)}
             helperText={
               !errors.employmentCircumstances
                 ? `${t("validation.minLength", {
@@ -171,13 +172,7 @@ const Step3SituationDescriptions: React.FC = () => {
             value={formData.reasonForApplying}
             onChange={handleChange("reasonForApplying")}
             onBlur={handleBlur("reasonForApplying")}
-            error={
-              errors.reasonForApplying
-                ? t(errors.reasonForApplying, {
-                    min: MIN_TEXT_LENGTH.DESCRIPTION,
-                  })
-                : undefined
-            }
+            error={translateError(errors.reasonForApplying)}
             helperText={
               !errors.reasonForApplying
                 ? `${t("validation.minLength", {

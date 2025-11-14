@@ -102,6 +102,9 @@ export const step2Schema = yup.object().shape({
 
   dependents: yup
     .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
     .required(VALIDATION_MESSAGES.REQUIRED)
     .min(0, VALIDATION_MESSAGES.NON_NEGATIVE)
     .integer(VALIDATION_MESSAGES.MUST_BE_INTEGER),
@@ -116,6 +119,9 @@ export const step2Schema = yup.object().shape({
 
   monthlyIncome: yup
     .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
     .required(VALIDATION_MESSAGES.REQUIRED)
     .min(0, VALIDATION_MESSAGES.NON_NEGATIVE),
 

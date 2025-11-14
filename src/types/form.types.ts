@@ -14,9 +14,9 @@ export interface ApplicationFormData {
 
   // Step 2: Family & Financial Information
   maritalStatus: "single" | "married" | "divorced" | "widowed" | "";
-  dependents: number;
+  dependents: number | "";
   employmentStatus: "employed" | "unemployed" | "selfEmployed" | "retired" | "";
-  monthlyIncome: number;
+  monthlyIncome: number | "";
   housingStatus: "owned" | "rented" | "homeless" | "other" | "";
 
   // Step 3: Situation Descriptions
@@ -38,9 +38,9 @@ export const initialFormData: ApplicationFormData = {
   phone: "",
   email: "",
   maritalStatus: "",
-  dependents: 0,
+  dependents: "",
   employmentStatus: "",
-  monthlyIncome: 0,
+  monthlyIncome: "",
   housingStatus: "",
   financialSituation: "",
   employmentCircumstances: "",

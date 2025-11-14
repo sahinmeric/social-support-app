@@ -59,7 +59,10 @@ export const sanitizeFormData = (
   for (const key in data) {
     if (Object.prototype.hasOwnProperty.call(data, key)) {
       const value = data[key as keyof ApplicationFormData];
-      if (typeof value === "string") {
+      // Convert empty string to 0 for numeric fields
+      if (value === "" && (key === "dependents" || key === "monthlyIncome")) {
+        sanitized[key] = 0;
+      } else if (typeof value === "string") {
         // Sanitize string fields
         sanitized[key] = sanitizeInput(value);
       } else {
