@@ -94,4 +94,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   );
 };
 
-export default ProgressBar;
+// Memoize component with custom comparison function
+export default React.memo(ProgressBar, (prevProps, nextProps) => {
+  // Only re-render if currentStep or totalSteps change
+  return (
+    prevProps.currentStep === nextProps.currentStep &&
+    prevProps.totalSteps === nextProps.totalSteps
+  );
+});

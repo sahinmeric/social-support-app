@@ -52,4 +52,5 @@ const LanguageSelector: React.FC = () => {
   );
 };
 
-export default LanguageSelector;
+// Memoize component as it rarely changes
+export default React.memo(LanguageSelector);

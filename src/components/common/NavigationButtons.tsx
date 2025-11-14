@@ -113,4 +113,5 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   );
 };
 
-export default NavigationButtons;
+// Memoize component to prevent unnecessary re-renders
+export default React.memo(NavigationButtons);

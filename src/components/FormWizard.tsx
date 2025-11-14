@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useCallback, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -38,8 +38,9 @@ const FormWizard: React.FC = () => {
 
   /**
    * Handle navigation to next step
+   * Memoized to prevent unnecessary re-renders of child components
    */
-  const handleNext = async () => {
+  const handleNext = useCallback(async () => {
     const isValid = await validateCurrentStep();
     if (isValid && currentStep < FORM_STEPS.MAX_STEP) {
       setCurrentStep((currentStep + 1) as 1 | 2 | 3);
@@ -49,12 +50,13 @@ const FormWizard: React.FC = () => {
         behavior: SCROLL_CONFIG.BEHAVIOR,
       });
     }
-  };
+  }, [currentStep, validateCurrentStep, setCurrentStep]);
 
   /**
    * Handle navigation to previous step
+   * Memoized to prevent unnecessary re-renders of child components
    */
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentStep > FORM_STEPS.MIN_STEP) {
       setCurrentStep((currentStep - 1) as 1 | 2 | 3);
       // Scroll to top when changing steps
@@ -63,12 +65,13 @@ const FormWizard: React.FC = () => {
         behavior: SCROLL_CONFIG.BEHAVIOR,
       });
     }
-  };
+  }, [currentStep, setCurrentStep]);
 
   /**
    * Handle form submission
+   * Memoized to prevent unnecessary re-renders of child components
    */
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const isValid = await validateCurrentStep();
     if (!isValid) {
       setErrorMessage(t("submission.validationError"));
@@ -114,7 +117,7 @@ const FormWizard: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [validateCurrentStep, t, formData]);
 
   /**
    * Handle submit another application
@@ -147,8 +150,9 @@ const FormWizard: React.FC = () => {
 
   /**
    * Get the title for the current step
+   * Memoized to avoid recalculating on every render
    */
-  const getStepTitle = (): string => {
+  const stepTitle = useMemo(() => {
     switch (currentStep) {
       case FORM_STEPS.PERSONAL_INFO:
         return t("steps.personalInfo");
@@ -159,7 +163,7 @@ const FormWizard: React.FC = () => {
       default:
         return "";
     }
-  };
+  }, [currentStep, t]);
 
   /**
    * Render the current step component
@@ -200,7 +204,7 @@ const FormWizard: React.FC = () => {
 
       {/* Step Title */}
       <Typography variant="h4" component="h1" gutterBottom align="center">
-        {getStepTitle()}
+        {stepTitle}
       </Typography>
 
       {/* Progress Bar */}
