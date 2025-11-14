@@ -14,76 +14,77 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      fillStep1(data: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        phone: string;
-        dateOfBirth: string;
-        nationalId: string;
-      }): Chainable<void>;
-      fillStep2(data: {
-        maritalStatus: string;
-        numberOfDependents: string;
-        monthlyIncome: string;
-        hasOtherIncome: boolean;
-        otherIncomeSource?: string;
-        otherIncomeAmount?: string;
-      }): Chainable<void>;
-      fillStep3(data: {
-        currentSituation: string;
-        requestedAssistance: string;
-        additionalInfo?: string;
-      }): Chainable<void>;
+      fillStep1(data: Step1Data): Chainable<void>;
+      fillStep2(data: Step2Data): Chainable<void>;
+      fillStep3(data: Step3Data): Chainable<void>;
     }
   }
 }
 
+// TypeScript interfaces for form data
+interface Step1Data {
+  name: string;
+  nationalId: string;
+  dateOfBirth: string;
+  gender: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  phone: string;
+  email: string;
+}
+
+interface Step2Data {
+  maritalStatus: string;
+  dependents: string;
+  employmentStatus: string;
+  monthlyIncome: string;
+  currency: string;
+  housingStatus: string;
+}
+
+interface Step3Data {
+  financialSituation: string;
+  employmentCircumstances: string;
+  reasonForApplying: string;
+}
+
 // Custom command to fill Step 1 (Personal Information)
 Cypress.Commands.add("fillStep1", (data) => {
-  cy.get('input[name="firstName"]').clear().type(data.firstName);
-  cy.get('input[name="lastName"]').clear().type(data.lastName);
-  cy.get('input[name="email"]').clear().type(data.email);
-  cy.get('input[name="phone"]').clear().type(data.phone);
-  cy.get('input[name="dateOfBirth"]').clear().type(data.dateOfBirth);
+  cy.get('input[name="name"]').clear().type(data.name);
   cy.get('input[name="nationalId"]').clear().type(data.nationalId);
+  cy.get('input[name="dateOfBirth"]').clear().type(data.dateOfBirth);
+  cy.get('select[name="gender"]').select(data.gender);
+  cy.get('input[name="address"]').clear().type(data.address);
+  cy.get('input[name="city"]').clear().type(data.city);
+  cy.get('input[name="state"]').clear().type(data.state);
+  cy.get('input[name="country"]').clear().type(data.country);
+  cy.get('input[name="phone"]').clear().type(data.phone);
+  cy.get('input[name="email"]').clear().type(data.email);
 });
 
 // Custom command to fill Step 2 (Family and Financial Information)
 Cypress.Commands.add("fillStep2", (data) => {
   cy.get('select[name="maritalStatus"]').select(data.maritalStatus);
-  cy.get('input[name="numberOfDependents"]')
-    .clear()
-    .type(data.numberOfDependents);
+  cy.get('select[name="dependents"]').select(data.dependents);
+  cy.get('select[name="employmentStatus"]').select(data.employmentStatus);
   cy.get('input[name="monthlyIncome"]').clear().type(data.monthlyIncome);
-
-  if (data.hasOtherIncome) {
-    cy.get('input[name="hasOtherIncome"]').check();
-    if (data.otherIncomeSource) {
-      cy.get('input[name="otherIncomeSource"]')
-        .clear()
-        .type(data.otherIncomeSource);
-    }
-    if (data.otherIncomeAmount) {
-      cy.get('input[name="otherIncomeAmount"]')
-        .clear()
-        .type(data.otherIncomeAmount);
-    }
-  }
+  cy.get('select[name="currency"]').select(data.currency);
+  cy.get('select[name="housingStatus"]').select(data.housingStatus);
 });
 
 // Custom command to fill Step 3 (Situation Description)
 Cypress.Commands.add("fillStep3", (data) => {
-  cy.get('textarea[name="currentSituation"]')
+  cy.get('textarea[name="financialSituation"]')
     .clear()
-    .type(data.currentSituation);
-  cy.get('textarea[name="requestedAssistance"]')
+    .type(data.financialSituation);
+  cy.get('textarea[name="employmentCircumstances"]')
     .clear()
-    .type(data.requestedAssistance);
-
-  if (data.additionalInfo) {
-    cy.get('textarea[name="additionalInfo"]').clear().type(data.additionalInfo);
-  }
+    .type(data.employmentCircumstances);
+  cy.get('textarea[name="reasonForApplying"]')
+    .clear()
+    .type(data.reasonForApplying);
 });
 
 export {};
