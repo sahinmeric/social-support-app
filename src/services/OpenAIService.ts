@@ -15,6 +15,7 @@ import {
   ERROR_CODES,
 } from "../constants";
 import { sanitizeInput } from "../utils/sanitize";
+import { PerformanceMonitor } from "../utils/performance";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_AI === "true";
 
@@ -109,20 +110,36 @@ Generate a compelling reason for why they are applying for social support, focus
 
   /**
    * Generate AI suggestion for a specific field
+   * Performance monitored for optimization tracking
    */
   async generateSuggestion(
     fieldName: keyof ApplicationFormData,
     formData: ApplicationFormData
   ): Promise<AISuggestion> {
-    // Use mock mode for testing without API calls (avoids CORS issues)
-    if (USE_MOCK) {
-      // Simulate network delay
-      await new Promise((resolve) =>
-        setTimeout(resolve, APP_CONFIG.AI_MOCK_DELAY)
-      );
-      return this.generateMockSuggestion(fieldName, formData);
-    }
+    return PerformanceMonitor.measureAsync(
+      `AI Suggestion Generation - ${fieldName}`,
+      async () => {
+        // Use mock mode for testing without API calls (avoids CORS issues)
+        if (USE_MOCK) {
+          // Simulate network delay
+          await new Promise((resolve) =>
+            setTimeout(resolve, APP_CONFIG.AI_MOCK_DELAY)
+          );
+          return this.generateMockSuggestion(fieldName, formData);
+        }
 
+        return this.generateSuggestionInternal(fieldName, formData);
+      }
+    );
+  }
+
+  /**
+   * Internal method for generating AI suggestions
+   */
+  private async generateSuggestionInternal(
+    fieldName: keyof ApplicationFormData,
+    formData: ApplicationFormData
+  ): Promise<AISuggestion> {
     if (!this.apiKey) {
       throw this.createError(
         AIErrorType.GENERIC,

@@ -14,6 +14,7 @@ import { useFormPersistence } from "../hooks/useFormPersistence";
 import { FormContext } from "./FormContext.context";
 import type { FormContextValue } from "./FormContext.types";
 import { FORM_STEPS } from "../constants";
+import { PerformanceMonitor } from "../utils/performance";
 
 interface FormProviderProps {
   children: ReactNode;
@@ -68,11 +69,15 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
 
   /**
    * Validate the current step using Yup schema
+   * Performance monitored for optimization tracking
    */
   const validateCurrentStep = useCallback(async (): Promise<boolean> => {
-    const result = await trigger();
+    const result = await PerformanceMonitor.measureAsync(
+      `Form Validation - Step ${currentStep}`,
+      async () => await trigger()
+    );
     return result;
-  }, [trigger]);
+  }, [trigger, currentStep]);
 
   /**
    * Clear all validation errors

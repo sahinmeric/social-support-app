@@ -2,6 +2,7 @@ import type { ApplicationFormData } from "../types/form.types";
 import type { SubmissionResponse } from "../types/api.types";
 import { APP_CONFIG, MIN_TEXT_LENGTH } from "../constants";
 import { sanitizeFormData } from "../utils/sanitize";
+import { PerformanceMonitor } from "../utils/performance";
 
 /**
  * Service for submitting application data to the backend
@@ -15,54 +16,57 @@ export class APIService {
   /**
    * Submit application to the backend
    * Currently uses a mock implementation with 1-2 second delay
+   * Performance monitored for optimization tracking
    */
   static async submitApplication(
     data: ApplicationFormData
   ): Promise<SubmissionResponse> {
-    try {
-      // Sanitize form data before submission
-      const sanitizedData = sanitizeFormData(data) as ApplicationFormData;
+    return PerformanceMonitor.measureAsync("Form Submission", async () => {
+      try {
+        // Sanitize form data before submission
+        const sanitizedData = sanitizeFormData(data) as ApplicationFormData;
 
-      // Validate all required fields are present
-      const validationErrors = this.validateSubmission(sanitizedData);
-      if (validationErrors.length > 0) {
-        throw new Error(`Validation failed: ${validationErrors.join(", ")}`);
+        // Validate all required fields are present
+        const validationErrors = this.validateSubmission(sanitizedData);
+        if (validationErrors.length > 0) {
+          throw new Error(`Validation failed: ${validationErrors.join(", ")}`);
+        }
+
+        // Simulate network delay (1-2 seconds)
+        const delay =
+          APP_CONFIG.MOCK_API_DELAY_MIN +
+          Math.random() *
+            (APP_CONFIG.MOCK_API_DELAY_MAX - APP_CONFIG.MOCK_API_DELAY_MIN);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        // Mock API response
+        // In production, this would be:
+        // const response = await axios.post(this.API_URL, data);
+        // return response.data;
+
+        const mockResponse: SubmissionResponse = {
+          success: true,
+          message: "Application submitted successfully",
+          data: {
+            applicationId: `APP-${Date.now()}-${Math.random()
+              .toString(36)
+              .substr(2, 9)}`,
+            timestamp: new Date().toISOString(),
+          },
+        };
+
+        // eslint-disable-next-line no-console
+        console.log("Application submitted:", {
+          data: sanitizedData,
+          response: mockResponse,
+        });
+
+        return mockResponse;
+      } catch (error) {
+        console.error("Submission error:", error);
+        throw error;
       }
-
-      // Simulate network delay (1-2 seconds)
-      const delay =
-        APP_CONFIG.MOCK_API_DELAY_MIN +
-        Math.random() *
-          (APP_CONFIG.MOCK_API_DELAY_MAX - APP_CONFIG.MOCK_API_DELAY_MIN);
-      await new Promise((resolve) => setTimeout(resolve, delay));
-
-      // Mock API response
-      // In production, this would be:
-      // const response = await axios.post(this.API_URL, data);
-      // return response.data;
-
-      const mockResponse: SubmissionResponse = {
-        success: true,
-        message: "Application submitted successfully",
-        data: {
-          applicationId: `APP-${Date.now()}-${Math.random()
-            .toString(36)
-            .substr(2, 9)}`,
-          timestamp: new Date().toISOString(),
-        },
-      };
-
-      // eslint-disable-next-line no-console
-      console.log("Application submitted:", {
-        data: sanitizedData,
-        response: mockResponse,
-      });
-
-      return mockResponse;
-    } catch (error) {
-      console.error("Submission error:", error);
-      throw error;
-    }
+    });
   }
 
   /**
