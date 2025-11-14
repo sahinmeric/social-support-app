@@ -5,6 +5,7 @@ import { useLanguage } from "./contexts/LanguageContext";
 import { createAppTheme } from "./theme/theme";
 import { FormProvider } from "./contexts/FormContext";
 import FormWizard from "./components/FormWizard";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 import "./App.css";
 
 function App() {
@@ -14,11 +15,15 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <FormProvider>
-        <Box sx={{ minHeight: "100vh", bgcolor: "background.default", py: 4 }}>
-          <FormWizard />
-        </Box>
-      </FormProvider>
+      <ErrorBoundary>
+        <FormProvider>
+          <Box
+            sx={{ minHeight: "100vh", bgcolor: "background.default", py: 4 }}
+          >
+            <FormWizard />
+          </Box>
+        </FormProvider>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }

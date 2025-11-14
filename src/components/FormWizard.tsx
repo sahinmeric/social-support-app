@@ -8,8 +8,7 @@ import Snackbar from "@mui/material/Snackbar";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../hooks/useFormContext";
 import { useStepNavigation } from "../hooks/useStepNavigation";
-import { APIService } from "../services/APIService";
-import { StorageService } from "../services/StorageService";
+import { useFormSubmission } from "../hooks/useFormSubmission";
 import ProgressBar from "./common/ProgressBar";
 import NavigationButtons from "./common/NavigationButtons";
 import LanguageSelector from "./common/LanguageSelector";
@@ -28,74 +27,31 @@ const FormWizard: React.FC = () => {
   const { t } = useTranslation();
   const { formData, validateCurrentStep } = useFormContext();
   const { currentStep, handleNext, handlePrevious } = useStepNavigation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const {
+    isSubmitting,
+    isSuccess,
+    error: submissionError,
+    submissionData,
+    submitForm,
+    resetSubmission,
+  } = useFormSubmission();
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [submissionData, setSubmissionData] = useState<{
-    applicationId?: string;
-    timestamp?: string;
-  }>({});
 
   /**
    * Handle form submission
    * Memoized to prevent unnecessary re-renders of child components
    */
   const handleSubmit = useCallback(async () => {
-    const isValid = await validateCurrentStep();
-    if (!isValid) {
-      setErrorMessage(t("submission.validationError"));
-      setShowError(true);
-      return;
-    }
-
-    setIsSubmitting(true);
     setShowError(false);
-
-    try {
-      // Submit application via API service
-      const response = await APIService.submitApplication(formData);
-
-      if (response.success && response.data) {
-        // Clear localStorage on successful submission
-        StorageService.clearFormData();
-
-        // Store submission data
-        setSubmissionData({
-          applicationId: response.data.applicationId,
-          timestamp: response.data.timestamp,
-        });
-
-        // Show success page
-        setShowSuccess(true);
-
-        // Log for demonstration
-        // eslint-disable-next-line no-console
-        console.log("Application submitted successfully:", {
-          applicationId: response.data.applicationId,
-          timestamp: response.data.timestamp,
-        });
-      } else {
-        throw new Error(response.message || "Submission failed");
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-      setErrorMessage(
-        error instanceof Error ? error.message : t("submission.error")
-      );
-      setShowError(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [validateCurrentStep, t, formData]);
+    await submitForm(formData, validateCurrentStep);
+  }, [submitForm, formData, validateCurrentStep]);
 
   /**
    * Handle submit another application
    */
   const handleSubmitAnother = () => {
-    // Reset form state
-    setShowSuccess(false);
-    setSubmissionData({});
+    // Reset submission state
+    resetSubmission();
     // Note: FormContext will initialize with empty data from localStorage
     // which was cleared after successful submission
     window.location.reload(); // Reload to reset all state
@@ -116,6 +72,15 @@ const FormWizard: React.FC = () => {
   const handleCloseError = () => {
     setShowError(false);
   };
+
+  /**
+   * Show error snackbar when submission error occurs
+   */
+  React.useEffect(() => {
+    if (submissionError) {
+      setShowError(true);
+    }
+  }, [submissionError]);
 
   /**
    * Get the title for the current step
@@ -151,12 +116,12 @@ const FormWizard: React.FC = () => {
   };
 
   // Show success page after successful submission
-  if (showSuccess) {
+  if (isSuccess) {
     return (
       <Suspense fallback={<FormSkeleton />}>
         <SuccessPage
-          applicationId={submissionData.applicationId}
-          timestamp={submissionData.timestamp}
+          applicationId={submissionData?.applicationId}
+          timestamp={submissionData?.timestamp}
           onSubmitAnother={handleSubmitAnother}
           onGoHome={handleGoHome}
         />
@@ -211,7 +176,7 @@ const FormWizard: React.FC = () => {
           variant="filled"
           sx={{ width: "100%" }}
         >
-          {errorMessage || t("submission.error")}
+          {submissionError || t("submission.error")}
         </Alert>
       </Snackbar>
     </Container>

@@ -5,7 +5,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -15,6 +14,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useTranslation } from "react-i18next";
+import { ModalSkeleton } from "../common/SkeletonLoader";
 import type { SuggestionModalProps } from "../../types/component.types";
 
 const SuggestionModal: React.FC<SuggestionModalProps> = ({
@@ -96,20 +96,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
       </DialogTitle>
 
       <DialogContent dividers>
-        {isLoading && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              py: 4,
-            }}
-          >
-            <CircularProgress size={40} sx={{ mb: 2 }} />
-            <Box sx={{ color: "text.secondary" }}>{t("ai.generating")}</Box>
-          </Box>
-        )}
+        {isLoading && <ModalSkeleton />}
 
         {error && (
           <Alert
