@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -10,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import type { SelectChangeEvent } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";
+import FormField from "../common/FormField";
 
 const Step2FamilyFinancial: React.FC = () => {
   const { t } = useTranslation();
@@ -102,7 +102,7 @@ const Step2FamilyFinancial: React.FC = () => {
             )}
           </FormControl>
 
-          <TextField
+          <FormField
             fullWidth
             required
             id="dependents"
@@ -111,8 +111,7 @@ const Step2FamilyFinancial: React.FC = () => {
             type="number"
             value={formData.dependents}
             onChange={handleChange("dependents")}
-            error={!!errors.dependents}
-            helperText={getErrorMessage(errors.dependents)}
+            error={getErrorMessage(errors.dependents)}
             slotProps={{
               htmlInput: {
                 min: 0,
@@ -177,7 +176,7 @@ const Step2FamilyFinancial: React.FC = () => {
             )}
           </FormControl>
 
-          <TextField
+          <FormField
             fullWidth
             required
             id="monthlyIncome"
@@ -186,8 +185,7 @@ const Step2FamilyFinancial: React.FC = () => {
             type="number"
             value={formData.monthlyIncome}
             onChange={handleChange("monthlyIncome")}
-            error={!!errors.monthlyIncome}
-            helperText={getErrorMessage(errors.monthlyIncome)}
+            error={getErrorMessage(errors.monthlyIncome)}
             slotProps={{
               htmlInput: {
                 min: 0,

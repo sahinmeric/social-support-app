@@ -110,5 +110,8 @@
     "somethingWentWrong": "حدث خطأ ما",
     "pleaseTryAgain": "نأسف، لكن حدث شيء غير متوقع. يرجى المحاولة مرة أخرى.",
     "retry": "إعادة المحاولة"
+  },
+  "progress": {
+    "overallCompletion": "نسبة الإنجاز الكلية"
   }
 }

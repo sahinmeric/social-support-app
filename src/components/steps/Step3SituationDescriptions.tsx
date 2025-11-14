@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -10,6 +9,7 @@ import { useAISuggestion } from "../../hooks/useAISuggestion";
 import SuggestionModal from "../ai/SuggestionModal";
 import { MIN_TEXT_LENGTH } from "../../constants";
 import { sanitizeInput } from "../../utils/sanitize";
+import FormField from "../common/FormField";
 
 const Step3SituationDescriptions: React.FC = () => {
   const { t } = useTranslation();
@@ -52,7 +52,7 @@ const Step3SituationDescriptions: React.FC = () => {
       <Stack spacing={3}>
         {/* Financial Situation */}
         <Box>
-          <TextField
+          <FormField
             fullWidth
             required
             id="financialSituation"
@@ -61,17 +61,21 @@ const Step3SituationDescriptions: React.FC = () => {
             value={formData.financialSituation}
             onChange={handleChange("financialSituation")}
             onBlur={handleBlur("financialSituation")}
-            error={!!errors.financialSituation}
-            helperText={
+            error={
               errors.financialSituation
                 ? t(errors.financialSituation, {
                     min: MIN_TEXT_LENGTH.DESCRIPTION,
                   })
-                : `${t("validation.minLength", {
+                : undefined
+            }
+            helperText={
+              !errors.financialSituation
+                ? `${t("validation.minLength", {
                     min: MIN_TEXT_LENGTH.DESCRIPTION,
                   })} (${formData.financialSituation.length}/${
                     MIN_TEXT_LENGTH.DESCRIPTION
                   })`
+                : undefined
             }
             multiline
             rows={4}
@@ -103,7 +107,7 @@ const Step3SituationDescriptions: React.FC = () => {
 
         {/* Employment Circumstances */}
         <Box>
-          <TextField
+          <FormField
             fullWidth
             required
             id="employmentCircumstances"
@@ -112,17 +116,21 @@ const Step3SituationDescriptions: React.FC = () => {
             value={formData.employmentCircumstances}
             onChange={handleChange("employmentCircumstances")}
             onBlur={handleBlur("employmentCircumstances")}
-            error={!!errors.employmentCircumstances}
-            helperText={
+            error={
               errors.employmentCircumstances
                 ? t(errors.employmentCircumstances, {
                     min: MIN_TEXT_LENGTH.DESCRIPTION,
                   })
-                : `${t("validation.minLength", {
+                : undefined
+            }
+            helperText={
+              !errors.employmentCircumstances
+                ? `${t("validation.minLength", {
                     min: MIN_TEXT_LENGTH.DESCRIPTION,
                   })} (${formData.employmentCircumstances.length}/${
                     MIN_TEXT_LENGTH.DESCRIPTION
                   })`
+                : undefined
             }
             multiline
             rows={4}
@@ -154,7 +162,7 @@ const Step3SituationDescriptions: React.FC = () => {
 
         {/* Reason for Applying */}
         <Box>
-          <TextField
+          <FormField
             fullWidth
             required
             id="reasonForApplying"
@@ -163,17 +171,21 @@ const Step3SituationDescriptions: React.FC = () => {
             value={formData.reasonForApplying}
             onChange={handleChange("reasonForApplying")}
             onBlur={handleBlur("reasonForApplying")}
-            error={!!errors.reasonForApplying}
-            helperText={
+            error={
               errors.reasonForApplying
                 ? t(errors.reasonForApplying, {
                     min: MIN_TEXT_LENGTH.DESCRIPTION,
                   })
-                : `${t("validation.minLength", {
+                : undefined
+            }
+            helperText={
+              !errors.reasonForApplying
+                ? `${t("validation.minLength", {
                     min: MIN_TEXT_LENGTH.DESCRIPTION,
                   })} (${formData.reasonForApplying.length}/${
                     MIN_TEXT_LENGTH.DESCRIPTION
                   })`
+                : undefined
             }
             multiline
             rows={4}

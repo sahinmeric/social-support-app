@@ -110,5 +110,8 @@
     "somethingWentWrong": "Something went wrong",
     "pleaseTryAgain": "We're sorry, but something unexpected happened. Please try again.",
     "retry": "Retry"
+  },
+  "progress": {
+    "overallCompletion": "Overall Completion"
   }
 }

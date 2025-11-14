@@ -4,6 +4,7 @@ import type { ApplicationFormData, FormStep, FormErrors } from "./form.types";
 export interface ProgressBarProps {
   currentStep: FormStep;
   totalSteps: number;
+  completionPercentage?: number;
 }
 
 // NavigationButtons component props

@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -11,6 +10,7 @@ import type { SelectChangeEvent } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";
 import { sanitizeInput } from "../../utils/sanitize";
+import FormField from "../common/FormField";
 
 const Step1PersonalInfo: React.FC = () => {
   const { t } = useTranslation();
@@ -70,7 +70,7 @@ const Step1PersonalInfo: React.FC = () => {
             flexDirection: { xs: "column", md: "row" },
           }}
         >
-          <TextField
+          <FormField
             fullWidth
             required
             id="name"
@@ -79,8 +79,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.name}
             onChange={handleChange("name")}
             onBlur={handleBlur("name")}
-            error={!!errors.name}
-            helperText={getErrorMessage(errors.name)}
+            error={getErrorMessage(errors.name)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.name"),
@@ -91,7 +90,7 @@ const Step1PersonalInfo: React.FC = () => {
             }}
           />
 
-          <TextField
+          <FormField
             fullWidth
             required
             id="nationalId"
@@ -100,8 +99,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.nationalId}
             onChange={handleChange("nationalId")}
             onBlur={handleBlur("nationalId")}
-            error={!!errors.nationalId}
-            helperText={getErrorMessage(errors.nationalId)}
+            error={getErrorMessage(errors.nationalId)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.nationalId"),
@@ -123,7 +121,7 @@ const Step1PersonalInfo: React.FC = () => {
             flexDirection: { xs: "column", md: "row" },
           }}
         >
-          <TextField
+          <FormField
             fullWidth
             required
             id="dateOfBirth"
@@ -132,8 +130,7 @@ const Step1PersonalInfo: React.FC = () => {
             type="date"
             value={formData.dateOfBirth}
             onChange={handleChange("dateOfBirth")}
-            error={!!errors.dateOfBirth}
-            helperText={getErrorMessage(errors.dateOfBirth)}
+            error={getErrorMessage(errors.dateOfBirth)}
             slotProps={{
               inputLabel: {
                 shrink: true,
@@ -182,7 +179,7 @@ const Step1PersonalInfo: React.FC = () => {
         </Box>
 
         {/* Row 3: Address */}
-        <TextField
+        <FormField
           fullWidth
           required
           id="address"
@@ -191,8 +188,7 @@ const Step1PersonalInfo: React.FC = () => {
           value={formData.address}
           onChange={handleChange("address")}
           onBlur={handleBlur("address")}
-          error={!!errors.address}
-          helperText={getErrorMessage(errors.address)}
+          error={getErrorMessage(errors.address)}
           multiline
           rows={2}
           slotProps={{
@@ -213,7 +209,7 @@ const Step1PersonalInfo: React.FC = () => {
             flexDirection: { xs: "column", md: "row" },
           }}
         >
-          <TextField
+          <FormField
             fullWidth
             required
             id="city"
@@ -222,8 +218,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.city}
             onChange={handleChange("city")}
             onBlur={handleBlur("city")}
-            error={!!errors.city}
-            helperText={getErrorMessage(errors.city)}
+            error={getErrorMessage(errors.city)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.city"),
@@ -234,7 +229,7 @@ const Step1PersonalInfo: React.FC = () => {
             }}
           />
 
-          <TextField
+          <FormField
             fullWidth
             required
             id="state"
@@ -243,8 +238,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.state}
             onChange={handleChange("state")}
             onBlur={handleBlur("state")}
-            error={!!errors.state}
-            helperText={getErrorMessage(errors.state)}
+            error={getErrorMessage(errors.state)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.state"),
@@ -264,7 +258,7 @@ const Step1PersonalInfo: React.FC = () => {
             flexDirection: { xs: "column", md: "row" },
           }}
         >
-          <TextField
+          <FormField
             fullWidth
             required
             id="country"
@@ -273,8 +267,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.country}
             onChange={handleChange("country")}
             onBlur={handleBlur("country")}
-            error={!!errors.country}
-            helperText={getErrorMessage(errors.country)}
+            error={getErrorMessage(errors.country)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.country"),
@@ -287,7 +280,7 @@ const Step1PersonalInfo: React.FC = () => {
             }}
           />
 
-          <TextField
+          <FormField
             fullWidth
             required
             id="phone"
@@ -297,8 +290,7 @@ const Step1PersonalInfo: React.FC = () => {
             value={formData.phone}
             onChange={handleChange("phone")}
             onBlur={handleBlur("phone")}
-            error={!!errors.phone}
-            helperText={getErrorMessage(errors.phone)}
+            error={getErrorMessage(errors.phone)}
             slotProps={{
               htmlInput: {
                 "aria-label": t("fields.phone"),
@@ -311,7 +303,7 @@ const Step1PersonalInfo: React.FC = () => {
         </Box>
 
         {/* Row 6: Email */}
-        <TextField
+        <FormField
           fullWidth
           required
           id="email"
@@ -321,8 +313,7 @@ const Step1PersonalInfo: React.FC = () => {
           value={formData.email}
           onChange={handleChange("email")}
           onBlur={handleBlur("email")}
-          error={!!errors.email}
-          helperText={getErrorMessage(errors.email)}
+          error={getErrorMessage(errors.email)}
           slotProps={{
             htmlInput: {
               "aria-label": t("fields.email"),

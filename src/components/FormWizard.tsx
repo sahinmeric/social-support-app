@@ -14,6 +14,7 @@ import NavigationButtons from "./common/NavigationButtons";
 import LanguageSelector from "./common/LanguageSelector";
 import { FormSkeleton } from "./common/SkeletonLoader";
 import { APP_CONFIG, FORM_STEPS } from "../constants";
+import { calculateCompletionPercentage } from "../utils/progress";
 
 // Lazy load step components for code splitting
 const Step1PersonalInfo = lazy(() => import("./steps/Step1PersonalInfo"));
@@ -83,6 +84,15 @@ const FormWizard: React.FC = () => {
   }, [submissionError]);
 
   /**
+   * Calculate completion percentage
+   * Memoized to avoid recalculating on every render
+   */
+  const completionPercentage = useMemo(
+    () => calculateCompletionPercentage(formData),
+    [formData]
+  );
+
+  /**
    * Get the title for the current step
    * Memoized to avoid recalculating on every render
    */
@@ -145,6 +155,7 @@ const FormWizard: React.FC = () => {
       <ProgressBar
         currentStep={currentStep}
         totalSteps={APP_CONFIG.FORM_STEPS}
+        completionPercentage={completionPercentage}
       />
 
       {/* Step Content */}
