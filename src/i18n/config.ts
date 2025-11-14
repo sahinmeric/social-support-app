@@ -51,7 +51,7 @@ const initializeI18n = async () => {
   return i18n;
 };
 
-// Initialize i18n
-initializeI18n();
+// Initialize i18n and export the promise
+export const i18nInitPromise = initializeI18n();
 
 export default i18n;
