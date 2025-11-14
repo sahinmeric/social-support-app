@@ -307,14 +307,14 @@
     - Document known issues for medium/low priority
   - _Requirements: Comprehensive manual testing_
 
-- [ ] 28. Set up unit testing framework
-  - [ ] 28.1 Install testing dependencies
+- [-] 28. Set up unit testing framework
+  - [x] 28.1 Install testing dependencies
     - Install Vitest as test runner
     - Install @testing-library/react for component testing
     - Install @testing-library/jest-dom for DOM matchers
     - Install @testing-library/user-event for user interactions
     - Configure Vitest in vite.config.ts
-  - [ ] 28.2 Create test utilities and setup
+  - [x] 28.2 Create test utilities and setup
     - Create src/test/setup.ts with global test configuration
     - Create src/test/utils.tsx with custom render function
     - Set up test providers (FormProvider, LanguageProvider, ThemeProvider)
