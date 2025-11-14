@@ -29,6 +29,7 @@
     "dependents": "Number of Dependents",
     "employmentStatus": "Employment Status",
     "monthlyIncome": "Monthly Income",
+    "currency": "Currency",
     "housingStatus": "Housing Status",
     "financialSituation": "Current Financial Situation",
     "employmentCircumstances": "Employment Circumstances",

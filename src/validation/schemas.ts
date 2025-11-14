@@ -125,6 +125,11 @@ export const step2Schema = yup.object().shape({
     .required(VALIDATION_MESSAGES.REQUIRED)
     .min(0, VALIDATION_MESSAGES.NON_NEGATIVE),
 
+  currency: yup
+    .string()
+    .required(VALIDATION_MESSAGES.REQUIRED)
+    .oneOf(["USD", "AED"], "Please select a valid currency"),
+
   housingStatus: yup
     .string()
     .required(VALIDATION_MESSAGES.REQUIRED)

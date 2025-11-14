@@ -17,6 +17,7 @@ export interface ApplicationFormData {
   dependents: number | "";
   employmentStatus: "employed" | "unemployed" | "selfEmployed" | "retired" | "";
   monthlyIncome: number | "";
+  currency: "USD" | "AED" | "";
   housingStatus: "owned" | "rented" | "homeless" | "other" | "";
 
   // Step 3: Situation Descriptions
@@ -41,6 +42,7 @@ export const initialFormData: ApplicationFormData = {
   dependents: "",
   employmentStatus: "",
   monthlyIncome: "",
+  currency: "AED",
   housingStatus: "",
   financialSituation: "",
   employmentCircumstances: "",

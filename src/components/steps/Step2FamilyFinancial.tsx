@@ -196,29 +196,53 @@ const Step2FamilyFinancial: React.FC = () => {
             )}
           </FormControl>
 
-          <FormField
-            fullWidth
-            required
-            id="monthlyIncome"
-            name="monthlyIncome"
-            label={t("fields.monthlyIncome")}
-            type="number"
-            value={formData.monthlyIncome}
-            onChange={handleChange("monthlyIncome")}
-            error={getErrorMessage(errors.monthlyIncome)}
-            slotProps={{
-              htmlInput: {
-                min: 0,
-                step: "0.01",
-                "aria-label": t("fields.monthlyIncome"),
-                "aria-required": "true",
-                "aria-invalid": !!errors.monthlyIncome,
-                "aria-describedby": errors.monthlyIncome
-                  ? "monthlyIncome-error"
-                  : undefined,
-              },
-            }}
-          />
+          <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+            <FormField
+              fullWidth
+              required
+              id="monthlyIncome"
+              name="monthlyIncome"
+              label={t("fields.monthlyIncome")}
+              type="number"
+              value={formData.monthlyIncome}
+              onChange={handleChange("monthlyIncome")}
+              error={getErrorMessage(errors.monthlyIncome)}
+              slotProps={{
+                htmlInput: {
+                  min: 0,
+                  step: "0.01",
+                  "aria-label": t("fields.monthlyIncome"),
+                  "aria-required": "true",
+                  "aria-invalid": !!errors.monthlyIncome,
+                  "aria-describedby": errors.monthlyIncome
+                    ? "monthlyIncome-error"
+                    : undefined,
+                },
+              }}
+            />
+            <FormControl sx={{ minWidth: 120 }} required>
+              <InputLabel id="currency-label">
+                {t("fields.currency")}
+              </InputLabel>
+              <Select
+                labelId="currency-label"
+                id="currency"
+                name="currency"
+                value={formData.currency}
+                onChange={handleSelectChange("currency")}
+                label={t("fields.currency")}
+                slotProps={{
+                  input: {
+                    "aria-label": t("fields.currency"),
+                    "aria-required": "true",
+                  },
+                }}
+              >
+                <MenuItem value="USD">USD ($)</MenuItem>
+                <MenuItem value="AED">AED (د.إ)</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
 
         {/* Row 3: Housing Status */}
