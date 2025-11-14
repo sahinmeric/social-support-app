@@ -201,6 +201,272 @@
   - Document migration decisions and rationale
   - _Requirements: All requirements (documentation)_
 
+## Phase 5: Bug Fixes and UI Improvements (Completed)
+
+- [x] 21. Fix i18n initialization issue
+  - Export i18nInitPromise from config.ts
+  - Update main.tsx to wait for i18n initialization before rendering
+  - Verify translation keys don't flash on initial load
+  - Test with both English and Arabic languages
+  - _Requirements: Bug fix for translation loading_
+
+- [x] 22. Fix Step3 validation error translation
+  - Add translateError helper function to Step3SituationDescriptions
+  - Parse pipe-separated error format (key|value)
+  - Apply translation with proper interpolation
+  - Verify minimum length errors display correctly
+  - _Requirements: Bug fix for validation messages_
+
+- [x] 23. Improve numeric input UX
+  - Change dependents and monthlyIncome initial values from 0 to empty string
+  - Update form types to accept number | "" for numeric fields
+  - Update validation schema with transform to handle empty strings
+  - Update sanitizeFormData to convert empty strings to 0 before submission
+  - Test that inputs start empty and don't show "0" prefix
+  - _Requirements: UX improvement for numeric inputs_
+
+- [x] 24. Convert dependents to dropdown
+  - Replace number input with Select component for dependents field
+  - Add options from 0 to 20
+  - Update handleSelectChange to convert string to number
+  - Remove number input validation attributes
+  - Test dropdown selection and form submission
+  - _Requirements: UX improvement for dependents field_
+
+- [x] 25. Add currency selector
+  - Add currency field to form types (USD | AED)
+  - Add currency dropdown next to monthly income field
+  - Add currency validation to schema
+  - Add currency translations (English and Arabic)
+  - Display currency symbols: USD ($) and AED (د.إ)
+  - Set default currency to USD
+  - _Requirements: Feature addition for currency selection_
+
+- [x] 26. Fix success page form reset
+  - Add resetForm function to FormContext
+  - Implement resetForm to clear form data, reset to step 1, and clear localStorage
+  - Update FormWizard handleSubmitAnother to use resetForm
+  - Update FormWizard handleGoHome to use resetForm
+  - Remove window.location.reload() calls
+  - Test that success page buttons properly reset form
+  - _Requirements: Bug fix for form reset after submission_
+
+## Phase 6: Testing and Quality Assurance (TODO)
+
+- [-] 27. Complete application review and manual testing
+  - [x] 27.1 Test complete user flow from start to finish
+    - Fill out all three steps with valid data
+    - Test form validation on each step
+    - Test navigation between steps (Next/Previous)
+    - Test form submission and success page
+    - Test "Submit Another Application" flow
+  - [-] 27.2 Test internationalization (i18n)
+    - Switch between English and Arabic
+    - Verify all text translates correctly
+    - Test RTL layout for Arabic
+    - Verify validation messages in both languages
+  - [-] 27.3 Test form persistence
+    - Fill out partial form
+    - Refresh browser
+    - Verify data persists from localStorage
+    - Complete and submit form
+    - Verify localStorage clears after submission
+  - [-] 27.4 Test AI suggestion feature
+    - Click "Help Me Write" on each Step 3 field
+    - Verify suggestions generate correctly
+    - Test Accept, Edit, Discard, and Retry actions
+    - Test error handling for AI failures
+  - [-] 27.5 Test validation and error handling
+    - Submit empty form and verify validation errors
+    - Test field-level validation (email, phone, national ID)
+    - Test minimum length validation for text areas
+    - Test numeric field validation (dependents, income)
+    - Test date validation (date of birth must be in past)
+  - [-] 27.6 Test responsive design
+    - Test on desktop (1920x1080, 1366x768)
+    - Test on tablet (iPad, 768x1024)
+    - Test on mobile (iPhone, 375x667)
+    - Verify layout adapts correctly
+    - Test touch interactions on mobile
+  - [-] 27.7 Test accessibility
+    - Test keyboard navigation (Tab, Enter, Escape)
+    - Test screen reader compatibility
+    - Verify ARIA labels are present
+    - Test focus management
+    - Verify color contrast meets WCAG standards
+  - [-] 27.8 Test edge cases
+    - Test with very long text inputs
+    - Test with special characters in text fields
+    - Test rapid clicking on buttons
+    - Test browser back/forward buttons
+    - Test with slow network (throttle to 3G)
+  - [x] 27.9 Document all bugs found
+    - Create bug report for each issue
+    - Prioritize bugs (critical, high, medium, low)
+    - Fix critical and high priority bugs
+    - Document known issues for medium/low priority
+  - _Requirements: Comprehensive manual testing_
+
+- [ ] 28. Set up unit testing framework
+  - [ ] 28.1 Install testing dependencies
+    - Install Vitest as test runner
+    - Install @testing-library/react for component testing
+    - Install @testing-library/jest-dom for DOM matchers
+    - Install @testing-library/user-event for user interactions
+    - Configure Vitest in vite.config.ts
+  - [ ] 28.2 Create test utilities and setup
+    - Create src/test/setup.ts with global test configuration
+    - Create src/test/utils.tsx with custom render function
+    - Set up test providers (FormProvider, LanguageProvider, ThemeProvider)
+    - Create mock data factories for form data
+    - Create test helpers for common assertions
+  - [ ] 28.3 Write utility function tests
+    - Test sanitizeInput function with various inputs
+    - Test sanitizeFormData function
+    - Test calculateCompletionPercentage function
+    - Test calculateStepCompletion function
+    - Test PerformanceMonitor class methods
+  - [ ] 28.4 Write validation schema tests
+    - Test step1Schema with valid and invalid data
+    - Test step2Schema with valid and invalid data
+    - Test step3Schema with valid and invalid data
+    - Test edge cases (empty strings, special characters, boundary values)
+  - [ ] 28.5 Write custom hook tests
+    - Test useFormContext hook
+    - Test useStepNavigation hook
+    - Test useAISuggestion hook
+    - Test useFormSubmission hook
+    - Test useFormPersistence hook
+  - [ ] 28.6 Write component tests
+    - Test FormField component (success/error states)
+    - Test ProgressBar component
+    - Test NavigationButtons component
+    - Test LanguageSelector component
+    - Test ErrorBoundary component
+    - Test SkeletonLoader components
+  - [ ] 28.7 Write form step component tests
+    - Test Step1PersonalInfo rendering and validation
+    - Test Step2FamilyFinancial rendering and validation
+    - Test Step3SituationDescriptions rendering and AI integration
+    - Test SuccessPage rendering and actions
+  - [ ] 28.8 Write integration tests
+    - Test complete form flow (all steps)
+    - Test form persistence across page reloads
+    - Test form submission and success flow
+    - Test error handling and recovery
+  - [ ] 28.9 Set up test coverage reporting
+    - Configure Vitest coverage with c8
+    - Set coverage thresholds (80% minimum)
+    - Generate coverage reports
+    - Add coverage badge to README
+  - [ ] 28.10 Add test scripts to package.json
+    - Add "test" script to run all tests
+    - Add "test:watch" script for development
+    - Add "test:coverage" script for coverage reports
+    - Add "test:ui" script for Vitest UI
+  - _Requirements: Unit and integration testing_
+
+- [ ] 29. Set up E2E testing with Cypress
+  - [ ] 29.1 Install Cypress and dependencies
+    - Install Cypress as dev dependency
+    - Install @testing-library/cypress for better selectors
+    - Configure Cypress in cypress.config.ts
+    - Set up Cypress folder structure
+  - [ ] 29.2 Create Cypress test utilities
+    - Create cypress/support/commands.ts with custom commands
+    - Create fillStep1 command for personal info
+    - Create fillStep2 command for family/financial info
+    - Create fillStep3 command for situation descriptions
+    - Create helper functions for common actions
+  - [ ] 29.3 Write E2E test for happy path
+    - Test complete form submission flow
+    - Fill all three steps with valid data
+    - Submit form and verify success page
+    - Verify application ID is displayed
+    - Test "Submit Another Application" button
+  - [ ] 29.4 Write E2E test for validation
+    - Test form validation on each step
+    - Attempt to proceed with empty fields
+    - Verify error messages display
+    - Fill fields and verify errors clear
+    - Test field-level validation (email, phone, etc.)
+  - [ ] 29.5 Write E2E test for navigation
+    - Test Next/Previous button navigation
+    - Test progress bar updates
+    - Test step indicator highlights
+    - Test browser back/forward buttons
+    - Verify form data persists during navigation
+  - [ ] 29.6 Write E2E test for persistence
+    - Fill partial form
+    - Refresh page
+    - Verify data persists
+    - Complete and submit form
+    - Verify localStorage clears
+  - [ ] 29.7 Write E2E test for internationalization
+    - Switch to Arabic language
+    - Verify text translates
+    - Verify RTL layout
+    - Fill and submit form in Arabic
+    - Switch back to English
+  - [ ] 29.8 Write E2E test for AI suggestions
+    - Navigate to Step 3
+    - Click "Help Me Write" button
+    - Wait for suggestion to generate
+    - Test Accept action
+    - Test Edit action
+    - Test Discard action
+    - Test Retry action
+  - [ ] 29.9 Write E2E test for error scenarios
+    - Test network error during submission
+    - Test AI service error
+    - Test form validation errors
+    - Verify error messages display
+    - Verify error recovery
+  - [ ] 29.10 Set up Cypress in CI/CD
+    - Add Cypress scripts to package.json
+    - Configure Cypress for headless mode
+    - Set up video recording for failed tests
+    - Set up screenshot capture on failures
+    - Document how to run E2E tests locally
+  - _Requirements: End-to-end testing_
+
+- [ ] 30. Performance testing and optimization
+  - [ ] 30.1 Run Lighthouse audits
+    - Run Lighthouse on production build
+    - Analyze Performance score
+    - Analyze Accessibility score
+    - Analyze Best Practices score
+    - Analyze SEO score
+    - Document baseline scores
+  - [ ] 30.2 Analyze bundle size
+    - Run production build
+    - Analyze bundle size with rollup-plugin-visualizer
+    - Identify large dependencies
+    - Check for duplicate dependencies
+    - Verify code splitting is working
+    - Document bundle size breakdown
+  - [ ] 30.3 Test load performance
+    - Measure First Contentful Paint (FCP)
+    - Measure Largest Contentful Paint (LCP)
+    - Measure Time to Interactive (TTI)
+    - Measure Total Blocking Time (TBT)
+    - Measure Cumulative Layout Shift (CLS)
+    - Document performance metrics
+  - [ ] 30.4 Test runtime performance
+    - Profile component render times
+    - Check for unnecessary re-renders
+    - Verify memoization is working
+    - Test form validation performance
+    - Test AI suggestion generation time
+    - Document performance bottlenecks
+  - [ ] 30.5 Optimize based on findings
+    - Address any performance issues found
+    - Optimize large dependencies if needed
+    - Further optimize component rendering
+    - Implement additional lazy loading if beneficial
+    - Re-run tests to verify improvements
+  - _Requirements: Performance testing and optimization_
+
 ## Success Criteria
 
 After completing all tasks, verify:
