@@ -55,8 +55,12 @@ Cypress.Commands.add("fillStep1", (data) => {
   cy.get('input[name="name"]').clear().type(data.name);
   cy.get('input[name="nationalId"]').clear().type(data.nationalId);
   cy.get('input[name="dateOfBirth"]').clear().type(data.dateOfBirth);
-  cy.get('select[name="gender"]').select(data.gender);
-  cy.get('input[name="address"]').clear().type(data.address);
+
+  // Handle MUI Select for gender
+  cy.get("#gender").click();
+  cy.get(`[data-value="${data.gender}"]`).click();
+
+  cy.get('textarea[name="address"]').clear().type(data.address);
   cy.get('input[name="city"]').clear().type(data.city);
   cy.get('input[name="state"]').clear().type(data.state);
   cy.get('input[name="country"]').clear().type(data.country);

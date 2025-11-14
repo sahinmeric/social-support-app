@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+cypress/screenshots
+cypress/videos
+
+design.md
+requirements.md
+tasks.md
+
