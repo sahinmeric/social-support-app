@@ -89,10 +89,18 @@ export class APIService {
 
     // Step 2 validations
     if (!data.maritalStatus) errors.push("Marital Status is required");
-    if (data.dependents === undefined || data.dependents < 0)
+    if (
+      data.dependents === undefined ||
+      data.dependents === "" ||
+      (typeof data.dependents === "number" && data.dependents < 0)
+    )
       errors.push("Dependents is required");
     if (!data.employmentStatus) errors.push("Employment Status is required");
-    if (data.monthlyIncome === undefined || data.monthlyIncome < 0)
+    if (
+      data.monthlyIncome === undefined ||
+      data.monthlyIncome === "" ||
+      (typeof data.monthlyIncome === "number" && data.monthlyIncome < 0)
+    )
       errors.push("Monthly Income is required");
     if (!data.housingStatus) errors.push("Housing Status is required");
 
