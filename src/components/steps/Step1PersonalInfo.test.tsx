@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../test/utils";
@@ -140,8 +140,8 @@ describe("Step1PersonalInfo Component", () => {
 
     // Check that error messages are displayed (translated)
     expect(screen.getByText(/required/i)).toBeInTheDocument();
-    expect(screen.getByText(/email/i)).toBeInTheDocument();
-    expect(screen.getByText(/phone/i)).toBeInTheDocument();
+    expect(screen.getByText(/valid email/i)).toBeInTheDocument();
+    expect(screen.getByText(/valid phone/i)).toBeInTheDocument();
   });
 
   it("sanitizes input on blur", async () => {

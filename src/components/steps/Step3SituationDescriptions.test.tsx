@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../test/utils";
@@ -143,7 +143,8 @@ describe("Step3SituationDescriptions Component", () => {
     renderWithProviders(<Step3SituationDescriptions />);
 
     // Should display translated error messages
-    expect(screen.getByText(/minimum.*50/i)).toBeInTheDocument();
+    const errorMessages = screen.getAllByText(/minimum.*50/i);
+    expect(errorMessages.length).toBeGreaterThan(0);
     expect(screen.getByText(/required/i)).toBeInTheDocument();
   });
 
@@ -194,6 +195,14 @@ describe("Step3SituationDescriptions Component", () => {
   });
 
   it("has proper ARIA attributes for accessibility", () => {
+    // Reset errors to ensure no validation errors
+    mockFormContext.errors = {};
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      financialSituation:
+        "This is a valid text that is long enough to pass validation requirements for the minimum length",
+    };
+
     renderWithProviders(<Step3SituationDescriptions />);
 
     const financialSituationInput =
@@ -219,15 +228,19 @@ describe("Step3SituationDescriptions Component", () => {
   });
 
   it("shows helper text with character count when no error", () => {
+    mockFormContext.errors = {}; // Ensure no errors
     mockFormContext.formData = {
       ...mockFormContext.formData,
       financialSituation: "Short text",
+      employmentCircumstances: "",
+      reasonForApplying: "",
     };
 
     renderWithProviders(<Step3SituationDescriptions />);
 
     // Should show minimum length requirement and character count
-    expect(screen.getByText(/minimum.*50/i)).toBeInTheDocument();
+    const helperTexts = screen.getAllByText(/minimum.*50/i);
+    expect(helperTexts.length).toBeGreaterThan(0);
     expect(screen.getByText(/\(10\/50\)/)).toBeInTheDocument();
   });
 

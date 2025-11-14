@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../test/utils";
@@ -78,6 +78,10 @@ describe("Step2FamilyFinancial Component", () => {
 
   it("calls updateFormData when marital status changes", async () => {
     const user = userEvent.setup();
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      maritalStatus: "", // Start with empty to test selection
+    };
     renderWithProviders(<Step2FamilyFinancial />);
 
     const maritalStatusSelect = screen.getByLabelText(/marital status/i);
@@ -96,6 +100,10 @@ describe("Step2FamilyFinancial Component", () => {
 
   it("calls updateFormData when dependents changes", async () => {
     const user = userEvent.setup();
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      dependents: "", // Start with empty to test selection
+    };
     renderWithProviders(<Step2FamilyFinancial />);
 
     const dependentsSelect = screen.getByLabelText(/dependents/i);
@@ -111,12 +119,18 @@ describe("Step2FamilyFinancial Component", () => {
 
   it("calls updateFormData when employment status changes", async () => {
     const user = userEvent.setup();
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      employmentStatus: "", // Start with empty to test selection
+    };
     renderWithProviders(<Step2FamilyFinancial />);
 
     const employmentStatusSelect = screen.getByLabelText(/employment status/i);
     await user.click(employmentStatusSelect);
 
-    const employedOption = screen.getByRole("option", { name: /employed/i });
+    const employedOption = screen.getByRole("option", {
+      name: /^employed$/i,
+    });
     await user.click(employedOption);
 
     await waitFor(() => {
@@ -141,12 +155,16 @@ describe("Step2FamilyFinancial Component", () => {
 
   it("calls updateFormData when currency changes", async () => {
     const user = userEvent.setup();
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      currency: "USD", // Start with USD to test changing to AED
+    };
     renderWithProviders(<Step2FamilyFinancial />);
 
     const currencySelect = screen.getByLabelText(/currency/i);
     await user.click(currencySelect);
 
-    const aedOption = screen.getByRole("option", { name: /AED/i });
+    const aedOption = screen.getByRole("option", { name: /AED \(د\.إ\)/i });
     await user.click(aedOption);
 
     await waitFor(() => {
@@ -156,6 +174,10 @@ describe("Step2FamilyFinancial Component", () => {
 
   it("calls updateFormData when housing status changes", async () => {
     const user = userEvent.setup();
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      housingStatus: "", // Start with empty to test selection
+    };
     renderWithProviders(<Step2FamilyFinancial />);
 
     const housingStatusSelect = screen.getByLabelText(/housing status/i);
@@ -211,18 +233,13 @@ describe("Step2FamilyFinancial Component", () => {
     const employmentStatusSelect = screen.getByLabelText(/employment status/i);
     await user.click(employmentStatusSelect);
 
-    expect(
-      screen.getByRole("option", { name: /employed/i })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: /unemployed/i })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: /self employed/i })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: /retired/i })
-    ).toBeInTheDocument();
+    const options = screen.getAllByRole("option");
+    const optionTexts = options.map((opt) => opt.textContent);
+
+    expect(optionTexts).toContain("Employed");
+    expect(optionTexts).toContain("Unemployed");
+    expect(optionTexts).toContain("Self-Employed");
+    expect(optionTexts).toContain("Retired");
   });
 
   it("renders housing status dropdown with all options", async () => {

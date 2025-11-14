@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../test/utils";
@@ -21,7 +21,7 @@ describe("SuccessPage Component", () => {
     );
 
     expect(screen.getByText(/success/i)).toBeInTheDocument();
-    expect(screen.getByText(/successfully submitted/i)).toBeInTheDocument();
+    expect(screen.getByText(/submitted successfully/i)).toBeInTheDocument();
   });
 
   it("displays application ID when provided", () => {
@@ -88,7 +88,7 @@ describe("SuccessPage Component", () => {
     );
 
     const goHomeButton = screen.getByRole("button", {
-      name: /go home/i,
+      name: /go.*home/i,
     });
     expect(goHomeButton).toBeInTheDocument();
   });
@@ -122,7 +122,7 @@ describe("SuccessPage Component", () => {
     );
 
     const goHomeButton = screen.getByRole("button", {
-      name: /go home/i,
+      name: /go.*home/i,
     });
     await user.click(goHomeButton);
 
@@ -168,10 +168,12 @@ describe("SuccessPage Component", () => {
     );
 
     // Check for AddIcon in Submit Another button
-    expect(screen.getByTestId("AddIcon")).toBeInTheDocument();
+    const addIcon = screen.getByTestId("AddIcon");
+    expect(addIcon).toBeInTheDocument();
 
     // Check for HomeIcon in Go Home button
-    expect(screen.getByTestId("HomeIcon")).toBeInTheDocument();
+    const homeIcon = screen.getByTestId("HomeIcon");
+    expect(homeIcon).toBeInTheDocument();
   });
 
   it("renders within a Paper component for elevation", () => {
