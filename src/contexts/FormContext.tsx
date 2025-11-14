@@ -103,6 +103,15 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     [form]
   );
 
+  /**
+   * Reset form to initial state
+   */
+  const resetForm = useCallback((): void => {
+    form.reset(initialFormData);
+    setCurrentStepState(FORM_STEPS.PERSONAL_INFO);
+    StorageService.clearFormData();
+  }, [form]);
+
   const value: FormContextValue = useMemo(
     () => ({
       formData,
@@ -116,6 +125,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
       validateCurrentStep,
       clearErrors,
       setErrors,
+      resetForm,
     }),
     [
       formData,
@@ -126,6 +136,7 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
       validateCurrentStep,
       clearErrors,
       setErrors,
+      resetForm,
     ]
   );
 

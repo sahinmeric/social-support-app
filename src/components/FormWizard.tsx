@@ -26,7 +26,7 @@ const SuccessPage = lazy(() => import("./SuccessPage"));
 
 const FormWizard: React.FC = () => {
   const { t } = useTranslation();
-  const { formData, validateCurrentStep } = useFormContext();
+  const { formData, validateCurrentStep, resetForm } = useFormContext();
   const { currentStep, handleNext, handlePrevious } = useStepNavigation();
   const {
     isSubmitting,
@@ -50,22 +50,23 @@ const FormWizard: React.FC = () => {
   /**
    * Handle submit another application
    */
-  const handleSubmitAnother = () => {
+  const handleSubmitAnother = useCallback(() => {
     // Reset submission state
     resetSubmission();
-    // Note: FormContext will initialize with empty data from localStorage
-    // which was cleared after successful submission
-    window.location.reload(); // Reload to reset all state
-  };
+    // Reset form to initial state and go to step 1
+    resetForm();
+  }, [resetSubmission, resetForm]);
 
   /**
    * Handle go to home page
    */
-  const handleGoHome = () => {
+  const handleGoHome = useCallback(() => {
+    // Reset form and submission state
+    resetSubmission();
+    resetForm();
     // In a real app, this would navigate to the home page
-    // For now, just reload the page
-    window.location.href = "/";
-  };
+    // For now, just reset to step 1
+  }, [resetSubmission, resetForm]);
 
   /**
    * Close error snackbar

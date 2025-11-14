@@ -16,4 +16,5 @@ export interface FormContextValue {
   validateCurrentStep: () => Promise<boolean>;
   clearErrors: () => void;
   setErrors: (errors: FormErrors) => void;
+  resetForm: () => void;
 }
