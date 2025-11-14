@@ -31,7 +31,13 @@ const Step2FamilyFinancial: React.FC = () => {
 
   const handleSelectChange = useCallback(
     (field: keyof typeof formData) => (event: SelectChangeEvent) => {
-      updateFormData(field, event.target.value);
+      const value = event.target.value;
+      // Convert to number for dependents field
+      if (field === "dependents") {
+        updateFormData(field, value === "" ? "" : Number(value));
+      } else {
+        updateFormData(field, value);
+      }
     },
     [updateFormData]
   );
@@ -102,28 +108,42 @@ const Step2FamilyFinancial: React.FC = () => {
             )}
           </FormControl>
 
-          <FormField
-            fullWidth
-            required
-            id="dependents"
-            name="dependents"
-            label={t("fields.dependents")}
-            type="number"
-            value={formData.dependents}
-            onChange={handleChange("dependents")}
-            error={getErrorMessage(errors.dependents)}
-            slotProps={{
-              htmlInput: {
-                min: 0,
-                "aria-label": t("fields.dependents"),
-                "aria-required": "true",
-                "aria-invalid": !!errors.dependents,
-                "aria-describedby": errors.dependents
-                  ? "dependents-error"
-                  : undefined,
-              },
-            }}
-          />
+          <FormControl fullWidth required error={!!errors.dependents}>
+            <InputLabel id="dependents-label">
+              {t("fields.dependents")}
+            </InputLabel>
+            <Select
+              labelId="dependents-label"
+              id="dependents"
+              name="dependents"
+              value={
+                formData.dependents === "" ? "" : String(formData.dependents)
+              }
+              onChange={handleSelectChange("dependents")}
+              label={t("fields.dependents")}
+              slotProps={{
+                input: {
+                  "aria-label": t("fields.dependents"),
+                  "aria-required": "true",
+                  "aria-invalid": !!errors.dependents,
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>{t("common.select")}</em>
+              </MenuItem>
+              {Array.from({ length: 11 }, (_, i) => i).map((num) => (
+                <MenuItem key={num} value={String(num)}>
+                  {num}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.dependents && (
+              <FormHelperText id="dependents-error">
+                {getErrorMessage(errors.dependents)}
+              </FormHelperText>
+            )}
+          </FormControl>
         </Box>
 
         {/* Row 2: Employment Status and Monthly Income */}
