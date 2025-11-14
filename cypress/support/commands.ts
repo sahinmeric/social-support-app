@@ -70,12 +70,35 @@ Cypress.Commands.add("fillStep1", (data) => {
 
 // Custom command to fill Step 2 (Family and Financial Information)
 Cypress.Commands.add("fillStep2", (data) => {
-  cy.get('select[name="maritalStatus"]').select(data.maritalStatus);
-  cy.get('select[name="dependents"]').select(data.dependents);
-  cy.get('select[name="employmentStatus"]').select(data.employmentStatus);
+  // Handle MUI Select for maritalStatus
+  cy.get("#maritalStatus").click();
+  cy.get(`[data-value="${data.maritalStatus}"]`).click();
+  // Wait for menu to close
+  cy.wait(200);
+
+  // Handle MUI Select for dependents
+  cy.get("#dependents").click();
+  cy.get(`[data-value="${data.dependents}"]`).click();
+  // Wait for menu to close
+  cy.wait(200);
+
+  // Handle MUI Select for employmentStatus
+  cy.get("#employmentStatus").click();
+  cy.get(`[data-value="${data.employmentStatus}"]`).click();
+  // Wait for menu to close
+  cy.wait(200);
+
   cy.get('input[name="monthlyIncome"]').clear().type(data.monthlyIncome);
-  cy.get('select[name="currency"]').select(data.currency);
-  cy.get('select[name="housingStatus"]').select(data.housingStatus);
+
+  // Handle MUI Select for currency
+  cy.get("#currency").click();
+  cy.get(`[data-value="${data.currency}"]`).click();
+  // Wait for menu to close
+  cy.wait(200);
+
+  // Handle MUI Select for housingStatus
+  cy.get("#housingStatus").click();
+  cy.get(`[data-value="${data.housingStatus}"]`).click();
 });
 
 // Custom command to fill Step 3 (Situation Description)
