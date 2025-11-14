@@ -1,5 +1,7 @@
 # Social Support Application Portal
 
+![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
+
 A modern, accessible, and multilingual web application for citizens to apply for government social support. Built with React, TypeScript, and Material-UI, featuring AI-powered assistance for form completion.
 
 ## 🌟 Features
