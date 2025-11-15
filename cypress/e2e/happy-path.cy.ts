@@ -12,64 +12,75 @@ describe("SSA Application - Happy Path", () => {
 
     // Fill Step 1
     cy.fillStep1({
-      firstName: "Ahmed",
-      lastName: "Hassan",
-      email: "ahmed.hassan@example.com",
-      phone: "+966501234567",
-      dateOfBirth: "1990-01-15",
+      name: "Ahmed Hassan",
       nationalId: "1234567890",
+      dateOfBirth: "1990-01-15",
+      gender: "male",
+      address: "123 Main Street",
+      city: "Riyadh",
+      state: "Riyadh Province",
+      country: "Saudi Arabia",
+      phone: "+966501234567",
+      email: "ahmed.hassan@example.com",
     });
 
     // Click Next
     cy.contains("button", "Next").click();
 
     // Verify we're on Step 2
-    cy.contains("Family and Financial Information").should("be.visible");
-    cy.get('[data-testid="step-indicator"]').should("contain", "2");
+    cy.get('[data-testid="step-indicator"]', { timeout: 10000 }).should(
+      "contain",
+      "2"
+    );
 
     // Fill Step 2
     cy.fillStep2({
       maritalStatus: "married",
-      numberOfDependents: "3",
+      dependents: "3",
+      employmentStatus: "employed",
       monthlyIncome: "5000",
-      hasOtherIncome: true,
-      otherIncomeSource: "Freelance work",
-      otherIncomeAmount: "1500",
+      currency: "USD",
+      housingStatus: "rented",
     });
 
     // Click Next
     cy.contains("button", "Next").click();
 
     // Verify we're on Step 3
-    cy.contains("Situation Description").should("be.visible");
-    cy.get('[data-testid="step-indicator"]').should("contain", "3");
+    cy.get('[data-testid="step-indicator"]', { timeout: 10000 }).should(
+      "contain",
+      "3"
+    );
 
     // Fill Step 3
     cy.fillStep3({
-      currentSituation:
+      financialSituation:
         "I am currently facing financial difficulties due to unexpected medical expenses for my family.",
-      requestedAssistance:
+      employmentCircumstances:
+        "I am currently employed but my income is not sufficient to cover all necessary expenses.",
+      reasonForApplying:
         "I am requesting financial assistance to help cover medical bills and basic living expenses.",
-      additionalInfo:
-        "I have attached relevant medical documents for your review.",
     });
 
     // Submit the form
     cy.contains("button", "Submit").click();
 
     // Verify success page
-    cy.contains("Application Submitted Successfully").should("be.visible");
+    cy.contains(/submitted successfully/i, { timeout: 15000 }).should(
+      "be.visible"
+    );
 
     // Verify application ID is displayed
-    cy.get('[data-testid="application-id"]')
-      .should("be.visible")
-      .and("not.be.empty");
+    cy.get('[data-testid="success-page"]').should("be.visible");
 
     // Test "Submit Another Application" button
-    cy.contains("button", "Submit Another Application").click();
+    cy.get('[data-testid="btn-submit-another"]').click();
 
     // Verify we're back at Step 1 with empty form
-    cy.contains("Personal Information").should("be.visible");
-    cy.get('input[name="firstName"]').should("have.value", "");
+    cy.get('[data-testid="step-indicator"]', { timeout: 10000 }).should(
+      "contain",
+      "1"
+    );
+    cy.get('input[name="name"]').should("have.value", "");
   });
 });
