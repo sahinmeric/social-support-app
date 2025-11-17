@@ -6,39 +6,24 @@
  * API configuration
  */
 export const API_CONFIG = {
-  /** OpenAI API URL */
-  OPENAI_URL: "https://api.openai.com/v1/chat/completions",
+  /** Backend API base URL */
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || "/api",
   /** Mock API delay (ms) */
   MOCK_API_DELAY: 1500,
   /** Request timeout (ms) */
   REQUEST_TIMEOUT: 30000,
-  /** Default API base URL */
-  BASE_URL: "/api",
 } as const;
 
 /**
- * API endpoints
+ * API endpoints (relative paths, will be combined with BASE_URL)
  */
 export const API_ENDPOINTS = {
   /** Submit application endpoint */
-  SUBMIT_APPLICATION: "/api/applications",
+  SUBMIT_APPLICATION: "/applications",
   /** Validate national ID endpoint */
-  VALIDATE_NATIONAL_ID: "/api/validate/national-id",
-} as const;
-
-/**
- * OpenAI configuration
- */
-export const OPENAI_CONFIG = {
-  /** Model to use for AI suggestions */
-  MODEL: "gpt-3.5-turbo",
-  /** Maximum tokens for AI response */
-  MAX_TOKENS: 300,
-  /** Temperature for AI response randomness */
-  TEMPERATURE: 0.7,
-  /** System role message */
-  SYSTEM_MESSAGE:
-    "You are a helpful assistant that helps people write clear and empathetic descriptions for social support applications.",
+  VALIDATE_NATIONAL_ID: "/validate/national-id",
+  /** AI suggestion endpoint */
+  AI_SUGGESTIONS: "/ai/suggestions",
 } as const;
 
 /**

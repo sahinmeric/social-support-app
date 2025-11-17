@@ -29,8 +29,6 @@ describe("OpenAIService", () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockedAxios: any;
 
-  const mockApiKey = "test-api-key-123";
-
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.resetModules();
@@ -60,31 +58,33 @@ describe("OpenAIService", () => {
   // Task 1.1: Constructor Tests
   // ============================================================================
   describe("constructor", () => {
-    it("should use provided API key when passed as parameter", () => {
-      service = new OpenAIService(mockApiKey);
-      expect(service["apiKey"]).toBe(mockApiKey);
+    it("should initialize with default API base URL", () => {
+      service = new OpenAIService();
+      expect(service["apiBaseUrl"]).toBe("/api");
     });
 
-    it("should use environment variable API key when no parameter provided", () => {
-      const envApiKey = "env-api-key-456";
-      vi.stubEnv("VITE_OPENAI_API_KEY", envApiKey);
+    it("should use environment variable for API base URL when provided", async () => {
+      const customBaseUrl = "http://localhost:3000/api";
+      vi.stubEnv("VITE_API_BASE_URL", customBaseUrl);
+
+      // Need to reload the module to pick up the new env variable
+      vi.resetModules();
+      const serviceModule = await import("../../../services/OpenAIService");
+      OpenAIService = serviceModule.OpenAIService;
 
       service = new OpenAIService();
-      expect(service["apiKey"]).toBe(envApiKey);
+      expect(service["apiBaseUrl"]).toBe(customBaseUrl);
     });
 
-    it("should use empty string when no API key is available", () => {
-      vi.stubEnv("VITE_OPENAI_API_KEY", "");
-
+    it("should initialize cache as empty Map", () => {
       service = new OpenAIService();
-      expect(service["apiKey"]).toBe("");
+      expect(service["cache"]).toBeInstanceOf(Map);
+      expect(service["cache"].size).toBe(0);
     });
 
-    it("should prioritize parameter API key over environment variable", () => {
-      vi.stubEnv("VITE_OPENAI_API_KEY", "env-key");
-
-      service = new OpenAIService(mockApiKey);
-      expect(service["apiKey"]).toBe(mockApiKey);
+    it("should initialize abortController as null", () => {
+      service = new OpenAIService();
+      expect(service["abortController"]).toBeNull();
     });
   });
 
@@ -93,7 +93,7 @@ describe("OpenAIService", () => {
   // ============================================================================
   describe("generateMockSuggestion", () => {
     beforeEach(() => {
-      service = new OpenAIService(mockApiKey);
+      service = new OpenAIService();
     });
 
     it("should generate suggestion for financialSituation field", () => {
@@ -220,12 +220,12 @@ describe("OpenAIService", () => {
   // ============================================================================
   // Task 1.3: Prompt Building Tests
   // ============================================================================
-  describe("buildPrompt", () => {
+  describe("buildRequestPayload", () => {
     beforeEach(() => {
-      service = new OpenAIService(mockApiKey);
+      service = new OpenAIService();
     });
 
-    it("should build prompt for financialSituation with complete form data", () => {
+    it("should build payload for financialSituation with complete form data", () => {
       const formData = createMockFormData({
         employmentStatus: "employed",
         monthlyIncome: 5000,
@@ -233,65 +233,39 @@ describe("OpenAIService", () => {
         dependents: 2,
       });
 
-      const prompt = service["buildPrompt"]("financialSituation", formData);
+      const payload = service["buildRequestPayload"](
+        "financialSituation",
+        formData
+      );
 
-      expect(prompt).toContain("financialSituation");
-      expect(prompt).toContain("Employment Status: employed");
-      expect(prompt).toContain("Monthly Income: 5000");
-      expect(prompt).toContain("Housing Status: owned");
-      expect(prompt).toContain("Number of Dependents: 2");
-      expect(prompt).toContain("50-200 words");
+      expect(payload.fieldName).toBe("financialSituation");
+      expect(payload.formData.employmentStatus).toBe("employed");
+      expect(payload.formData.monthlyIncome).toBe(5000);
+      expect(payload.formData.housingStatus).toBe("owned");
+      expect(payload.formData.dependents).toBe(2);
     });
 
-    it("should build prompt for financialSituation with missing data", () => {
-      const formData = createMockFormData({
-        employmentStatus: undefined,
-        monthlyIncome: undefined,
-        housingStatus: undefined,
-        dependents: undefined,
-      });
-
-      const prompt = service["buildPrompt"]("financialSituation", formData);
-
-      expect(prompt).toContain("Employment Status: Not specified");
-      expect(prompt).toContain("Monthly Income: Not specified");
-      expect(prompt).toContain("Housing Status: Not specified");
-      expect(prompt).toContain("Number of Dependents: 0");
-    });
-
-    it("should build prompt for employmentCircumstances with complete form data", () => {
+    it("should build payload for employmentCircumstances with relevant fields only", () => {
       const formData = createMockFormData({
         employmentStatus: "selfEmployed",
         monthlyIncome: 4000,
+        housingStatus: "owned", // Should not be included
+        dependents: 2, // Should not be included
       });
 
-      const prompt = service["buildPrompt"](
+      const payload = service["buildRequestPayload"](
         "employmentCircumstances",
         formData
       );
 
-      expect(prompt).toContain("employmentCircumstances");
-      expect(prompt).toContain("Employment Status: selfEmployed");
-      expect(prompt).toContain("Monthly Income: 4000");
-      expect(prompt).toContain("employment circumstances");
+      expect(payload.fieldName).toBe("employmentCircumstances");
+      expect(payload.formData.employmentStatus).toBe("selfEmployed");
+      expect(payload.formData.monthlyIncome).toBe(4000);
+      expect(payload.formData.housingStatus).toBeUndefined();
+      expect(payload.formData.dependents).toBeUndefined();
     });
 
-    it("should build prompt for employmentCircumstances with missing data", () => {
-      const formData = createMockFormData({
-        employmentStatus: undefined,
-        monthlyIncome: undefined,
-      });
-
-      const prompt = service["buildPrompt"](
-        "employmentCircumstances",
-        formData
-      );
-
-      expect(prompt).toContain("Employment Status: Not specified");
-      expect(prompt).toContain("Monthly Income: Not specified");
-    });
-
-    it("should build prompt for reasonForApplying with complete form data", () => {
+    it("should build payload for reasonForApplying with complete form data", () => {
       const formData = createMockFormData({
         financialSituation: "Facing hardship",
         employmentStatus: "unemployed",
@@ -299,54 +273,34 @@ describe("OpenAIService", () => {
         dependents: 3,
       });
 
-      const prompt = service["buildPrompt"]("reasonForApplying", formData);
-
-      expect(prompt).toContain("reasonForApplying");
-      expect(prompt).toContain("Financial Situation: Facing hardship");
-      expect(prompt).toContain("Employment Status: unemployed");
-      expect(prompt).toContain("Housing Status: homeless");
-      expect(prompt).toContain("Number of Dependents: 3");
-    });
-
-    it("should build prompt for reasonForApplying with missing data", () => {
-      const formData = createMockFormData({
-        financialSituation: undefined,
-        employmentStatus: undefined,
-        housingStatus: undefined,
-        dependents: undefined,
-      });
-
-      const prompt = service["buildPrompt"]("reasonForApplying", formData);
-
-      expect(prompt).toContain("Financial Situation: Not specified");
-      expect(prompt).toContain("Employment Status: Not specified");
-      expect(prompt).toContain("Housing Status: Not specified");
-      expect(prompt).toContain("Number of Dependents: 0");
-    });
-
-    it("should build default prompt for unknown field", () => {
-      const formData = createMockFormData();
-      const unknownField = "customField" as keyof ApplicationFormData;
-
-      const prompt = service["buildPrompt"](unknownField, formData);
-
-      expect(prompt).toContain("customField");
-      expect(prompt).toContain("Generate appropriate content");
-    });
-
-    it("should include base context in all prompts", () => {
-      const formData = createMockFormData();
-      const fields: Array<keyof ApplicationFormData> = [
-        "financialSituation",
-        "employmentCircumstances",
+      const payload = service["buildRequestPayload"](
         "reasonForApplying",
-      ];
+        formData
+      );
 
-      fields.forEach((field) => {
-        const prompt = service["buildPrompt"](field, formData);
-        expect(prompt).toContain("social support application form");
-        expect(prompt).toContain("clear, concise, and empathetic");
+      expect(payload.fieldName).toBe("reasonForApplying");
+      expect(payload.formData.financialSituation).toBe("Facing hardship");
+      expect(payload.formData.employmentStatus).toBe("unemployed");
+      expect(payload.formData.housingStatus).toBe("homeless");
+      expect(payload.formData.dependents).toBe(3);
+    });
+
+    it("should handle empty/undefined values in form data", () => {
+      const formData = createMockFormData({
+        employmentStatus: "",
+        monthlyIncome: "",
+        housingStatus: "",
+        dependents: "",
       });
+
+      const payload = service["buildRequestPayload"](
+        "financialSituation",
+        formData
+      );
+
+      expect(payload.fieldName).toBe("financialSituation");
+      expect(payload.formData.employmentStatus).toBe("");
+      expect(payload.formData.monthlyIncome).toBe("");
     });
   });
 
@@ -359,7 +313,7 @@ describe("OpenAIService", () => {
       vi.resetModules();
       const serviceModule = await import("../../../services/OpenAIService");
       OpenAIService = serviceModule.OpenAIService;
-      service = new OpenAIService(mockApiKey);
+      service = new OpenAIService();
     });
 
     it("should return mock suggestion when USE_MOCK is true", async () => {
@@ -402,32 +356,15 @@ describe("OpenAIService", () => {
 
   describe("generateSuggestion - API Mode", () => {
     beforeEach(() => {
-      service = new OpenAIService(mockApiKey);
+      service = new OpenAIService();
     });
 
-    it("should throw error when API key is not configured", async () => {
-      service = new OpenAIService(""); // No API key
-      const formData = createMockFormData();
-
-      await expect(
-        service.generateSuggestion("financialSituation", formData)
-      ).rejects.toMatchObject({
-        type: AIErrorType.GENERIC,
-        message: expect.stringContaining("API key is not configured"),
-      });
-    });
-
-    it("should call OpenAI API with correct parameters", async () => {
+    it("should call backend API with correct endpoint", async () => {
       const formData = createMockFormData();
       const mockResponse = {
         data: {
-          choices: [
-            {
-              message: {
-                content: "AI generated suggestion",
-              },
-            },
-          ],
+          text: "AI generated suggestion",
+          fieldName: "financialSituation",
         },
       };
 
@@ -436,22 +373,54 @@ describe("OpenAIService", () => {
       await service.generateSuggestion("financialSituation", formData);
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        "https://api.openai.com/v1/chat/completions",
+        "/api/ai/suggestions",
         expect.objectContaining({
-          model: "gpt-3.5-turbo",
-          max_tokens: 300,
-          temperature: 0.7,
-          messages: expect.arrayContaining([
-            expect.objectContaining({ role: "system" }),
-            expect.objectContaining({ role: "user" }),
-          ]),
+          fieldName: "financialSituation",
+          formData: expect.any(Object),
         }),
         expect.objectContaining({
-          headers: {
+          headers: expect.objectContaining({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${mockApiKey}`,
-          },
+          }),
           timeout: 30000,
+        })
+      );
+    });
+
+    it("should call backend API with correct payload structure", async () => {
+      const formData = createMockFormData({
+        employmentStatus: "employed",
+        monthlyIncome: 5000,
+        housingStatus: "owned",
+        dependents: 2,
+      });
+
+      const mockResponse = {
+        data: {
+          text: "AI generated suggestion",
+          fieldName: "financialSituation",
+        },
+      };
+
+      mockedAxios.post.mockResolvedValue(mockResponse);
+
+      await service.generateSuggestion("financialSituation", formData);
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        "/api/ai/suggestions",
+        {
+          fieldName: "financialSituation",
+          formData: {
+            employmentStatus: "employed",
+            monthlyIncome: 5000,
+            housingStatus: "owned",
+            dependents: 2,
+          },
+        },
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "Content-Type": "application/json",
+          }),
         })
       );
     });
@@ -463,7 +432,8 @@ describe("OpenAIService", () => {
 
       mockedAxios.post.mockResolvedValue({
         data: {
-          choices: [{ message: { content: mockSuggestion } }],
+          text: mockSuggestion,
+          fieldName: "financialSituation",
         },
       });
 
@@ -475,7 +445,7 @@ describe("OpenAIService", () => {
       );
 
       expect(result.text).toBe(mockSanitized);
-      expect(sanitizeInput).toHaveBeenCalledWith(mockSuggestion.trim());
+      expect(sanitizeInput).toHaveBeenCalledWith(mockSuggestion);
     });
 
     it("should throw error when API returns empty suggestion", async () => {

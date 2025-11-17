@@ -1,36 +1,24 @@
-// OpenAI API request types
-export interface OpenAIRequest {
-  model: string;
-  messages: OpenAIMessage[];
-  max_tokens: number;
-  temperature: number;
+// Backend API request types
+export interface AISuggestionRequest {
+  fieldName: string;
+  formData: {
+    employmentStatus?:
+      | "employed"
+      | "unemployed"
+      | "selfEmployed"
+      | "retired"
+      | "";
+    monthlyIncome?: number | "";
+    housingStatus?: "owned" | "rented" | "homeless" | "other" | "";
+    dependents?: number | "";
+    financialSituation?: string;
+  };
 }
 
-export interface OpenAIMessage {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
-
-// OpenAI API response types
-export interface OpenAIResponse {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: OpenAIChoice[];
-  usage: OpenAIUsage;
-}
-
-export interface OpenAIChoice {
-  index: number;
-  message: OpenAIMessage;
-  finish_reason: string;
-}
-
-export interface OpenAIUsage {
-  prompt_tokens: number;
-  completion_tokens: number;
-  total_tokens: number;
+// Backend API response types
+export interface AISuggestionResponse {
+  text: string;
+  fieldName: string;
 }
 
 // AI suggestion result

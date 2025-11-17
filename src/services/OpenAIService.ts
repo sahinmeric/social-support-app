@@ -1,7 +1,7 @@
 import axios from "axios";
 import type {
-  OpenAIRequest,
-  OpenAIResponse,
+  AISuggestionRequest,
+  AISuggestionResponse,
   AISuggestion,
   AIError,
 } from "../types/openai.types";
@@ -9,7 +9,7 @@ import { AIErrorType } from "../types/openai.types";
 import type { ApplicationFormData } from "../types/form.types";
 import {
   API_CONFIG,
-  OPENAI_CONFIG,
+  API_ENDPOINTS,
   APP_CONFIG,
   HTTP_STATUS,
   ERROR_CODES,
@@ -29,16 +29,16 @@ interface CacheEntry {
 }
 
 /**
- * Service for interacting with OpenAI API to generate suggestions
+ * Service for interacting with backend API to generate AI suggestions
  */
 export class OpenAIService {
-  private apiKey: string;
   private abortController: AbortController | null = null;
   private cache: Map<string, CacheEntry> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly apiBaseUrl: string;
 
-  constructor(apiKey?: string) {
-    this.apiKey = apiKey || import.meta.env.VITE_OPENAI_API_KEY || "";
+  constructor() {
+    this.apiBaseUrl = API_CONFIG.BASE_URL;
   }
 
   /**
@@ -75,49 +75,38 @@ export class OpenAIService {
   }
 
   /**
-   * Build contextual prompt for a specific field
+   * Build request payload for backend API
    */
-  private buildPrompt(
+  private buildRequestPayload(
     fieldName: keyof ApplicationFormData,
     formData: ApplicationFormData
-  ): string {
-    const baseContext = `You are helping someone fill out a social support application form. Based on the information provided, generate a clear, concise, and empathetic response for the "${fieldName}" field. Keep it between 50-200 words.`;
+  ): AISuggestionRequest {
+    // Extract only relevant fields for the backend
+    const relevantData: Partial<ApplicationFormData> = {};
 
     switch (fieldName) {
       case "financialSituation":
-        return `${baseContext}
-
-Context:
-- Employment Status: ${formData.employmentStatus || "Not specified"}
-- Monthly Income: ${formData.monthlyIncome || "Not specified"}
-- Housing Status: ${formData.housingStatus || "Not specified"}
-- Number of Dependents: ${formData.dependents || 0}
-
-Generate a description of their current financial situation that explains their need for support.`;
-
+        relevantData.employmentStatus = formData.employmentStatus;
+        relevantData.monthlyIncome = formData.monthlyIncome;
+        relevantData.housingStatus = formData.housingStatus;
+        relevantData.dependents = formData.dependents;
+        break;
       case "employmentCircumstances":
-        return `${baseContext}
-
-Context:
-- Employment Status: ${formData.employmentStatus || "Not specified"}
-- Monthly Income: ${formData.monthlyIncome || "Not specified"}
-
-Generate a description of their employment circumstances and how it affects their ability to support themselves.`;
-
+        relevantData.employmentStatus = formData.employmentStatus;
+        relevantData.monthlyIncome = formData.monthlyIncome;
+        break;
       case "reasonForApplying":
-        return `${baseContext}
-
-Context:
-- Financial Situation: ${formData.financialSituation || "Not specified"}
-- Employment Status: ${formData.employmentStatus || "Not specified"}
-- Housing Status: ${formData.housingStatus || "Not specified"}
-- Number of Dependents: ${formData.dependents || 0}
-
-Generate a compelling reason for why they are applying for social support, focusing on their specific needs and circumstances.`;
-
-      default:
-        return `${baseContext}\n\nGenerate appropriate content for the ${fieldName} field.`;
+        relevantData.financialSituation = formData.financialSituation;
+        relevantData.employmentStatus = formData.employmentStatus;
+        relevantData.housingStatus = formData.housingStatus;
+        relevantData.dependents = formData.dependents;
+        break;
     }
+
+    return {
+      fieldName: fieldName as string,
+      formData: relevantData as AISuggestionRequest["formData"],
+    };
   }
 
   /**
@@ -264,57 +253,33 @@ Generate a compelling reason for why they are applying for social support, focus
   }
 
   /**
-   * Internal method for generating AI suggestions
+   * Internal method for generating AI suggestions via backend API
    */
   private async generateSuggestionInternal(
     fieldName: keyof ApplicationFormData,
     formData: ApplicationFormData
   ): Promise<AISuggestion> {
-    if (!this.apiKey) {
-      throw this.createError(
-        AIErrorType.GENERIC,
-        "OpenAI API key is not configured. Please set VITE_OPENAI_API_KEY in your .env file."
-      );
-    }
-
-    const prompt = this.buildPrompt(fieldName, formData);
-
-    const request: OpenAIRequest = {
-      model: OPENAI_CONFIG.MODEL,
-      messages: [
-        {
-          role: "system",
-          content: OPENAI_CONFIG.SYSTEM_MESSAGE,
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      max_tokens: OPENAI_CONFIG.MAX_TOKENS,
-      temperature: OPENAI_CONFIG.TEMPERATURE,
-    };
+    const requestPayload = this.buildRequestPayload(fieldName, formData);
 
     // Create new AbortController for this request
     this.abortController = new AbortController();
 
     try {
-      const response = await axios.post<OpenAIResponse>(
-        API_CONFIG.OPENAI_URL,
-        request,
+      const response = await axios.post<AISuggestionResponse>(
+        `${this.apiBaseUrl}${API_ENDPOINTS.AI_SUGGESTIONS}`,
+        requestPayload,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${this.apiKey}`,
           },
           timeout: API_CONFIG.REQUEST_TIMEOUT,
           signal: this.abortController.signal,
         }
       );
 
-      const suggestion = response.data.choices[0]?.message?.content?.trim();
+      const { text, fieldName: responseFieldName } = response.data;
 
-      if (!suggestion) {
+      if (!text) {
         throw this.createError(
           AIErrorType.GENERIC,
           "No suggestion was generated. Please try again."
@@ -323,8 +288,8 @@ Generate a compelling reason for why they are applying for social support, focus
 
       // Sanitize AI-generated content before returning
       return {
-        text: sanitizeInput(suggestion),
-        fieldName: fieldName as string,
+        text: sanitizeInput(text),
+        fieldName: responseFieldName,
       };
     } catch (error) {
       // Check if request was cancelled
@@ -387,4 +352,7 @@ Generate a compelling reason for why they are applying for social support, focus
 }
 
 // Export a singleton instance
-export const openAIService = new OpenAIService();
+export const aiService = new OpenAIService();
+
+// Keep backward compatibility
+export const openAIService = aiService;
