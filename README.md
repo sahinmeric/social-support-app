@@ -1,8 +1,17 @@
 # Social Support Application Portal
 
+![CI/CD](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/CI%2FCD%20Pipeline/badge.svg)
 ![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 
 A modern, accessible, and multilingual web application for citizens to apply for government social support. Built with React, TypeScript, and Material-UI, featuring AI-powered assistance for form completion.
+
+## 🌐 Live Demo
+
+**Deployed on GitHub Pages:** [View Live Application](https://YOUR_USERNAME.github.io/YOUR_REPO/)
+
+> **Note:** Replace `YOUR_USERNAME` and `YOUR_REPO` with your actual GitHub username and repository name.
 
 ## 🌟 Features
 
@@ -515,13 +524,54 @@ console.log(PerformanceMonitor.getMetrics());
 - Multi-language support (add more languages)
 - Advanced analytics and reporting
 
+## 🚀 Deployment
+
+This project is configured for automatic deployment to GitHub Pages via GitHub Actions.
+
+### Quick Deploy
+
+1. **Push to GitHub:**
+
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin main
+   ```
+
+2. **Enable GitHub Pages:**
+   - Go to Settings → Pages
+   - Source: GitHub Actions
+
+3. **Update Base Path:**
+   - Edit `vite.config.ts`
+   - Change `/ssa/` to `/YOUR_REPO_NAME/`
+
+4. **Access Your Site:**
+   - `https://YOUR_USERNAME.github.io/YOUR_REPO/`
+
+For detailed instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+### CI/CD Pipeline
+
+Every push to `main` triggers:
+
+- ✅ Lint & Type Check
+- ✅ Unit Tests (Vitest)
+- ✅ E2E Tests (Cypress)
+- ✅ Build
+- ✅ Deploy to GitHub Pages
+
 ## 📄 License
 
 This project is for demonstration purposes.
 
 ## 👥 Support
 
-For questions or issues, please contact the development team.
+For questions or issues, please:
+
+- Open an issue on GitHub
+- Check the [Deployment Guide](./DEPLOYMENT.md)
+- Review the [Quick Start Guide](./.github/QUICK_START.md)
 
 ---
 
