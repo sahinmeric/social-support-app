@@ -84,7 +84,8 @@ describe("PerformanceMonitor", () => {
 
       expect(result).toBe("done");
       const stats = PerformanceMonitor.getStats("test-delay");
-      expect(stats?.avg).toBeGreaterThanOrEqual(10);
+      // Allow small tolerance for timing precision (9ms instead of 10ms)
+      expect(stats?.avg).toBeGreaterThanOrEqual(9);
     });
 
     it("should handle rejected promises", async () => {

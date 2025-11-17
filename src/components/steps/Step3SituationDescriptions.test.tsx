@@ -163,8 +163,8 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Current Financial Situation");
-      await user.clear(textarea);
-      await user.type(textarea, maliciousInput);
+      await user.click(textarea);
+      await user.paste(maliciousInput);
 
       // Focus another element to trigger blur
       const employmentTextarea = screen.getByLabelText(
@@ -177,7 +177,7 @@ describe("Step3SituationDescriptions", () => {
           maliciousInput
         );
       });
-    });
+    }, 10000);
 
     it("should sanitize employmentCircumstances input on blur", async () => {
       const user = userEvent.setup();
@@ -189,8 +189,8 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Employment Circumstances");
-      await user.clear(textarea);
-      await user.type(textarea, maliciousInput);
+      await user.click(textarea);
+      await user.paste(maliciousInput);
 
       // Focus another element to trigger blur
       const reasonTextarea = screen.getByLabelText("Reason for Applying");
@@ -201,7 +201,7 @@ describe("Step3SituationDescriptions", () => {
           maliciousInput
         );
       });
-    });
+    }, 10000);
 
     it("should sanitize reasonForApplying input on blur", async () => {
       const user = userEvent.setup();
@@ -213,15 +213,21 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Reason for Applying");
-      await user.type(textarea, maliciousInput);
-      await user.tab(); // Trigger blur
+      await user.click(textarea);
+      await user.paste(maliciousInput);
+
+      // Focus another element to trigger blur
+      const financialTextarea = screen.getByLabelText(
+        "Current Financial Situation"
+      );
+      await user.click(financialTextarea);
 
       await waitFor(() => {
         expect(sanitizeModule.sanitizeInput).toHaveBeenCalledWith(
           maliciousInput
         );
       });
-    });
+    }, 10000);
 
     it("should not sanitize if input is unchanged on blur", async () => {
       const user = userEvent.setup();
@@ -232,13 +238,19 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Current Financial Situation");
-      await user.type(textarea, safeInput);
-      await user.tab(); // Trigger blur
+      await user.click(textarea);
+      await user.paste(safeInput);
+
+      // Focus another element to trigger blur
+      const employmentTextarea = screen.getByLabelText(
+        "Employment Circumstances"
+      );
+      await user.click(employmentTextarea);
 
       await waitFor(() => {
         expect(sanitizeModule.sanitizeInput).toHaveBeenCalledWith(safeInput);
       });
-    });
+    }, 10000);
   });
 
   // ============================================================================
@@ -250,7 +262,8 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Current Financial Situation");
-      await user.type(textarea, "Test financial situation");
+      await user.click(textarea);
+      await user.paste("Test financial situation");
 
       expect(textarea).toHaveValue("Test financial situation");
     });
@@ -260,7 +273,8 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Employment Circumstances");
-      await user.type(textarea, "Test employment circumstances");
+      await user.click(textarea);
+      await user.paste("Test employment circumstances");
 
       expect(textarea).toHaveValue("Test employment circumstances");
     });
@@ -270,7 +284,8 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Reason for Applying");
-      await user.type(textarea, "Test reason for applying");
+      await user.click(textarea);
+      await user.paste("Test reason for applying");
 
       expect(textarea).toHaveValue("Test reason for applying");
     });

@@ -20,10 +20,22 @@ import { PerformanceMonitor } from "../utils/performance";
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_AI === "true";
 
 /**
+ * Cache entry for storing AI suggestions
+ */
+interface CacheEntry {
+  suggestion: AISuggestion;
+  timestamp: number;
+  contextHash: string;
+}
+
+/**
  * Service for interacting with OpenAI API to generate suggestions
  */
 export class OpenAIService {
   private apiKey: string;
+  private abortController: AbortController | null = null;
+  private cache: Map<string, CacheEntry> = new Map();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   constructor(apiKey?: string) {
     this.apiKey = apiKey || import.meta.env.VITE_OPENAI_API_KEY || "";
@@ -109,8 +121,108 @@ Generate a compelling reason for why they are applying for social support, focus
   }
 
   /**
+   * Generate a hash of the context for cache key
+   */
+  private generateContextHash(
+    fieldName: keyof ApplicationFormData,
+    formData: ApplicationFormData
+  ): string {
+    // Create a hash based on relevant form data for this field
+    const relevantData: Record<string, unknown> = {};
+
+    switch (fieldName) {
+      case "financialSituation":
+        relevantData.employmentStatus = formData.employmentStatus;
+        relevantData.monthlyIncome = formData.monthlyIncome;
+        relevantData.housingStatus = formData.housingStatus;
+        relevantData.dependents = formData.dependents;
+        break;
+      case "employmentCircumstances":
+        relevantData.employmentStatus = formData.employmentStatus;
+        relevantData.monthlyIncome = formData.monthlyIncome;
+        break;
+      case "reasonForApplying":
+        relevantData.financialSituation = formData.financialSituation;
+        relevantData.employmentStatus = formData.employmentStatus;
+        relevantData.housingStatus = formData.housingStatus;
+        relevantData.dependents = formData.dependents;
+        break;
+    }
+
+    return JSON.stringify(relevantData);
+  }
+
+  /**
+   * Get cached suggestion if available and not expired
+   */
+  private getCachedSuggestion(
+    fieldName: keyof ApplicationFormData,
+    contextHash: string
+  ): AISuggestion | null {
+    const cacheKey = `${fieldName}-${contextHash}`;
+    const cached = this.cache.get(cacheKey);
+
+    if (cached) {
+      const isExpired = Date.now() - cached.timestamp > this.CACHE_TTL;
+      if (!isExpired && cached.contextHash === contextHash) {
+        return cached.suggestion;
+      }
+      // Remove expired entry
+      this.cache.delete(cacheKey);
+    }
+
+    return null;
+  }
+
+  /**
+   * Store suggestion in cache
+   */
+  private setCachedSuggestion(
+    fieldName: keyof ApplicationFormData,
+    contextHash: string,
+    suggestion: AISuggestion
+  ): void {
+    const cacheKey = `${fieldName}-${contextHash}`;
+    this.cache.set(cacheKey, {
+      suggestion,
+      timestamp: Date.now(),
+      contextHash,
+    });
+  }
+
+  /**
+   * Invalidate cache for a specific field or all fields
+   */
+  public invalidateCache(fieldName?: keyof ApplicationFormData): void {
+    if (fieldName) {
+      // Remove all cache entries for this field
+      const keysToDelete: string[] = [];
+      this.cache.forEach((_, key) => {
+        if (key.startsWith(`${fieldName}-`)) {
+          keysToDelete.push(key);
+        }
+      });
+      keysToDelete.forEach((key) => this.cache.delete(key));
+    } else {
+      // Clear entire cache
+      this.cache.clear();
+    }
+  }
+
+  /**
+   * Cancel any ongoing API request
+   */
+  public cancelRequest(): void {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+  }
+
+  /**
    * Generate AI suggestion for a specific field
    * Performance monitored for optimization tracking
+   * Includes caching to avoid duplicate API calls
    */
   async generateSuggestion(
     fieldName: keyof ApplicationFormData,
@@ -119,16 +231,34 @@ Generate a compelling reason for why they are applying for social support, focus
     return PerformanceMonitor.measureAsync(
       `AI Suggestion Generation - ${fieldName}`,
       async () => {
+        // Generate context hash for caching
+        const contextHash = this.generateContextHash(fieldName, formData);
+
+        // Check cache first
+        const cached = this.getCachedSuggestion(fieldName, contextHash);
+        if (cached) {
+          return cached;
+        }
+
         // Use mock mode for testing without API calls (avoids CORS issues)
         if (USE_MOCK) {
           // Simulate network delay
           await new Promise((resolve) =>
             setTimeout(resolve, APP_CONFIG.AI_MOCK_DELAY)
           );
-          return this.generateMockSuggestion(fieldName, formData);
+          const suggestion = this.generateMockSuggestion(fieldName, formData);
+          // Cache mock suggestions too
+          this.setCachedSuggestion(fieldName, contextHash, suggestion);
+          return suggestion;
         }
 
-        return this.generateSuggestionInternal(fieldName, formData);
+        const suggestion = await this.generateSuggestionInternal(
+          fieldName,
+          formData
+        );
+        // Cache the result
+        this.setCachedSuggestion(fieldName, contextHash, suggestion);
+        return suggestion;
       }
     );
   }
@@ -165,6 +295,9 @@ Generate a compelling reason for why they are applying for social support, focus
       temperature: OPENAI_CONFIG.TEMPERATURE,
     };
 
+    // Create new AbortController for this request
+    this.abortController = new AbortController();
+
     try {
       const response = await axios.post<OpenAIResponse>(
         API_CONFIG.OPENAI_URL,
@@ -175,6 +308,7 @@ Generate a compelling reason for why they are applying for social support, focus
             Authorization: `Bearer ${this.apiKey}`,
           },
           timeout: API_CONFIG.REQUEST_TIMEOUT,
+          signal: this.abortController.signal,
         }
       );
 
@@ -193,7 +327,18 @@ Generate a compelling reason for why they are applying for social support, focus
         fieldName: fieldName as string,
       };
     } catch (error) {
+      // Check if request was cancelled
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "ERR_CANCELED"
+      ) {
+        throw this.createError(AIErrorType.GENERIC, "Request was cancelled.");
+      }
       throw this.handleError(error);
+    } finally {
+      this.abortController = null;
     }
   }
 

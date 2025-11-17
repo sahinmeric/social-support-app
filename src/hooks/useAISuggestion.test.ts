@@ -10,6 +10,8 @@ import { AIErrorType } from "../types/openai.types";
 vi.mock("../services/OpenAIService", () => ({
   openAIService: {
     generateSuggestion: vi.fn(),
+    cancelRequest: vi.fn(),
+    invalidateCache: vi.fn(),
   },
 }));
 

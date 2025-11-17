@@ -80,6 +80,11 @@ describe("Complete form flow (all steps)", () => {
   describe("Error handling and recovery", () => {
     it("should show validation errors when trying to proceed with incomplete data", async () => {
       const user = userEvent.setup();
+
+      // Clear any stored data to ensure we start at step 1
+      StorageService.clearFormData();
+      StorageService.saveCurrentStep(1);
+
       renderWithProviders(<FormWizard />);
 
       await waitFor(() => {

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "./useFormContext";
 import { openAIService } from "../services/OpenAIService";
@@ -19,6 +19,8 @@ export interface UseAISuggestionReturn {
   isLoading: boolean;
   /** Error message if generation failed */
   error: string | null;
+  /** Map of loading states per field to prevent multiple simultaneous requests */
+  loadingFields: Record<string, boolean>;
   /** Generate a suggestion for a specific field */
   generateSuggestion: (field: keyof ApplicationFormData) => Promise<void>;
   /** Accept the suggestion and update form data */
@@ -92,20 +94,60 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
   const [suggestion, setSuggestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingFields, setLoadingFields] = useState<Record<string, boolean>>({
+    financialSituation: false,
+    employmentCircumstances: false,
+    reasonForApplying: false,
+  });
+
+  // Track previous form data for cache invalidation
+  const prevFormDataRef = useRef<ApplicationFormData>(formData);
+
+  // Invalidate cache when relevant form data changes
+  useEffect(() => {
+    const prev = prevFormDataRef.current;
+    const current = formData;
+
+    // Check if any relevant fields have changed
+    const relevantFields: (keyof ApplicationFormData)[] = [
+      "employmentStatus",
+      "monthlyIncome",
+      "housingStatus",
+      "dependents",
+      "financialSituation",
+    ];
+
+    const hasChanged = relevantFields.some(
+      (field) => prev[field] !== current[field]
+    );
+
+    if (hasChanged) {
+      // Invalidate cache when form data changes
+      openAIService.invalidateCache();
+      prevFormDataRef.current = current;
+    }
+  }, [formData]);
 
   /**
    * Generate a suggestion for a specific field
    * Opens the modal and initiates the AI generation process
+   * Prevents multiple simultaneous requests for the same field
    *
    * @param field - The form field to generate a suggestion for
    */
   const generateSuggestion = useCallback(
     async (field: keyof ApplicationFormData) => {
+      // Prevent multiple simultaneous requests for the same field
+      if (loadingFields[field]) {
+        return;
+      }
+
       setCurrentField(field);
       setIsModalOpen(true);
       setIsLoading(true);
       setError(null);
       setSuggestion("");
+      setLoadingFields((prev) => ({ ...prev, [field]: true }));
 
       try {
         const result = await openAIService.generateSuggestion(field, formData);
@@ -115,9 +157,10 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
         setError(t(`ai.errors.${aiError.type}`) || aiError.message);
       } finally {
         setIsLoading(false);
+        setLoadingFields((prev) => ({ ...prev, [field]: false }));
       }
     },
-    [formData, t]
+    [formData, t, loadingFields]
   );
 
   /**
@@ -128,6 +171,8 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
     if (currentField && suggestion) {
       updateFormData(currentField, suggestion);
     }
+    // Cancel any ongoing request
+    openAIService.cancelRequest();
     setIsModalOpen(false);
     setCurrentField(null);
     setSuggestion("");
@@ -145,6 +190,8 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
       if (currentField) {
         updateFormData(currentField, editedText);
       }
+      // Cancel any ongoing request
+      openAIService.cancelRequest();
       setIsModalOpen(false);
       setCurrentField(null);
       setSuggestion("");
@@ -158,6 +205,8 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
    * Closes the modal and resets state
    */
   const discardSuggestion = useCallback(() => {
+    // Cancel any ongoing request
+    openAIService.cancelRequest();
     setIsModalOpen(false);
     setCurrentField(null);
     setSuggestion("");
@@ -173,6 +222,7 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
       setIsLoading(true);
       setError(null);
       setSuggestion("");
+      setLoadingFields((prev) => ({ ...prev, [currentField]: true }));
 
       try {
         const result = await openAIService.generateSuggestion(
@@ -185,6 +235,7 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
         setError(t(`ai.errors.${aiError.type}`) || aiError.message);
       } finally {
         setIsLoading(false);
+        setLoadingFields((prev) => ({ ...prev, [currentField]: false }));
       }
     }
   }, [currentField, formData, t]);
@@ -192,8 +243,11 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
   /**
    * Close the modal and reset all state
    * Can be called directly or as a result of other actions
+   * Cancels any ongoing API request
    */
   const closeModal = useCallback(() => {
+    // Cancel any ongoing request when modal closes
+    openAIService.cancelRequest();
     setIsModalOpen(false);
     setCurrentField(null);
     setSuggestion("");
@@ -206,6 +260,7 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
     suggestion,
     isLoading,
     error,
+    loadingFields,
     generateSuggestion,
     acceptSuggestion,
     editSuggestion,
