@@ -19,7 +19,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
 export function renderWithProviders(
   ui: ReactElement,
   {
-    initialLanguage = "en",
+    initialLanguage: _initialLanguage = "en",
     withFormProvider = true,
     withLanguageProvider = true,
     withThemeProvider = true,

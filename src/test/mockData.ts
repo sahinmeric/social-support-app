@@ -59,12 +59,12 @@ export const createStep1Data = (
 export const createStep2Data = (
   overrides?: Partial<ApplicationFormData>
 ): Partial<ApplicationFormData> => ({
-  maritalStatus: "married",
-  dependents: 2,
-  employmentStatus: "employed",
-  monthlyIncome: 5000,
-  currency: "AED",
-  housingStatus: "rented",
+  maritalStatus: "married" as const,
+  dependents: 2 as const,
+  employmentStatus: "employed" as const,
+  monthlyIncome: 5000 as const,
+  currency: "AED" as const,
+  housingStatus: "rented" as const,
   ...overrides,
 });
 

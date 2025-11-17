@@ -60,6 +60,7 @@ export class PerformanceMonitor {
 
     // Log in development mode
     if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
       console.log(`⏱️ ${name}: ${duration.toFixed(2)}ms`);
     }
   }
@@ -92,6 +93,7 @@ export class PerformanceMonitor {
    */
   static logAllStats(): void {
     if (this.measurements.size === 0) {
+      // eslint-disable-next-line no-console
       console.log("No performance measurements recorded");
       return;
     }
@@ -101,6 +103,7 @@ export class PerformanceMonitor {
       ...this.getStats(name),
     }));
 
+    // eslint-disable-next-line no-console
     console.table(stats);
   }
 
