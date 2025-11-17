@@ -28,6 +28,11 @@ describe("Step3SituationDescriptions", () => {
     suggestion: "",
     isLoading: false,
     error: null,
+    loadingFields: {
+      financialSituation: false,
+      employmentCircumstances: false,
+      reasonForApplying: false,
+    },
     generateSuggestion: mockGenerateSuggestion,
     acceptSuggestion: mockAcceptSuggestion,
     editSuggestion: mockEditSuggestion,
@@ -158,8 +163,14 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Current Financial Situation");
+      await user.clear(textarea);
       await user.type(textarea, maliciousInput);
-      await user.tab(); // Trigger blur
+
+      // Focus another element to trigger blur
+      const employmentTextarea = screen.getByLabelText(
+        "Employment Circumstances"
+      );
+      await user.click(employmentTextarea);
 
       await waitFor(() => {
         expect(sanitizeModule.sanitizeInput).toHaveBeenCalledWith(
@@ -178,8 +189,12 @@ describe("Step3SituationDescriptions", () => {
       renderWithProviders(<Step3SituationDescriptions />);
 
       const textarea = screen.getByLabelText("Employment Circumstances");
+      await user.clear(textarea);
       await user.type(textarea, maliciousInput);
-      await user.tab(); // Trigger blur
+
+      // Focus another element to trigger blur
+      const reasonTextarea = screen.getByLabelText("Reason for Applying");
+      await user.click(reasonTextarea);
 
       await waitFor(() => {
         expect(sanitizeModule.sanitizeInput).toHaveBeenCalledWith(

@@ -18,6 +18,7 @@ const Step3SituationDescriptions: React.FC = () => {
     suggestion,
     isLoading,
     error,
+    loadingFields,
     generateSuggestion,
     acceptSuggestion,
     editSuggestion,
@@ -99,6 +100,7 @@ const Step3SituationDescriptions: React.FC = () => {
           <HelpMeWriteButton
             fieldName="financialSituation"
             onClick={generateSuggestion}
+            loading={loadingFields.financialSituation}
           />
         </Box>
 
@@ -139,6 +141,7 @@ const Step3SituationDescriptions: React.FC = () => {
           <HelpMeWriteButton
             fieldName="employmentCircumstances"
             onClick={generateSuggestion}
+            loading={loadingFields.employmentCircumstances}
           />
         </Box>
 
@@ -179,6 +182,7 @@ const Step3SituationDescriptions: React.FC = () => {
           <HelpMeWriteButton
             fieldName="reasonForApplying"
             onClick={generateSuggestion}
+            loading={loadingFields.reasonForApplying}
           />
         </Box>
       </Stack>
