@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "../../hooks/useFormContext";
 import { useAISuggestion } from "../../hooks/useAISuggestion";
 import SuggestionModal from "../ai/SuggestionModal";
+import HelpMeWriteButton from "../ai/HelpMeWriteButton";
 import { MIN_TEXT_LENGTH } from "../../constants";
 import { sanitizeInput } from "../../utils/sanitize";
 import FormField from "../common/FormField";
@@ -97,20 +96,10 @@ const Step3SituationDescriptions: React.FC = () => {
               },
             }}
           />
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<AutoAwesomeIcon />}
-            onClick={() => generateSuggestion("financialSituation")}
-            sx={{
-              mt: 1,
-              textTransform: "none",
-              borderRadius: 2,
-            }}
-            data-testid="ai-help-financialSituation"
-          >
-            {t("ai.helpMeWrite")}
-          </Button>
+          <HelpMeWriteButton
+            fieldName="financialSituation"
+            onClick={generateSuggestion}
+          />
         </Box>
 
         {/* Employment Circumstances */}
@@ -147,20 +136,10 @@ const Step3SituationDescriptions: React.FC = () => {
               },
             }}
           />
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<AutoAwesomeIcon />}
-            onClick={() => generateSuggestion("employmentCircumstances")}
-            sx={{
-              mt: 1,
-              textTransform: "none",
-              borderRadius: 2,
-            }}
-            data-testid="ai-help-employmentCircumstances"
-          >
-            {t("ai.helpMeWrite")}
-          </Button>
+          <HelpMeWriteButton
+            fieldName="employmentCircumstances"
+            onClick={generateSuggestion}
+          />
         </Box>
 
         {/* Reason for Applying */}
@@ -197,20 +176,10 @@ const Step3SituationDescriptions: React.FC = () => {
               },
             }}
           />
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<AutoAwesomeIcon />}
-            onClick={() => generateSuggestion("reasonForApplying")}
-            sx={{
-              mt: 1,
-              textTransform: "none",
-              borderRadius: 2,
-            }}
-            data-testid="ai-help-reasonForApplying"
-          >
-            {t("ai.helpMeWrite")}
-          </Button>
+          <HelpMeWriteButton
+            fieldName="reasonForApplying"
+            onClick={generateSuggestion}
+          />
         </Box>
       </Stack>
 

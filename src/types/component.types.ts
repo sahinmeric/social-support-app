@@ -29,14 +29,6 @@ export interface StepProps {
   onBlur: (field: keyof ApplicationFormData) => void;
 }
 
-// HelpMeWriteButton component props
-export interface HelpMeWriteButtonProps {
-  fieldName: keyof ApplicationFormData;
-  currentValue: string;
-  onAccept: (suggestion: string) => void;
-  disabled?: boolean;
-}
-
 // SuggestionModal component props
 export interface SuggestionModalProps {
   open: boolean;
