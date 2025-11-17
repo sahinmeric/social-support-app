@@ -19,7 +19,9 @@
     "cypress:run": "cypress run",
     "cypress:run:headless": "cypress run --headless",
     "e2e": "start-server-and-test dev http://localhost:5173 cypress:run",
-    "e2e:headless": "start-server-and-test dev http://localhost:5173 cypress:run:headless"
+    "e2e:headless": "start-server-and-test dev http://localhost:5173 cypress:run:headless",
+    "pre-deploy": "bash scripts/pre-deploy-check.sh",
+    "deploy:check": "npm run lint && npm run test && npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
