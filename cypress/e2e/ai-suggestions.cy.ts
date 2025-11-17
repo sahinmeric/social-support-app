@@ -50,8 +50,14 @@ describe("SSA Application - AI Suggestions", () => {
     // Wait for suggestion modal to appear
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
 
+    // Wait for loading to finish and suggestion to appear (AI mock delay is 1.5s)
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("exist");
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("not.exist");
+
     // Verify suggestion content exists
-    cy.get('[data-testid="ai-suggestion-text"]').should("exist");
+    cy.get('[data-testid="ai-suggestion-text"]', { timeout: 5000 }).should(
+      "exist"
+    );
   });
 
   it("should accept AI suggestion", () => {
@@ -61,8 +67,12 @@ describe("SSA Application - AI Suggestions", () => {
     cy.get('[data-testid="ai-help-financialSituation"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
 
+    // Wait for loading to finish
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("exist");
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("not.exist");
+
     // Get the suggestion text
-    cy.get('[data-testid="ai-suggestion-text"]')
+    cy.get('[data-testid="ai-suggestion-text"]', { timeout: 5000 })
       .find("textarea")
       .invoke("val")
       .then((suggestionText) => {
@@ -109,7 +119,10 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion for financial situation
     cy.get('[data-testid="ai-help-financialSituation"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-    cy.get('[data-testid="btn-accept-suggestion"]').click();
+    // Wait for loading to finish
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("exist");
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("not.exist");
+    cy.get('[data-testid="btn-accept-suggestion"]', { timeout: 5000 }).click();
 
     // Verify first field has content
     cy.get('textarea[name="financialSituation"]').should("not.have.value", "");
@@ -117,7 +130,10 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion for employment circumstances
     cy.get('[data-testid="ai-help-employmentCircumstances"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-    cy.get('[data-testid="btn-accept-suggestion"]').click();
+    // Wait for loading to finish
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("exist");
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("not.exist");
+    cy.get('[data-testid="btn-accept-suggestion"]', { timeout: 5000 }).click();
 
     // Verify second field has content
     cy.get('textarea[name="employmentCircumstances"]').should(
@@ -128,7 +144,10 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion for reason for applying
     cy.get('[data-testid="ai-help-reasonForApplying"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-    cy.get('[data-testid="btn-accept-suggestion"]').click();
+    // Wait for loading to finish
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("exist");
+    cy.get('[data-testid="ai-loading"]', { timeout: 5000 }).should("not.exist");
+    cy.get('[data-testid="btn-accept-suggestion"]', { timeout: 5000 }).click();
 
     // Verify third field has content
     cy.get('textarea[name="reasonForApplying"]').should("not.have.value", "");
