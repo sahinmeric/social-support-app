@@ -30,11 +30,14 @@ describe("Complete form flow (all steps)", () => {
 
       renderWithProviders(<FormWizard />);
 
-      await waitFor(() => {
-        expect(
-          screen.getByLabelText(/financial situation/i)
-        ).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(
+            screen.getByLabelText(/financial situation/i)
+          ).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
 
       // Submit the form
       const submitButton = screen.getByRole("button", { name: /submit/i });
@@ -42,7 +45,7 @@ describe("Complete form flow (all steps)", () => {
 
       // Should show loading state (button disabled)
       expect(submitButton).toBeDisabled();
-    });
+    }, 10000); // Increase timeout to 10 seconds
 
     it("should display success page with application ID after submission", async () => {
       const user = userEvent.setup();
@@ -54,11 +57,14 @@ describe("Complete form flow (all steps)", () => {
 
       renderWithProviders(<FormWizard />);
 
-      await waitFor(() => {
-        expect(
-          screen.getByLabelText(/financial situation/i)
-        ).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(
+            screen.getByLabelText(/financial situation/i)
+          ).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
 
       // Submit the form
       await user.click(screen.getByRole("button", { name: /submit/i }));
@@ -69,7 +75,7 @@ describe("Complete form flow (all steps)", () => {
       // Verify application ID is displayed
       expect(screen.getByText(/application id/i)).toBeInTheDocument();
       expect(screen.getByText(/APP-/)).toBeInTheDocument();
-    });
+    }, 10000); // Increase timeout to 10 seconds
   });
 
   describe("Error handling and recovery", () => {

@@ -209,7 +209,9 @@ describe("SuggestionModal", () => {
 
       const textarea = screen.getByRole("textbox");
       await user.clear(textarea);
-      await user.type(textarea, "Edited suggestion text");
+      // Use paste instead of type for faster test execution
+      await user.click(textarea);
+      await user.paste("Edited suggestion text");
 
       const editButton = screen.getByText("Edit");
       await user.click(editButton);
