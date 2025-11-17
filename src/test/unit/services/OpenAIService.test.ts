@@ -635,4 +635,57 @@ describe("OpenAIService", () => {
       expect(openAIService).toBeInstanceOf(OpenAIService);
     });
   });
+
+  // ============================================================================
+  // Cache Expiration Tests
+  // ============================================================================
+  describe("cache expiration", () => {
+    beforeEach(async () => {
+      vi.stubEnv("VITE_USE_MOCK_AI", "true");
+      vi.resetModules();
+      const serviceModule = await import("../../../services/OpenAIService");
+      OpenAIService = serviceModule.OpenAIService;
+      service = new OpenAIService();
+    });
+
+    it("should cache suggestions for same field and data", async () => {
+      const formData = createMockFormData();
+
+      // Generate and cache a suggestion
+      const firstResult = await service.generateSuggestion(
+        "financialSituation",
+        formData
+      );
+
+      // Generate again with same data - should use cache
+      const secondResult = await service.generateSuggestion(
+        "financialSituation",
+        formData
+      );
+
+      // Should return same cached result
+      expect(secondResult.text).toBe(firstResult.text);
+      expect(secondResult.fieldName).toBe("financialSituation");
+    });
+
+    it("should generate new suggestion for different field", async () => {
+      const formData = createMockFormData();
+
+      // Generate for first field
+      const firstResult = await service.generateSuggestion(
+        "financialSituation",
+        formData
+      );
+
+      // Generate for different field
+      const secondResult = await service.generateSuggestion(
+        "employmentCircumstances",
+        formData
+      );
+
+      // Should be different suggestions
+      expect(secondResult.fieldName).toBe("employmentCircumstances");
+      expect(firstResult.fieldName).toBe("financialSituation");
+    });
+  });
 });

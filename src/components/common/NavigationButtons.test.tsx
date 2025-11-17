@@ -158,4 +158,23 @@ describe("NavigationButtons Component", () => {
     const submitButton = screen.getByLabelText("Submit");
     expect(submitButton).toHaveAttribute("aria-busy", "true");
   });
+
+  it("should not show Previous button on first step", () => {
+    renderWithProviders(
+      <NavigationButtons {...defaultProps} currentStep={1 as const} />
+    );
+
+    const previousButton = screen.getByText("Previous");
+    expect(previousButton).toBeDisabled();
+    expect(screen.getByText("Next")).toBeInTheDocument();
+  });
+
+  it("should show Submit button instead of Next on last step", () => {
+    renderWithProviders(
+      <NavigationButtons {...defaultProps} currentStep={3 as const} />
+    );
+
+    expect(screen.getByText("Submit")).toBeInTheDocument();
+    expect(screen.queryByText("Next")).not.toBeInTheDocument();
+  });
 });

@@ -242,4 +242,69 @@ describe("useAISuggestion", () => {
     expect(result.current.suggestion).toBe("");
     expect(result.current.error).toBe(null);
   });
+
+  it("should handle error when suggestion generation fails", async () => {
+    const mockError = { type: AIErrorType.NETWORK, message: "Network error" };
+    vi.mocked(openAIService.generateSuggestion).mockRejectedValue(mockError);
+
+    const { result } = renderHook(() => useAISuggestion(), {
+      wrapper: FormProvider,
+    });
+
+    await act(async () => {
+      await result.current.generateSuggestion("financialSituation");
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toBeTruthy();
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.suggestion).toBe("");
+    });
+  });
+
+  it("should handle multiple suggestion requests for different fields", async () => {
+    const mockSuggestion1: AISuggestion = {
+      text: "Financial suggestion",
+      fieldName: "financialSituation",
+    };
+
+    const mockSuggestion2: AISuggestion = {
+      text: "Employment suggestion",
+      fieldName: "employmentCircumstances",
+    };
+
+    vi.mocked(openAIService.generateSuggestion)
+      .mockResolvedValueOnce(mockSuggestion1)
+      .mockResolvedValueOnce(mockSuggestion2);
+
+    const { result } = renderHook(() => useAISuggestion(), {
+      wrapper: FormProvider,
+    });
+
+    // Generate first suggestion
+    await act(async () => {
+      await result.current.generateSuggestion("financialSituation");
+    });
+
+    await waitFor(() => {
+      expect(result.current.suggestion).toBe("Financial suggestion");
+    });
+
+    // Close modal
+    act(() => {
+      result.current.closeModal();
+    });
+
+    // Generate second suggestion for different field
+    await act(async () => {
+      await result.current.generateSuggestion("employmentCircumstances");
+    });
+
+    await waitFor(() => {
+      expect(result.current.suggestion).toBe("Employment suggestion");
+    });
+
+    // Should have called the service twice
+    expect(openAIService.generateSuggestion).toHaveBeenCalledTimes(2);
+  });
 });

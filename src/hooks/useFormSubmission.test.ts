@@ -204,4 +204,29 @@ describe("useFormSubmission", () => {
       expect(result.current.isSubmitting).toBe(false);
     });
   });
+
+  it("should handle completely malformed response", async () => {
+    const mockFormData = createMockFormData();
+    // Response missing success field entirely
+    const mockResponse = {
+      data: { applicationId: "APP-123" },
+    } as unknown as SubmissionResponse;
+
+    vi.mocked(APIService.submitApplication).mockResolvedValue(mockResponse);
+
+    const { result } = renderHook(() => useFormSubmission());
+
+    const mockValidate = vi.fn().mockResolvedValue(true);
+
+    await act(async () => {
+      await result.current.submitForm(mockFormData, mockValidate);
+    });
+
+    await waitFor(() => {
+      // Should treat as error since success field is missing
+      expect(result.current.error).toBeTruthy();
+      expect(result.current.isSubmitting).toBe(false);
+      expect(result.current.isSuccess).toBe(false);
+    });
+  });
 });
