@@ -6,7 +6,7 @@ import NavigationButtons from "./NavigationButtons";
 
 describe("NavigationButtons Component", () => {
   const defaultProps = {
-    currentStep: 2,
+    currentStep: 2 as const,
     totalSteps: 3,
     onNext: vi.fn(),
     onPrevious: vi.fn(),
@@ -24,7 +24,7 @@ describe("NavigationButtons Component", () => {
 
   it("disables Previous button on first step", () => {
     renderWithProviders(
-      <NavigationButtons {...defaultProps} currentStep={1} />
+      <NavigationButtons {...defaultProps} currentStep={1 as const} />
     );
 
     const previousButton = screen.getByText("Previous");
@@ -33,7 +33,7 @@ describe("NavigationButtons Component", () => {
 
   it("shows Submit button on last step", () => {
     renderWithProviders(
-      <NavigationButtons {...defaultProps} currentStep={3} />
+      <NavigationButtons {...defaultProps} currentStep={3 as const} />
     );
 
     expect(screen.getByText("Submit")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("NavigationButtons Component", () => {
     renderWithProviders(
       <NavigationButtons
         {...defaultProps}
-        currentStep={3}
+        currentStep={3 as const}
         onSubmit={onSubmit}
       />
     );
@@ -88,7 +88,11 @@ describe("NavigationButtons Component", () => {
 
   it("disables Submit button when form is invalid", () => {
     renderWithProviders(
-      <NavigationButtons {...defaultProps} currentStep={3} isValid={false} />
+      <NavigationButtons
+        {...defaultProps}
+        currentStep={3 as const}
+        isValid={false}
+      />
     );
 
     const submitButton = screen.getByText("Submit");
@@ -99,7 +103,7 @@ describe("NavigationButtons Component", () => {
     renderWithProviders(
       <NavigationButtons
         {...defaultProps}
-        currentStep={3}
+        currentStep={3 as const}
         isSubmitting={true}
       />
     );
@@ -115,7 +119,7 @@ describe("NavigationButtons Component", () => {
     renderWithProviders(
       <NavigationButtons
         {...defaultProps}
-        currentStep={2}
+        currentStep={2 as const}
         isSubmitting={true}
       />
     );
@@ -136,7 +140,7 @@ describe("NavigationButtons Component", () => {
 
   it("has correct ARIA label for Submit button", () => {
     renderWithProviders(
-      <NavigationButtons {...defaultProps} currentStep={3} />
+      <NavigationButtons {...defaultProps} currentStep={3 as const} />
     );
 
     expect(screen.getByLabelText("Submit")).toBeInTheDocument();
@@ -146,7 +150,7 @@ describe("NavigationButtons Component", () => {
     renderWithProviders(
       <NavigationButtons
         {...defaultProps}
-        currentStep={3}
+        currentStep={3 as const}
         isSubmitting={true}
       />
     );

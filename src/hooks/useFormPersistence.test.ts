@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { useFormPersistence } from "./useFormPersistence";
 import { StorageService } from "../services/StorageService";
 import { createMockFormData } from "../test/mockData";
-import type { FormStep } from "../types/form.types";
+import type { FormStep, ApplicationFormData } from "../types/form.types";
 import { APP_CONFIG } from "../constants";
 
 // Mock the StorageService
@@ -47,7 +47,8 @@ describe("useFormPersistence", () => {
     vi.mocked(StorageService.saveCurrentStep).mockImplementation(() => {});
 
     const { rerender } = renderHook(
-      ({ formData, step }) => useFormPersistence(formData, step),
+      ({ formData, step }: { formData: ApplicationFormData; step: FormStep }) =>
+        useFormPersistence(formData, step),
       {
         initialProps: { formData: mockFormData, step: currentStep },
       }
@@ -83,15 +84,17 @@ describe("useFormPersistence", () => {
     vi.mocked(StorageService.saveCurrentStep).mockImplementation(() => {});
 
     const { rerender } = renderHook(
-      ({ formData, step }) => useFormPersistence(formData, step),
+      (props: { formData: ApplicationFormData; step: FormStep }) =>
+        useFormPersistence(props.formData, props.step),
       {
         initialProps: { formData: mockFormData, step: currentStep },
       }
     );
 
     // Change step
-    const newStep: FormStep = 2;
-    rerender({ formData: mockFormData, step: newStep });
+    const newStep = 2 as FormStep;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rerender({ formData: mockFormData, step: newStep } as any);
 
     // Fast-forward time
     vi.advanceTimersByTime(APP_CONFIG.DEBOUNCE_DELAY);
@@ -130,7 +133,8 @@ describe("useFormPersistence", () => {
     vi.mocked(StorageService.saveCurrentStep).mockImplementation(() => {});
 
     const { rerender } = renderHook(
-      ({ formData, step }) => useFormPersistence(formData, step),
+      ({ formData, step }: { formData: ApplicationFormData; step: FormStep }) =>
+        useFormPersistence(formData, step),
       {
         initialProps: { formData: mockFormData, step: currentStep },
       }

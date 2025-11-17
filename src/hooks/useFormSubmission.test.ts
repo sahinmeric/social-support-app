@@ -104,7 +104,7 @@ describe("useFormSubmission", () => {
     const mockResponse: SubmissionResponse = {
       success: false,
       message: "Submission failed",
-      data: null,
+      data: undefined,
     };
 
     vi.mocked(APIService.submitApplication).mockResolvedValue(mockResponse);

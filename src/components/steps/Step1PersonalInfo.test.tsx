@@ -85,7 +85,11 @@ describe("Step1PersonalInfo Component", () => {
 
   it("displays pre-filled form data", () => {
     const step1Data = createStep1Data();
-    mockFormContext.formData = { ...mockFormContext.formData, ...step1Data };
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      ...step1Data,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
 
     renderWithProviders(<Step1PersonalInfo />);
 

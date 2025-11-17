@@ -1,15 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../utils";
 import FormWizard from "../../components/FormWizard";
 import { StorageService } from "../../services/StorageService";
-import {
-  createStep1Data,
-  createStep2Data,
-  createStep3Data,
-  createMockFormData,
-} from "../mockData";
+import { createMockFormData } from "../mockData";
 
 // Helper to wait for success page
 const waitForSuccessPage = async () => {

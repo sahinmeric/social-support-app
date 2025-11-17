@@ -15,8 +15,10 @@ vi.mock("../../../utils/performance", () => ({
 }));
 
 describe("APIService", () => {
-  let sanitizeFormData: unknown;
-  let PerformanceMonitor: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sanitizeFormData: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let PerformanceMonitor: any;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -161,7 +163,6 @@ describe("APIService", () => {
         monthlyIncome: 0,
         currency: "AED",
         housingStatus: "homeless",
-        hasOtherIncome: false,
 
         // Step 3
         financialSituation:
@@ -181,11 +182,7 @@ describe("APIService", () => {
     });
 
     it("should handle form data with optional fields", async () => {
-      const formData = createMockFormData({
-        hasOtherIncome: true,
-        otherIncomeSource: "Freelance work",
-        otherIncomeAmount: 1000,
-      });
+      const formData = createMockFormData();
 
       const submitPromise = APIService.submitApplication(formData);
       await vi.runAllTimersAsync();

@@ -54,7 +54,8 @@ describe("LanguageContext", () => {
   describe("setLanguage with dynamic loading", () => {
     it("should load language resources when not already loaded", async () => {
       mockHasResourceBundle.mockReturnValue(false);
-      mockLoadLanguageResources.mockResolvedValue({ test: "value" });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockLoadLanguageResources.mockResolvedValue({} as any);
       mockChangeLanguage.mockResolvedValue(undefined);
 
       const { result } = renderHook(() => useLanguage(), { wrapper });
@@ -67,7 +68,8 @@ describe("LanguageContext", () => {
         expect(mockAddResourceBundle).toHaveBeenCalledWith(
           "ar",
           "translation",
-          { test: "value" }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {} as any
         );
       });
     });
@@ -89,7 +91,8 @@ describe("LanguageContext", () => {
 
     it("should call i18n.changeLanguage after loading resources", async () => {
       mockHasResourceBundle.mockReturnValue(false);
-      mockLoadLanguageResources.mockResolvedValue({ test: "value" });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockLoadLanguageResources.mockResolvedValue({} as any);
       mockChangeLanguage.mockResolvedValue(undefined);
 
       const { result } = renderHook(() => useLanguage(), { wrapper });

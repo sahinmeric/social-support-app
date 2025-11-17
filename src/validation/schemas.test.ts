@@ -187,7 +187,7 @@ describe("Validation Schemas", () => {
       });
 
       it("should validate with different marital status options", async () => {
-        const statuses = ["single", "married", "divorced", "widowed"];
+        const statuses = ["single", "married", "divorced", "widowed"] as const;
 
         for (const status of statuses) {
           const data = createStep2Data({ maritalStatus: status });
@@ -196,7 +196,12 @@ describe("Validation Schemas", () => {
       });
 
       it("should validate with different employment status options", async () => {
-        const statuses = ["employed", "unemployed", "selfEmployed", "retired"];
+        const statuses = [
+          "employed",
+          "unemployed",
+          "selfEmployed",
+          "retired",
+        ] as const;
 
         for (const status of statuses) {
           const data = createStep2Data({ employmentStatus: status });
@@ -205,7 +210,7 @@ describe("Validation Schemas", () => {
       });
 
       it("should validate with different housing status options", async () => {
-        const statuses = ["owned", "rented", "homeless", "other"];
+        const statuses = ["owned", "rented", "homeless", "other"] as const;
 
         for (const status of statuses) {
           const data = createStep2Data({ housingStatus: status });

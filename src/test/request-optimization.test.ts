@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { OpenAIService } from "../services/OpenAIService";
 import type { ApplicationFormData } from "../types/form.types";
 
@@ -50,10 +50,7 @@ describe("Request Optimization Features", () => {
 
     it("should generate new suggestion when form data changes", async () => {
       // First call
-      const result1 = await service.generateSuggestion(
-        "financialSituation",
-        mockFormData
-      );
+      await service.generateSuggestion("financialSituation", mockFormData);
 
       // Change form data
       const updatedFormData = {

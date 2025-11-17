@@ -22,9 +22,12 @@ vi.mock("../../../utils/performance", () => ({
 describe("OpenAIService", () => {
   let OpenAIService: typeof import("../../../services/OpenAIService").OpenAIService;
   let service: InstanceType<typeof OpenAIService>;
-  let sanitizeInput: unknown;
-  let PerformanceMonitor: unknown;
-  let mockedAxios: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sanitizeInput: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let PerformanceMonitor: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockedAxios: any;
 
   const mockApiKey = "test-api-key-123";
 

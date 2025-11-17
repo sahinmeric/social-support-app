@@ -58,7 +58,11 @@ describe("Step2FamilyFinancial Component", () => {
 
   it("displays pre-filled form data", () => {
     const step2Data = createStep2Data();
-    mockFormContext.formData = { ...mockFormContext.formData, ...step2Data };
+    mockFormContext.formData = {
+      ...mockFormContext.formData,
+      ...step2Data,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any;
 
     renderWithProviders(<Step2FamilyFinancial />);
 
