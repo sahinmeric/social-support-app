@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: process.env.GITHUB_ACTIONS ? "/ssa/" : "/",
+  base: process.env.GITHUB_ACTIONS ? "/social-support-app/" : "/",
   build: {
     chunkSizeWarningLimit: 500,
     rollupOptions: {
