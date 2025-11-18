@@ -25,7 +25,4 @@ dist-ssr
 cypress/screenshots
 cypress/videos
 
-design.md
-requirements.md
-tasks.md
 coverage/
