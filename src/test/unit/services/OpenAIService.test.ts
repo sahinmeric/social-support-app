@@ -105,7 +105,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("financialSituation");
@@ -124,7 +125,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("financialSituation");
@@ -140,7 +142,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "employmentCircumstances",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("employmentCircumstances");
@@ -155,7 +158,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "employmentCircumstances",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("employmentCircumstances");
@@ -169,7 +173,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "reasonForApplying",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("reasonForApplying");
@@ -184,7 +189,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "reasonForApplying",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("reasonForApplying");
@@ -195,7 +201,11 @@ describe("OpenAIService", () => {
       const formData = createMockFormData();
       const unknownField = "unknownField" as keyof ApplicationFormData;
 
-      const result = service["generateMockSuggestion"](unknownField, formData);
+      const result = service["generateMockSuggestion"](
+        unknownField,
+        formData,
+        "en"
+      );
 
       expect(result.fieldName).toBe(unknownField);
       expect(result.text).toContain("Sample suggestion text for");
@@ -209,7 +219,8 @@ describe("OpenAIService", () => {
 
       const result = service["generateMockSuggestion"](
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(sanitizeInput).toHaveBeenCalled();
@@ -235,7 +246,8 @@ describe("OpenAIService", () => {
 
       const payload = service["buildRequestPayload"](
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(payload.fieldName).toBe("financialSituation");
@@ -255,7 +267,8 @@ describe("OpenAIService", () => {
 
       const payload = service["buildRequestPayload"](
         "employmentCircumstances",
-        formData
+        formData,
+        "en"
       );
 
       expect(payload.fieldName).toBe("employmentCircumstances");
@@ -275,7 +288,8 @@ describe("OpenAIService", () => {
 
       const payload = service["buildRequestPayload"](
         "reasonForApplying",
-        formData
+        formData,
+        "en"
       );
 
       expect(payload.fieldName).toBe("reasonForApplying");
@@ -295,7 +309,8 @@ describe("OpenAIService", () => {
 
       const payload = service["buildRequestPayload"](
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(payload.fieldName).toBe("financialSituation");
@@ -321,7 +336,8 @@ describe("OpenAIService", () => {
 
       const result = await service.generateSuggestion(
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.fieldName).toBe("financialSituation");
@@ -332,7 +348,7 @@ describe("OpenAIService", () => {
     it("should call PerformanceMonitor.measureAsync", async () => {
       const formData = createMockFormData();
 
-      await service.generateSuggestion("financialSituation", formData);
+      await service.generateSuggestion("financialSituation", formData, "en");
 
       expect(PerformanceMonitor.measureAsync).toHaveBeenCalledWith(
         "AI Suggestion Generation - financialSituation",
@@ -344,7 +360,7 @@ describe("OpenAIService", () => {
       const formData = createMockFormData();
       const startTime = Date.now();
 
-      await service.generateSuggestion("financialSituation", formData);
+      await service.generateSuggestion("financialSituation", formData, "en");
 
       const endTime = Date.now();
       const elapsed = endTime - startTime;
@@ -370,7 +386,7 @@ describe("OpenAIService", () => {
 
       mockedAxios.post.mockResolvedValue(mockResponse);
 
-      await service.generateSuggestion("financialSituation", formData);
+      await service.generateSuggestion("financialSituation", formData, "en");
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         "/api/ai/suggestions",
@@ -404,11 +420,11 @@ describe("OpenAIService", () => {
 
       mockedAxios.post.mockResolvedValue(mockResponse);
 
-      await service.generateSuggestion("financialSituation", formData);
+      await service.generateSuggestion("financialSituation", formData, "en");
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         "/api/ai/suggestions",
-        {
+        expect.objectContaining({
           fieldName: "financialSituation",
           formData: {
             employmentStatus: "employed",
@@ -416,7 +432,10 @@ describe("OpenAIService", () => {
             housingStatus: "owned",
             dependents: 2,
           },
-        },
+          systemPrompt: expect.stringContaining(
+            "Please respond in English language"
+          ),
+        }),
         expect.objectContaining({
           headers: expect.objectContaining({
             "Content-Type": "application/json",
@@ -441,7 +460,8 @@ describe("OpenAIService", () => {
 
       const result = await service.generateSuggestion(
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       expect(result.text).toBe(mockSanitized);
@@ -458,7 +478,7 @@ describe("OpenAIService", () => {
       });
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.GENERIC,
         message: expect.any(String),
@@ -475,7 +495,7 @@ describe("OpenAIService", () => {
       });
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.GENERIC,
         message: expect.any(String),
@@ -493,7 +513,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(timeoutError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.TIMEOUT,
         message: expect.stringContaining("Request took too long"),
@@ -511,7 +531,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(networkError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.TIMEOUT,
         message: expect.stringContaining("Request took too long"),
@@ -531,7 +551,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(rateLimitError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.RATE_LIMIT,
         message: expect.stringContaining("Too many requests"),
@@ -551,7 +571,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(authError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.GENERIC,
         message: expect.stringContaining("Something went wrong"),
@@ -569,7 +589,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(networkError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.NETWORK,
         message: expect.stringContaining("Unable to connect"),
@@ -589,7 +609,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(serverError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.GENERIC,
         message: expect.stringContaining("Something went wrong"),
@@ -604,7 +624,7 @@ describe("OpenAIService", () => {
       mockedAxios.post.mockRejectedValue(genericError);
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toMatchObject({
         type: AIErrorType.GENERIC,
         message: expect.stringContaining("Something went wrong"),
@@ -621,7 +641,7 @@ describe("OpenAIService", () => {
       });
 
       await expect(
-        service.generateSuggestion("financialSituation", formData)
+        service.generateSuggestion("financialSituation", formData, "en")
       ).rejects.toThrow();
     });
   });
@@ -654,13 +674,15 @@ describe("OpenAIService", () => {
       // Generate and cache a suggestion
       const firstResult = await service.generateSuggestion(
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       // Generate again with same data - should use cache
       const secondResult = await service.generateSuggestion(
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       // Should return same cached result
@@ -674,13 +696,15 @@ describe("OpenAIService", () => {
       // Generate for first field
       const firstResult = await service.generateSuggestion(
         "financialSituation",
-        formData
+        formData,
+        "en"
       );
 
       // Generate for different field
       const secondResult = await service.generateSuggestion(
         "employmentCircumstances",
-        formData
+        formData,
+        "en"
       );
 
       // Should be different suggestions

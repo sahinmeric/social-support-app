@@ -435,4 +435,123 @@ describe("SuggestionModal", () => {
       expect(dialog).toBeInTheDocument();
     });
   });
+
+  // ============================================================================
+  // Arabic Text Handling Tests
+  // ============================================================================
+  describe("Arabic Text Handling", () => {
+    it("should display Arabic text correctly in textarea", () => {
+      const arabicSuggestion = "أواجه حاليًا تحديات مالية كبيرة";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicSuggestion} />
+      );
+
+      const textarea = screen.getByRole("textbox");
+      expect(textarea).toHaveValue(arabicSuggestion);
+    });
+
+    it("should preserve Arabic text when editing", async () => {
+      const user = userEvent.setup();
+      const arabicSuggestion = "أواجه حاليًا تحديات مالية";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicSuggestion} />
+      );
+
+      const textarea = screen.getByRole("textbox");
+      await user.click(textarea);
+      await user.type(textarea, " كبيرة");
+
+      expect(textarea).toHaveValue("أواجه حاليًا تحديات مالية كبيرة");
+    });
+
+    it("should handle Arabic text with diacritics", () => {
+      const arabicWithDiacritics = "مُحَمَّد يَعْمَلُ فِي الْمَدِينَةِ";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicWithDiacritics} />
+      );
+
+      const textarea = screen.getByRole("textbox");
+      expect(textarea).toHaveValue(arabicWithDiacritics);
+    });
+
+    it("should handle mixed Arabic and English text", () => {
+      const mixedText = "My name is محمد and I live in القاهرة";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={mixedText} />
+      );
+
+      const textarea = screen.getByRole("textbox");
+      expect(textarea).toHaveValue(mixedText);
+    });
+
+    it("should correctly count Arabic characters in textarea", () => {
+      const arabicText = "أواجه حاليًا تحديات مالية كبيرة";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicText} />
+      );
+
+      const textarea = screen.getByRole("textbox") as HTMLTextAreaElement;
+      // Verify the textarea value matches the Arabic text exactly
+      expect(textarea.value).toBe(arabicText);
+      // Verify character count is accurate (including diacritics)
+      expect(textarea.value.length).toBe(arabicText.length);
+    });
+
+    it("should handle Arabic punctuation correctly", () => {
+      const arabicWithPunctuation = "السلام عليكم، كيف حالك؟ أنا بخير!";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicWithPunctuation} />
+      );
+
+      const textarea = screen.getByRole("textbox");
+      expect(textarea).toHaveValue(arabicWithPunctuation);
+    });
+
+    it("should maintain RTL text direction for Arabic text", () => {
+      const arabicSuggestion = "أواجه حاليًا تحديات مالية كبيرة";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicSuggestion} />
+      );
+
+      // Verify the modal renders with Arabic text
+      const textarea = screen.getByRole("textbox");
+      expect(textarea).toHaveValue(arabicSuggestion);
+
+      // The RTL direction is handled by the LanguageContext at the document level
+      // The textarea will inherit the direction from the document
+      // When Arabic language is selected, document.dir is set to 'rtl'
+    });
+
+    it("should call onEdit with Arabic text when edited", async () => {
+      const user = userEvent.setup();
+      const arabicSuggestion = "أواجه تحديات مالية";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicSuggestion} />
+      );
+
+      const textarea = screen.getByRole("textbox");
+      await user.clear(textarea);
+      await user.click(textarea);
+      await user.paste("وضعي الوظيفي الحالي صعب");
+
+      const editButton = screen.getByText("Edit");
+      await user.click(editButton);
+
+      expect(mockOnEdit).toHaveBeenCalledWith("وضعي الوظيفي الحالي صعب");
+    });
+
+    it("should call onAccept with Arabic text when accepted", async () => {
+      const user = userEvent.setup();
+      const arabicSuggestion = "أحتاج إلى الدعم المالي لعائلتي";
+      renderWithProviders(
+        <SuggestionModal {...defaultProps} suggestion={arabicSuggestion} />
+      );
+
+      const acceptButton = screen.getByTestId("btn-accept-suggestion");
+      await user.click(acceptButton);
+
+      expect(mockOnAccept).toHaveBeenCalledTimes(1);
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+  });
 });

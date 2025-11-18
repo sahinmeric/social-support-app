@@ -75,6 +75,73 @@ describe("sanitizeInput", () => {
     );
     expect(result).toBe('Helloalert("xss")');
   });
+
+  describe("Arabic text handling", () => {
+    it("should preserve Arabic characters (U+0600 to U+06FF)", () => {
+      const arabicText = "أواجه حاليًا تحديات مالية كبيرة";
+      const result = sanitizeInput(arabicText);
+      expect(result).toBe(arabicText);
+    });
+
+    it("should preserve Arabic diacritics", () => {
+      const textWithDiacritics = "مُحَمَّد يَعْمَلُ فِي الْمَدِينَةِ";
+      const result = sanitizeInput(textWithDiacritics);
+      expect(result).toBe(textWithDiacritics);
+    });
+
+    it("should preserve Arabic punctuation", () => {
+      const textWithPunctuation = "السلام عليكم، كيف حالك؟ أنا بخير!";
+      const result = sanitizeInput(textWithPunctuation);
+      expect(result).toBe(textWithPunctuation);
+    });
+
+    it("should preserve mixed Arabic and English text", () => {
+      const mixedText = "My name is محمد and I live in القاهرة";
+      const result = sanitizeInput(mixedText);
+      expect(result).toBe(mixedText);
+    });
+
+    it("should preserve Arabic numbers (Eastern Arabic numerals)", () => {
+      const textWithNumbers = "لدي ٣ أطفال وراتبي ٥٠٠٠ دولار";
+      const result = sanitizeInput(textWithNumbers);
+      expect(result).toBe(textWithNumbers);
+    });
+
+    it("should remove XSS attempts while preserving Arabic text", () => {
+      const maliciousArabic = '<script>alert("xss")</script>أواجه تحديات مالية';
+      const result = sanitizeInput(maliciousArabic);
+      expect(result).toBe('alert("xss")أواجه تحديات مالية');
+    });
+
+    it("should handle Arabic text with HTML tags", () => {
+      const arabicWithHtml = "<p>أواجه تحديات <strong>مالية</strong></p>";
+      const result = sanitizeInput(arabicWithHtml);
+      expect(result).toBe("أواجه تحديات مالية");
+    });
+
+    it("should correctly count Arabic characters with maxLength", () => {
+      const arabicText = "أواجه حاليًا تحديات";
+      const result = sanitizeInput(arabicText, { maxLength: 10 });
+      // Verify the result is truncated to 10 characters
+      expect(result.length).toBe(10);
+      // Verify it starts with the expected text
+      expect(result).toBe(arabicText.substring(0, 10));
+    });
+
+    it("should preserve Arabic text in form data sanitization", () => {
+      const data: Partial<ApplicationFormData> = {
+        financialSituation: "أواجه حاليًا تحديات مالية كبيرة",
+        employmentCircumstances: "وضعي الوظيفي الحالي صعب",
+        reasonForApplying: "أحتاج إلى الدعم المالي لعائلتي",
+      };
+
+      const result = sanitizeFormData(data);
+
+      expect(result.financialSituation).toBe("أواجه حاليًا تحديات مالية كبيرة");
+      expect(result.employmentCircumstances).toBe("وضعي الوظيفي الحالي صعب");
+      expect(result.reasonForApplying).toBe("أحتاج إلى الدعم المالي لعائلتي");
+    });
+  });
 });
 
 describe("sanitizeFormData", () => {

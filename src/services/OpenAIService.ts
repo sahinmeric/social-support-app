@@ -26,6 +26,7 @@ interface CacheEntry {
   suggestion: AISuggestion;
   timestamp: number;
   contextHash: string;
+  language: string;
 }
 
 /**
@@ -42,12 +43,52 @@ export class OpenAIService {
   }
 
   /**
+   * Generate Arabic mock suggestion for testing without API calls
+   */
+  private generateArabicMockSuggestion(
+    fieldName: keyof ApplicationFormData,
+    formData: ApplicationFormData
+  ): AISuggestion {
+    const mockSuggestions: Record<string, string> = {
+      financialSituation: `أواجه حاليًا تحديات مالية كبيرة. مع دخل شهري قدره ${
+        formData.monthlyIncome || "موارد محدودة"
+      } و ${
+        formData.dependents || 0
+      } من المعالين لدعمهم، أجد صعوبة في تلبية الاحتياجات الأساسية. وضعي السكني ${
+        formData.housingStatus || "غير مستقر"
+      }، مما يزيد من العبء المالي. أسعى للحصول على المساعدة لتحقيق الاستقرار في وضعي وتوفير احتياجات عائلتي الأساسية.`,
+      employmentCircumstances: `وضعي الوظيفي الحالي ${
+        formData.employmentStatus || "غير مؤكد"
+      }. وقد أثر هذا بشكل كبير على قدرتي على الحفاظ على دخل مستقر وإعالة نفسي وعائلتي. أبحث بنشاط عن فرص لتحسين وضعي الوظيفي، ولكن في الوقت الحالي، أحتاج إلى الدعم لتجاوز هذه الفترة الصعبة وضمان تلبية الاحتياجات الأساسية.`,
+      reasonForApplying: `أتقدم بطلب للحصول على الدعم الاجتماعي لأنني في حاجة ماسة إلى المساعدة لتغطية نفقات المعيشة الأساسية. مع وضعي المالي والوظيفي الحالي، لا أستطيع توفير ما يكفي لـ ${
+        formData.dependents || "معاليّ"
+      }. سيساعدني هذا الدعم في الحفاظ على استقرار السكن وضمان الأمن الغذائي وتغطية النفقات الأساسية بينما أعمل على تحسين ظروفي. أنا ملتزم باستخدام هذه المساعدة بمسؤولية والعمل نحو الاستقلال المالي.`,
+    };
+
+    const suggestion =
+      mockSuggestions[fieldName] || "نص اقتراح تجريبي لـ " + fieldName;
+
+    // Sanitize AI-generated content before returning
+    return {
+      text: sanitizeInput(suggestion),
+      fieldName: fieldName as string,
+    };
+  }
+
+  /**
    * Generate mock suggestion for testing without API calls
    */
   private generateMockSuggestion(
     fieldName: keyof ApplicationFormData,
-    formData: ApplicationFormData
+    formData: ApplicationFormData,
+    language: string
   ): AISuggestion {
+    // Call Arabic mock generator when language is Arabic
+    if (language === "ar") {
+      return this.generateArabicMockSuggestion(fieldName, formData);
+    }
+
+    // Default to English mock suggestions
     const mockSuggestions: Record<string, string> = {
       financialSituation: `I am currently facing significant financial challenges. With a monthly income of ${
         formData.monthlyIncome || "limited funds"
@@ -75,11 +116,28 @@ export class OpenAIService {
   }
 
   /**
+   * Build language-aware system prompt for AI requests
+   */
+  private buildSystemPrompt(language: string): string {
+    const languageInstruction =
+      language === "ar"
+        ? "Please respond in Arabic language."
+        : "Please respond in English language.";
+
+    return `You are a helpful assistant for a social support application. ${languageInstruction}
+
+Generate a professional and empathetic response for the user's application form.
+The response should be between 50-200 words and written in first person.
+Focus on clearly explaining the user's situation based on the provided context.`;
+  }
+
+  /**
    * Build request payload for backend API
    */
   private buildRequestPayload(
     fieldName: keyof ApplicationFormData,
-    formData: ApplicationFormData
+    formData: ApplicationFormData,
+    language: string
   ): AISuggestionRequest {
     // Extract only relevant fields for the backend
     const relevantData: Partial<ApplicationFormData> = {};
@@ -103,9 +161,13 @@ export class OpenAIService {
         break;
     }
 
+    // Build system prompt with language instruction
+    const systemPrompt = this.buildSystemPrompt(language);
+
     return {
       fieldName: fieldName as string,
       formData: relevantData as AISuggestionRequest["formData"],
+      systemPrompt,
     };
   }
 
@@ -114,7 +176,8 @@ export class OpenAIService {
    */
   private generateContextHash(
     fieldName: keyof ApplicationFormData,
-    formData: ApplicationFormData
+    formData: ApplicationFormData,
+    language: string
   ): string {
     // Create a hash based on relevant form data for this field
     const relevantData: Record<string, unknown> = {};
@@ -138,7 +201,7 @@ export class OpenAIService {
         break;
     }
 
-    return JSON.stringify(relevantData);
+    return JSON.stringify({ ...relevantData, language });
   }
 
   /**
@@ -146,17 +209,19 @@ export class OpenAIService {
    */
   private getCachedSuggestion(
     fieldName: keyof ApplicationFormData,
-    contextHash: string
+    contextHash: string,
+    language: string
   ): AISuggestion | null {
     const cacheKey = `${fieldName}-${contextHash}`;
     const cached = this.cache.get(cacheKey);
 
     if (cached) {
       const isExpired = Date.now() - cached.timestamp > this.CACHE_TTL;
-      if (!isExpired && cached.contextHash === contextHash) {
+      const languageMatches = cached.language === language;
+      if (!isExpired && cached.contextHash === contextHash && languageMatches) {
         return cached.suggestion;
       }
-      // Remove expired entry
+      // Remove expired or mismatched entry
       this.cache.delete(cacheKey);
     }
 
@@ -169,13 +234,15 @@ export class OpenAIService {
   private setCachedSuggestion(
     fieldName: keyof ApplicationFormData,
     contextHash: string,
-    suggestion: AISuggestion
+    suggestion: AISuggestion,
+    language: string
   ): void {
     const cacheKey = `${fieldName}-${contextHash}`;
     this.cache.set(cacheKey, {
       suggestion,
       timestamp: Date.now(),
       contextHash,
+      language,
     });
   }
 
@@ -215,16 +282,25 @@ export class OpenAIService {
    */
   async generateSuggestion(
     fieldName: keyof ApplicationFormData,
-    formData: ApplicationFormData
+    formData: ApplicationFormData,
+    language: string
   ): Promise<AISuggestion> {
     return PerformanceMonitor.measureAsync(
       `AI Suggestion Generation - ${fieldName}`,
       async () => {
         // Generate context hash for caching
-        const contextHash = this.generateContextHash(fieldName, formData);
+        const contextHash = this.generateContextHash(
+          fieldName,
+          formData,
+          language
+        );
 
         // Check cache first
-        const cached = this.getCachedSuggestion(fieldName, contextHash);
+        const cached = this.getCachedSuggestion(
+          fieldName,
+          contextHash,
+          language
+        );
         if (cached) {
           return cached;
         }
@@ -235,18 +311,28 @@ export class OpenAIService {
           await new Promise((resolve) =>
             setTimeout(resolve, APP_CONFIG.AI_MOCK_DELAY)
           );
-          const suggestion = this.generateMockSuggestion(fieldName, formData);
+          const suggestion = this.generateMockSuggestion(
+            fieldName,
+            formData,
+            language
+          );
           // Cache mock suggestions too
-          this.setCachedSuggestion(fieldName, contextHash, suggestion);
+          this.setCachedSuggestion(
+            fieldName,
+            contextHash,
+            suggestion,
+            language
+          );
           return suggestion;
         }
 
         const suggestion = await this.generateSuggestionInternal(
           fieldName,
-          formData
+          formData,
+          language
         );
         // Cache the result
-        this.setCachedSuggestion(fieldName, contextHash, suggestion);
+        this.setCachedSuggestion(fieldName, contextHash, suggestion, language);
         return suggestion;
       }
     );
@@ -257,9 +343,14 @@ export class OpenAIService {
    */
   private async generateSuggestionInternal(
     fieldName: keyof ApplicationFormData,
-    formData: ApplicationFormData
+    formData: ApplicationFormData,
+    language: string
   ): Promise<AISuggestion> {
-    const requestPayload = this.buildRequestPayload(fieldName, formData);
+    const requestPayload = this.buildRequestPayload(
+      fieldName,
+      formData,
+      language
+    );
 
     // Create new AbortController for this request
     this.abortController = new AbortController();

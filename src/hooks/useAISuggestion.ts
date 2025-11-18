@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "./useFormContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import { openAIService } from "../services/OpenAIService";
 import type { ApplicationFormData } from "../types/form.types";
 import type { AIError } from "../types/openai.types";
@@ -85,6 +86,7 @@ export interface UseAISuggestionReturn {
 export const useAISuggestion = (): UseAISuggestionReturn => {
   const { t } = useTranslation();
   const { formData, updateFormData } = useFormContext();
+  const { language } = useLanguage();
 
   // Modal and suggestion state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -150,7 +152,11 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
       setLoadingFields((prev) => ({ ...prev, [field]: true }));
 
       try {
-        const result = await openAIService.generateSuggestion(field, formData);
+        const result = await openAIService.generateSuggestion(
+          field,
+          formData,
+          language
+        );
         setSuggestion(result.text);
       } catch (err) {
         const aiError = err as AIError;
@@ -169,7 +175,7 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
         setLoadingFields((prev) => ({ ...prev, [field]: false }));
       }
     },
-    [formData, t, loadingFields]
+    [formData, t, loadingFields, language]
   );
 
   /**
@@ -236,7 +242,8 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
       try {
         const result = await openAIService.generateSuggestion(
           currentField,
-          formData
+          formData,
+          language
         );
         setSuggestion(result.text);
       } catch (err) {
@@ -256,7 +263,7 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
         setLoadingFields((prev) => ({ ...prev, [currentField]: false }));
       }
     }
-  }, [currentField, formData, t]);
+  }, [currentField, formData, t, language]);
 
   /**
    * Close the modal and reset all state

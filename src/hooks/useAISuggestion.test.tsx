@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { useAISuggestion } from "./useAISuggestion";
 import { FormProvider } from "../contexts/FormContext";
+import { LanguageProvider } from "../contexts/LanguageContext";
 import { openAIService } from "../services/OpenAIService";
 import type { AISuggestion } from "../types/openai.types";
 import { AIErrorType } from "../types/openai.types";
@@ -15,6 +17,13 @@ vi.mock("../services/OpenAIService", () => ({
   },
 }));
 
+// Wrapper component that includes both FormProvider and LanguageProvider
+const AllProviders = ({ children }: { children: ReactNode }) => (
+  <LanguageProvider>
+    <FormProvider>{children}</FormProvider>
+  </LanguageProvider>
+);
+
 describe("useAISuggestion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -22,7 +31,7 @@ describe("useAISuggestion", () => {
 
   it("should initialize with default state", () => {
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     expect(result.current.isModalOpen).toBe(false);
@@ -43,7 +52,7 @@ describe("useAISuggestion", () => {
     );
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -68,7 +77,7 @@ describe("useAISuggestion", () => {
     vi.mocked(openAIService.generateSuggestion).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -92,7 +101,7 @@ describe("useAISuggestion", () => {
     );
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -123,7 +132,7 @@ describe("useAISuggestion", () => {
     );
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -154,7 +163,7 @@ describe("useAISuggestion", () => {
     );
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -185,7 +194,7 @@ describe("useAISuggestion", () => {
     );
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -222,7 +231,7 @@ describe("useAISuggestion", () => {
     );
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -248,7 +257,7 @@ describe("useAISuggestion", () => {
     vi.mocked(openAIService.generateSuggestion).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     await act(async () => {
@@ -278,7 +287,7 @@ describe("useAISuggestion", () => {
       .mockResolvedValueOnce(mockSuggestion2);
 
     const { result } = renderHook(() => useAISuggestion(), {
-      wrapper: FormProvider,
+      wrapper: AllProviders,
     });
 
     // Generate first suggestion

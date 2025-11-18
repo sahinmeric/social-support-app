@@ -13,6 +13,7 @@ export interface AISuggestionRequest {
     dependents?: number | "";
     financialSituation?: string;
   };
+  systemPrompt?: string;
 }
 
 // Backend API response types
