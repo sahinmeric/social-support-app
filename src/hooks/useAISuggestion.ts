@@ -154,7 +154,16 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
         setSuggestion(result.text);
       } catch (err) {
         const aiError = err as AIError;
-        setError(t(`ai.errors.${aiError.type}`) || aiError.message);
+        const errorKey = aiError.type
+          ? `ai.errors.${aiError.type}`
+          : "ai.errors.generic";
+        const translatedError = t(errorKey);
+        // If translation returns the key itself, use the error message
+        setError(
+          translatedError !== errorKey
+            ? translatedError
+            : aiError.message || t("ai.errors.generic")
+        );
       } finally {
         setIsLoading(false);
         setLoadingFields((prev) => ({ ...prev, [field]: false }));
@@ -232,7 +241,16 @@ export const useAISuggestion = (): UseAISuggestionReturn => {
         setSuggestion(result.text);
       } catch (err) {
         const aiError = err as AIError;
-        setError(t(`ai.errors.${aiError.type}`) || aiError.message);
+        const errorKey = aiError.type
+          ? `ai.errors.${aiError.type}`
+          : "ai.errors.generic";
+        const translatedError = t(errorKey);
+        // If translation returns the key itself, use the error message
+        setError(
+          translatedError !== errorKey
+            ? translatedError
+            : aiError.message || t("ai.errors.generic")
+        );
       } finally {
         setIsLoading(false);
         setLoadingFields((prev) => ({ ...prev, [currentField]: false }));

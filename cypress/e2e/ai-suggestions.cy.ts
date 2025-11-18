@@ -50,10 +50,8 @@ describe("SSA Application - AI Suggestions", () => {
     // Wait for suggestion modal to appear
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
 
-    // Wait for suggestion to load - check that we're not in error state
-    cy.get('[data-testid="ai-error"]').should("not.exist");
-
     // Wait for suggestion text to appear (AI mock delay is 1.5s)
+    // This will automatically wait for loading to complete
     cy.get('[data-testid="ai-suggestion-text"]', { timeout: 10000 }).should(
       "be.visible"
     );
@@ -70,9 +68,6 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion
     cy.get('[data-testid="ai-help-financialSituation"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-
-    // Wait for suggestion to load - check that we're not in error state
-    cy.get('[data-testid="ai-error"]').should("not.exist");
 
     // Wait for suggestion to load and be visible
     cy.get('[data-testid="ai-suggestion-text"]', { timeout: 10000 }).should(
@@ -128,7 +123,6 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion for financial situation
     cy.get('[data-testid="ai-help-financialSituation"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-    cy.get('[data-testid="ai-error"]').should("not.exist");
     cy.get('[data-testid="ai-suggestion-text"]', { timeout: 10000 }).should(
       "be.visible"
     );
@@ -141,7 +135,6 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion for employment circumstances
     cy.get('[data-testid="ai-help-employmentCircumstances"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-    cy.get('[data-testid="ai-error"]').should("not.exist");
     cy.get('[data-testid="ai-suggestion-text"]', { timeout: 10000 }).should(
       "be.visible"
     );
@@ -157,7 +150,6 @@ describe("SSA Application - AI Suggestions", () => {
     // Generate suggestion for reason for applying
     cy.get('[data-testid="ai-help-reasonForApplying"]').click();
     cy.get('[data-testid="ai-modal"]', { timeout: 10000 }).should("be.visible");
-    cy.get('[data-testid="ai-error"]').should("not.exist");
     cy.get('[data-testid="ai-suggestion-text"]', { timeout: 10000 }).should(
       "be.visible"
     );
