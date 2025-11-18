@@ -59,12 +59,18 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
   }, [open, onClose]);
 
   const handleAccept = () => {
-    onAccept();
+    // Use edited text if it differs from original suggestion
+    if (editedText !== suggestion) {
+      onEdit(editedText);
+    } else {
+      onAccept();
+    }
     onClose();
   };
 
   const handleEdit = () => {
     onEdit(editedText);
+    onClose();
   };
 
   return (
@@ -141,7 +147,10 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
 
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button
-          onClick={onDiscard}
+          onClick={() => {
+            onDiscard();
+            onClose();
+          }}
           startIcon={<DeleteIcon />}
           color="error"
           disabled={isLoading}
