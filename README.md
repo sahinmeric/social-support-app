@@ -1,6 +1,6 @@
 # Social Support Application Portal
 
-![CI/CD](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/CI%2FCD%20Pipeline/badge.svg)
+![CI/CD](https://github.com/sahinmeric/social-support-app/workflows/CI%2FCD%20Pipeline/badge.svg)
 ![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
@@ -9,9 +9,7 @@ A modern, accessible, and multilingual web application for citizens to apply for
 
 ## 🌐 Live Demo
 
-**Deployed on GitHub Pages:** [View Live Application](https://YOUR_USERNAME.github.io/YOUR_REPO/)
-
-> **Note:** Replace `YOUR_USERNAME` and `YOUR_REPO` with your actual GitHub username and repository name.
+**Deployed on GitHub Pages:** [View Live Application](https://sahinmeric.github.io/social-support-app/)
 
 ## 🌟 Features
 
@@ -48,7 +46,7 @@ A modern, accessible, and multilingual web application for citizens to apply for
 
    ```bash
    git clone <repository-url>
-   cd ssa
+   cd social-support-app
    ```
 
 2. **Install dependencies**
@@ -544,7 +542,7 @@ This project is configured for automatic deployment to GitHub Pages via GitHub A
 
 3. **Update Base Path:**
    - Edit `vite.config.ts`
-   - Change `/ssa/` to `/YOUR_REPO_NAME/`
+   - Change `/social-support-app/` to `/YOUR_REPO_NAME/`
 
 4. **Access Your Site:**
    - `https://YOUR_USERNAME.github.io/YOUR_REPO/`
