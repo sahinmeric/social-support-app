@@ -19,7 +19,7 @@ A modern, accessible, and multilingual web application for citizens to apply for
 - **AI-Powered Writing Assistance** using OpenAI GPT-3.5
 - **Bilingual Support** (English & Arabic with RTL)
 - **Form Validation** with real-time error feedback
-- **Auto-Save** to localStorage (500ms debounce)
+- **Auto-Save** to localStorage (2000ms debounce)
 - **Responsive Design** (mobile, tablet, desktop)
 - **Accessibility** (ARIA labels, keyboard navigation, screen reader support)
 - **Code Splitting** for optimized bundle size and lazy loading
@@ -45,7 +45,7 @@ A modern, accessible, and multilingual web application for citizens to apply for
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/sahinmeric/social-support-app.git
    cd social-support-app
    ```
 
@@ -68,8 +68,12 @@ A modern, accessible, and multilingual web application for citizens to apply for
    Edit `.env.local` and add your OpenAI API key:
 
    ```env
-   VITE_OPENAI_API_KEY=your_openai_api_key_here
-   VITE_USE_MOCK_AI=false
+   # Backend API Configuration
+    # VITE_API_BASE_URL=/api
+
+    # Use mock AI responses (no backend required)
+    # Set to "false" when you have a backend API running
+    VITE_USE_MOCK_AI=true
    ```
 
    **Note**: Due to CORS restrictions, direct browser calls to OpenAI are blocked. The app uses mock AI responses by default (`VITE_USE_MOCK_AI=true`). For production, you would need a backend proxy server.
@@ -244,11 +248,10 @@ The application includes AI-powered writing assistance for Step 3 text fields:
 
 ### Environment Variables
 
-| Variable              | Description                         | Default             |
-| --------------------- | ----------------------------------- | ------------------- |
-| `VITE_OPENAI_API_KEY` | OpenAI API key for AI assistance    | -                   |
-| `VITE_USE_MOCK_AI`    | Use mock AI responses (avoids CORS) | `true`              |
-| `VITE_API_URL`        | Backend API endpoint                | `/api/applications` |
+| Variable           | Description           | Default             |
+| ------------------ | --------------------- | ------------------- |
+| `VITE_USE_MOCK_AI` | Use mock AI responses | `true`              |
+| `VITE_API_URL`     | Backend API endpoint  | `/api/applications` |
 
 ### Customization
 
@@ -264,7 +267,7 @@ The application includes AI-powered writing assistance for Step 3 text fields:
 
 - **FormContext**: Centralized form state with React Hook Form integration
 - **LanguageContext**: Language and RTL direction management
-- **localStorage**: Automatic form persistence with 500ms debouncing
+- **localStorage**: Automatic form persistence with 2000ms debouncing
 
 ### Component Architecture
 
@@ -298,7 +301,7 @@ The application includes AI-powered writing assistance for Step 3 text fields:
 
 #### 4. Debouncing
 
-- Form persistence debounced to 500ms
+- Form persistence debounced to 2000ms
 - Reduces localStorage writes
 - Improves performance during rapid typing
 
@@ -417,50 +420,6 @@ const result = await PerformanceMonitor.measureAsync(
 console.log(PerformanceMonitor.getMetrics());
 ```
 
-### Adding New Features
-
-1. **Create feature branch**
-
-   ```bash
-   git checkout -b feature/my-feature
-   ```
-
-2. **Add constants** (if needed)
-   - Add to `src/constants/index.ts` or `validation.ts`
-   - Use `as const` for type safety
-
-3. **Add translations** (if needed)
-   - Update `src/i18n/en.json`
-   - Update `src/i18n/ar.json`
-
-4. **Create components**
-   - Use TypeScript with strict types
-   - Wrap with React.memo() for performance
-   - Use useCallback() for event handlers
-
-5. **Add validation** (if needed)
-   - Update `src/validation/schemas.ts`
-   - Add validation messages to constants
-
-6. **Test locally**
-
-   ```bash
-   npm run dev
-   npm run build
-   npm run lint
-   npx tsc --noEmit
-   ```
-
-7. **Commit changes**
-
-   ```bash
-   git add .
-   git commit -m "feat: add my feature"
-   ```
-
-   - Pre-commit hooks run automatically
-   - Follows conventional commits format
-
 ## 🚧 Known Limitations
 
 1. **OpenAI CORS**: Direct browser calls blocked - using mock mode by default
@@ -507,7 +466,7 @@ console.log(PerformanceMonitor.getMetrics());
 - **Time to Interactive**: < 3 seconds
 - **First Contentful Paint**: < 1 second
 - **Re-render Performance**: 90% reduction with memoization
-- **Form Save Performance**: 500ms debounce prevents excessive writes
+- **Form Save Performance**: 2000ms debounce prevents excessive writes
 
 ## 🔮 Future Enhancements
 
@@ -577,285 +536,6 @@ For questions or issues, please:
 
 ---
 
-## 📚 Custom Hooks Documentation
-
-### useFormContext
-
-Provides access to form data, errors, and update functions.
-
-```typescript
-import { useFormContext } from './hooks/useFormContext';
-
-function MyComponent() {
-  const { formData, errors, updateFormData, validateCurrentStep } = useFormContext();
-
-  const handleChange = (field, value) => {
-    updateFormData(field, value);
-  };
-
-  return <input value={formData.name} onChange={(e) => handleChange('name', e.target.value)} />;
-}
-```
-
-**API:**
-
-- `formData`: Current form data object
-- `errors`: Validation errors object
-- `currentStep`: Current step number (1-3)
-- `updateFormData(field, value)`: Update a single field
-- `validateCurrentStep()`: Validate current step, returns Promise<boolean>
-- `setCurrentStep(step)`: Change current step
-- `clearErrors()`: Clear all validation errors
-- `setErrors(errors)`: Set errors manually
-
-### useFormNavigation
-
-Handles step navigation with validation.
-
-```typescript
-import { useFormNavigation } from './hooks/useFormNavigation';
-
-function NavigationButtons() {
-  const { canGoBack, canGoNext, handleNext, handleBack } = useFormNavigation();
-
-  return (
-    <>
-      <button onClick={handleBack} disabled={!canGoBack}>Back</button>
-      <button onClick={handleNext} disabled={!canGoNext}>Next</button>
-    </>
-  );
-}
-```
-
-**API:**
-
-- `canGoBack`: Boolean - can navigate to previous step
-- `canGoNext`: Boolean - can navigate to next step
-- `handleNext()`: Navigate to next step (validates first)
-- `handleBack()`: Navigate to previous step
-
-### useFormSubmission
-
-Manages form submission state and logic.
-
-```typescript
-import { useFormSubmission } from './hooks/useFormSubmission';
-
-function SubmitButton() {
-  const { isSubmitting, submissionData, handleSubmit } = useFormSubmission();
-
-  return (
-    <button onClick={handleSubmit} disabled={isSubmitting}>
-      {isSubmitting ? 'Submitting...' : 'Submit'}
-    </button>
-  );
-}
-```
-
-**API:**
-
-- `isSubmitting`: Boolean - submission in progress
-- `submissionData`: Object with applicationId and timestamp (after success)
-- `showSuccess`: Boolean - show success page
-- `handleSubmit()`: Submit form
-- `resetForm()`: Reset to initial state
-
-### useAISuggestion
-
-Manages AI suggestion modal and generation.
-
-```typescript
-import { useAISuggestion } from './hooks/useAISuggestion';
-
-function AIAssistButton() {
-  const {
-    isModalOpen,
-    suggestion,
-    isLoading,
-    generateSuggestion,
-    acceptSuggestion,
-    closeModal
-  } = useAISuggestion();
-
-  return (
-    <>
-      <button onClick={() => generateSuggestion('financialSituation')}>
-        Help Me Write
-      </button>
-      <SuggestionModal
-        open={isModalOpen}
-        suggestion={suggestion}
-        isLoading={isLoading}
-        onAccept={acceptSuggestion}
-        onClose={closeModal}
-      />
-    </>
-  );
-}
-```
-
-**API:**
-
-- `isModalOpen`: Boolean - modal visibility
-- `suggestion`: String - generated suggestion text
-- `isLoading`: Boolean - generation in progress
-- `error`: String - error message if generation fails
-- `generateSuggestion(field)`: Generate suggestion for field
-- `acceptSuggestion()`: Accept and apply suggestion
-- `editSuggestion(text)`: Update suggestion text
-- `discardSuggestion()`: Discard and close modal
-- `retrySuggestion()`: Retry generation after error
-- `closeModal()`: Close modal
-
-### useFormPersistence
-
-Auto-saves form data to localStorage with debouncing.
-
-```typescript
-// Used internally by FormProvider - no direct usage needed
-// Automatically saves form data every 500ms of inactivity
-```
-
-**Configuration:**
-
-- Debounce delay: 500ms (configurable in constants)
-- Storage key: 'socialSupportForm'
-- Step key: 'socialSupportFormStep'
-
-## 🛠️ Utility Functions Documentation
-
-### Performance Monitoring
-
-Track performance metrics for optimization.
-
-```typescript
-import { PerformanceMonitor } from "./utils/performance";
-
-// Measure synchronous operation
-const result = PerformanceMonitor.measure("Operation Name", () => {
-  // Your code here
-  return someValue;
-});
-
-// Measure async operation
-const result = await PerformanceMonitor.measureAsync(
-  "Async Operation",
-  async () => {
-    // Your async code here
-    return await someAsyncValue;
-  }
-);
-
-// Get all metrics
-const metrics = PerformanceMonitor.getMetrics();
-console.log(metrics);
-
-// Clear metrics
-PerformanceMonitor.clearMetrics();
-```
-
-**API:**
-
-- `measure(name, fn)`: Measure synchronous function execution time
-- `measureAsync(name, fn)`: Measure async function execution time
-- `getMetrics()`: Get all recorded metrics
-- `clearMetrics()`: Clear all metrics
-
-### Progress Calculation
-
-Calculate form completion percentage.
-
-```typescript
-import { calculateProgress } from "./utils/progress";
-
-const progress = calculateProgress(formData);
-// Returns: { percentage: 75, filledFields: 15, totalFields: 20 }
-```
-
-**Returns:**
-
-- `percentage`: Number (0-100) - completion percentage
-- `filledFields`: Number - count of filled fields
-- `totalFields`: Number - total required fields
-
-### Input Sanitization
-
-Sanitize user input to prevent XSS and injection attacks.
-
-```typescript
-import { sanitizeInput } from "./utils/sanitize";
-
-const clean = sanitizeInput(userInput);
-// Removes: <script>, onclick=, onerror=, SQL patterns, etc.
-```
-
-**Features:**
-
-- Removes script tags and event handlers
-- Prevents SQL injection patterns
-- Trims excessive whitespace
-- Preserves legitimate content
-
-## 📊 Constants Structure
-
-### Form Constants (`src/constants/index.ts`)
-
-```typescript
-// Form steps
-export const FORM_STEPS = {
-  PERSONAL_INFO: 1,
-  FAMILY_FINANCIAL: 2,
-  SITUATION_DESCRIPTIONS: 3,
-} as const;
-
-// Text length constraints
-export const MIN_TEXT_LENGTH = {
-  NAME: 2,
-  NATIONAL_ID: 10,
-  ADDRESS: 10,
-  CITY: 2,
-  STATE: 2,
-  COUNTRY: 2,
-  DESCRIPTION: 50,
-} as const;
-
-export const MAX_TEXT_LENGTH = {
-  NATIONAL_ID: 20,
-} as const;
-
-// Debounce delays
-export const DEBOUNCE_DELAY = {
-  FORM_SAVE: 500,
-} as const;
-```
-
-### Validation Constants (`src/constants/validation.ts`)
-
-```typescript
-// Validation patterns
-export const VALIDATION_PATTERNS = {
-  NAME: /^[a-zA-Z\s\u0600-\u06FF]+$/,
-  NATIONAL_ID: /^[A-Z0-9]+$/,
-  PHONE: /^\+?[0-9\s\-()]+$/,
-  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-} as const;
-
-// Validation messages
-export const VALIDATION_MESSAGES = {
-  REQUIRED: "validation.required",
-  INVALID_EMAIL: "validation.invalidEmail",
-  INVALID_PHONE: "validation.invalidPhone",
-  // ... more messages
-} as const;
-```
-
-**Adding New Constants:**
-
-1. Add constant to appropriate file
-2. Export with `as const` for type safety
-3. Import where needed
-4. Update translations if message keys added
-
 ## 🔄 Complete Application Workflow
 
 This section explains the end-to-end workflow of how the application works, from user interaction to data persistence.
@@ -882,7 +562,7 @@ User opens browser → http://localhost:5173
 │  │  ├─ defaultValues: saved data or empty initialFormData
 │  │  ├─ resolver: Yup schema for current step
 │  │  └─ mode: 'onChange' (validates as user types)
-│  └─ Starts useFormPersistence hook (500ms debounce)
+│  └─ Starts useFormPersistence hook (2000ms debounce)
 │
 └─ FormWizard component renders:
    ├─ Shows ProgressBar (memoized)
@@ -916,7 +596,7 @@ User types "J" in Name field
 │
 ├─ useFormPersistence hook detects change
 │  ├─ Clears previous timeout (if exists)
-│  ├─ Sets NEW timeout for 500ms
+│  ├─ Sets NEW timeout for 2000ms
 │  └─ Waits... (user keeps typing)
 │
 └─ User types "o" → "h" → "n"
@@ -925,7 +605,7 @@ User types "J" in Name field
       └─ Timeout keeps resetting (debouncing)
 ```
 
-**After 500ms of no typing:**
+**After 2000ms of no typing:**
 
 ```
 Timeout fires!
@@ -1162,7 +842,7 @@ User refreshes page (F5) or closes and reopens
 
 #### 4. Debouncing (useFormPersistence):
 
-- Saves to localStorage only after 500ms of inactivity
+- Saves to localStorage only after 2000ms of inactivity
 - Prevents excessive writes on every keystroke
 - Clears and resets timeout on each change
 - Reduces localStorage operations by 95%
@@ -1194,7 +874,7 @@ User refreshes page (F5) or closes and reopens
 User Input → FormField → React Hook Form → FormContext → useFormPersistence
                 ↓              ↓                ↓              ↓
          Success Icon    Validation      Components    localStorage
-                                             ↓         (500ms debounce)
+                                             ↓         (2000ms debounce)
                                         Navigation
                                              ↓
                                         Submission
@@ -1216,7 +896,7 @@ User Input → FormField → React Hook Form → FormContext → useFormPersiste
 | Initial Load        | 800 KB          | 573 KB        | 28% smaller   |
 | Gzipped Size        | ~250 KB         | ~185 KB       | 26% smaller   |
 | Re-renders          | High            | Low           | 90% reduction |
-| localStorage Writes | Every keystroke | Every 500ms   | 95% reduction |
+| localStorage Writes | Every keystroke | Every 2000ms  | 95% reduction |
 | Time to Interactive | ~4s             | <3s           | 25% faster    |
 | Error Handling      | None            | Full coverage | ✅ Added      |
 | Security            | Basic           | Enhanced      | ✅ Improved   |
